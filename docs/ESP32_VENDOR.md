@@ -19,12 +19,10 @@
 4. Stock Peopoly tools: `magneto-manager-tool` / wiki ESP update path (vendor archive under `docs/vendor-archive/peopoly-wiki/`).  
 5. UART boot / esptool: only with a known-good Peopoly firmware binary you obtained yourself — **not** shipped in this repo.
 
-## Community firmware (deferred — PR-M10)
+## Community firmware (optional — PR-M10)
 
-[EmperorArthur/magneto_x_linear_motor_controller_firmware](https://github.com/EmperorArthur/magneto_x_linear_motor_controller_firmware) is research-grade open work. Optional later:
+See **[COMMUNITY_ESP32.md](COMMUNITY_ESP32.md)** for EmperorArthur open firmware:
 
-- Document ENABLE/DISABLE string compatibility with our manager allowlist  
-- UART pinout + recovery  
-- Explicit “voids vendor support” warning  
-
-Do not make this the default install path.
+- Same `ENABLE` / `DISABLE` / `VERSION` ASCII as stock  
+- Compatible with hardened manager + `[magneto_linear_motor]`  
+- **Not** default until S3 is green on vendor FW

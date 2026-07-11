@@ -812,9 +812,9 @@ Owners choose via Moonraker `primary_branch` / clone branch. See `klipper/docs/T
 
 | Pros | Cons |
 |------|------|
-| No shell | More fork code; serial protocol ownership |
+| No shell for MagXY | More fork code; serial protocol ownership |
 
-**Decision:** Future S7+ (PR-K7).
+**Decision (updated):** **PR-K7 landed** — `magneto_linear_motor` with http (default) or serial backend; ENABLE/DISABLE only. Shell optional fallback.
 
 ### A6. Merge MagXY closed-loop into Klipper stepgen
 

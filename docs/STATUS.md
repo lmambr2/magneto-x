@@ -21,6 +21,7 @@ Living checklist vs DESIGN PR plan. Update when PRs land.
 | PR-K4 | Relax default n + defconfig assert | Kconfig + `os/check-defconfigs.sh` + `klipper/test/configs/magneto-*` |
 | PR-K5 | Shell PARAMS reject | both tracks |
 | PR-K6 lite | CI gate script | `scripts/ci-magneto.sh` (+ example workflow under `docs/ci/`) |
+| **PR-K7** | Native MagXY module | `klippy/extras/magneto_linear_motor.py` (http/serial); macros updated |
 | Polish | force_move warning, nginx snippet, alt-hardware notes, DESIGN sync | config/ + FAQ + DESIGN rev3+ |
 | Tracks | Mainline + Kalico A/B | `docs/TRACKS.md`, branches |
 | Decisions | Operator locks §1–7, §6 | `docs/DECISIONS_LOCKED.md` |
@@ -38,9 +39,8 @@ Living checklist vs DESIGN PR plan. Update when PRs land.
 
 | ID | Title | Notes |
 |----|--------|--------|
-| PR-K7 | Native MagXY Klippy module | S7+ |
 | PR-M9 full | Custom MainsailOS image build | postinstall script is enough for now |
-| PR-M10 | EmperorArthur ESP32 | Vendor FW first |
+| PR-M10 flash guide depth | EmperorArthur flash cookbook | Docs: COMMUNITY_ESP32.md; flash still operator-owned |
 | A8 | Moonraker MagXY proxy | If shell risk dominates |
 | GitHub Actions live | `.github/workflows/magneto-ci.yml` | Enabled (umbrella + both klipper tracks) |
 | HX717 / Beacon | Hardware redesign | Alt only |
