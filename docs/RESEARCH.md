@@ -1,6 +1,6 @@
 # Peopoly Magneto X — Firmware Research Notes
 
-Working basis: [lmambr2/klipper](https://github.com/lmambr2/klipper)  
+Working basis: [lmambr2/magneto-x-klipper](https://github.com/lmambr2/magneto-x-klipper)  
 **Policy: do not open PRs or push commits to upstream [Klipper3d/klipper](https://github.com/Klipper3d/klipper).**  
 All Magneto work stays on the personal fork / this workspace.
 
@@ -138,7 +138,7 @@ LM_ENABLE → RUN_SHELL_COMMAND → curl :8880/send_command?command=ENABLE → E
 
 ## 7. Modernization strategy (this workspace)
 
-1. **Host Klipper**: `lmambr2/klipper` branch `magneto-x-modern` = current upstream + Magneto extras only.
+1. **Host Klipper**: `lmambr2/magneto-x-klipper` branch `magneto-x` = current upstream + Magneto extras only.
 2. **Configs**: cleaned package under `config/` (UUID placeholders, fixed LM naming, single PAUSE/RESUME).
 3. **Host OS**: prefer **current MainsailOS Armbian image for Orange Pi Zero 2** + KIAUH/git install of our fork + magneto-manager services — not Peopoly’s frozen 2024 image as long-term base.
 4. **MCUs**: rebuild Octopus (H723 USB) and Lancer (RP2040 CAN) from the modern tree; enable `MAGNETO_RELAX_STEPPER_PAST` on Octopus only.

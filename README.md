@@ -1,45 +1,57 @@
-# Magneto X modernization workspace
+# magneto-x
 
-Personal project to run a Peopoly **Magneto X** on **modern Klipper** without contributing Magneto-specific patches to upstream Klipper.
+Community modernization for the **Peopoly Magneto X** (MagXY linear motors + Lancer toolhead).
+
+**Not affiliated with Peopoly.** Vendor firmware/history is frozen and hard to maintain; this project runs **modern Klipper** with only the Magneto-specific pieces carried forward.
+
+If you own a Magneto X that never quite worked because of the stock Klipper tree, this is meant for you.
+
+## Repos
+
+| Repo | Purpose |
+|------|---------|
+| **[lmambr2/magneto-x](https://github.com/lmambr2/magneto-x)** (this tree) | Docs, printer configs, Orange Pi host tooling |
+| **[lmambr2/magneto-x-klipper](https://github.com/lmambr2/magneto-x-klipper)** | Modern Klipper + Magneto extras (branch `magneto-x`) |
+
+> GitHub rename may still be pending: the Klipper fork may still appear as `lmambr2/klipper` until renamed. See [docs/NAMING.md](docs/NAMING.md).
+
+**Policy:** do not open PRs or push Magneto patches to [Klipper3d/klipper](https://github.com/Klipper3d/klipper).
 
 ## Quick findings
 
 | Question | Answer |
 |----------|--------|
 | What did Peopoly fork? | Upstream `5f0d252b` (**2023-05-25**, v0.11 era) |
-| How bad is the history? | `master` is a squash; branch **`magneto-x`** keeps real parents |
+| Broken history? | Peopoly `master` is a squash; their branch **`magneto-x`** keeps real parents |
 | How invasive is their Klipper? | **~172 lines**: load-cell reset, shell command, two small safety tweaks |
 | MagXY in Klipper? | **No** — ESP32 + MotionG closed-loop; Klipper only emits step/dir |
-| Working Klipper tree | `klipper/` → branch **`magneto-x-modern`** (based on [lmambr2/klipper](https://github.com/lmambr2/klipper)) |
+| Working Klipper tree | `klipper/` → branch **`magneto-x`** |
 
 ## Docs
 
+- [docs/NAMING.md](docs/NAMING.md) — repo names, GitHub descriptions, topics  
 - [docs/RESEARCH.md](docs/RESEARCH.md) — fork analysis, hardware map, community inventory  
-- [docs/MODERNIZATION.md](docs/MODERNIZATION.md) — build/flash/install steps  
-- [docs/OS_IMAGE.md](docs/OS_IMAGE.md) — Orange Pi Zero 2 / MainsailOS plan  
-- [klipper/docs/Magneto_X.md](klipper/docs/Magneto_X.md) — in-tree Magneto notes  
+- [docs/MODERNIZATION.md](docs/MODERNIZATION.md) — build / flash / install  
+- [docs/OS_IMAGE.md](docs/OS_IMAGE.md) — Orange Pi Zero 2 / MainsailOS  
+- [klipper/docs/Magneto_X.md](klipper/docs/Magneto_X.md) — in-tree Magneto modules  
+
+There is **not yet** a full formal design doc (goals, key decisions, PR plan). Research + procedures only.
 
 ## Layout
 
 | Path | Purpose |
 |------|---------|
-| `klipper/` | Your fork + Magneto port (`magneto-x-modern`) |
+| `klipper/` | Clone of **magneto-x-klipper** (branch `magneto-x`) |
 | `config/` | Clean printer configs (fill in UUIDs) |
 | `os/` | Host service install helpers |
-| `peopoly-klipper/` | Reference `mypeopoly/Klipper` |
-| `magnetox-os-update/` | Magmotor / manager binaries |
-| `community/` | Third-party reference clones |
+| `docs/` | Project documentation |
+| `peopoly-klipper/`, `community/`, … | Local reference clones (not published) |
 
-## Policy
+## Next steps
 
-- **Do not** open PRs or push Magneto work to `Klipper3d/klipper`.
-- Push only to **your** GitHub fork (`lmambr2/klipper`) when you are ready.
+1. Rename GitHub fork `klipper` → **`magneto-x-klipper`** and push branch `magneto-x`.  
+2. Publish this workspace as **`magneto-x`**.  
+3. Flash a modern Orange Pi image; install fork + magneto-manager; deploy `config/`.  
+4. Build/flash Octopus + Lancer; `LM_ENABLE` → home → QGL → print.  
 
-## Next steps on hardware
-
-1. Push `magneto-x-modern` to GitHub (when you want).  
-2. Flash a current **MainsailOS Orange Pi Zero 2** image (or bridge on stock).  
-3. Install fork + `os/install-magneto-services.sh`.  
-4. Deploy `config/`, set serial/CAN IDs.  
-5. Build/flash Octopus + Lancer from the same tree.  
-6. `LM_ENABLE` → `G28` → QGL → test print.  
+Details: [docs/MODERNIZATION.md](docs/MODERNIZATION.md).

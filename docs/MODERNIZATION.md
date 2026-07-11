@@ -12,7 +12,7 @@
 
 ```
 Projects/magneto-x/
-├── klipper/                 # lmambr2/klipper, branch magneto-x-modern
+├── klipper/                 # lmambr2/magneto-x-klipper, branch magneto-x
 ├── config/                  # Printer configs ready to deploy
 ├── docs/                    # This research + guides
 ├── os/                      # Host image / service install notes
@@ -22,7 +22,7 @@ Projects/magneto-x/
 └── community/               # Community reference clones
 ```
 
-## Klipper branch: `magneto-x-modern`
+## Klipper branch: `magneto-x`
 
 ### Ported extras
 
@@ -39,9 +39,9 @@ SSH on printer (or cross-build):
 
 ```bash
 cd ~/klipper
-git remote add mine https://github.com/lmambr2/klipper.git   # once
+git remote add mine https://github.com/lmambr2/magneto-x-klipper.git   # once
 git fetch mine
-git checkout magneto-x-modern   # after you push the branch
+git checkout magneto-x   # after you push the branch
 
 make menuconfig
 ```
@@ -80,7 +80,7 @@ sudo systemctl stop klipper
 cd ~
 # Prefer a clean clone of YOUR fork, not mypeopoly
 mv klipper klipper-peopoly-backup
-git clone -b magneto-x-modern https://github.com/lmambr2/klipper.git klipper
+git clone -b magneto-x https://github.com/lmambr2/magneto-x-klipper.git klipper
 
 # Reuse existing venv if present
 ~/klippy-env/bin/pip install -r ~/klipper/scripts/klippy-requirements.txt
@@ -88,7 +88,7 @@ git clone -b magneto-x-modern https://github.com/lmambr2/klipper.git klipper
 sudo systemctl start klipper
 ```
 
-Or point KIAUH / custom update manager at `https://github.com/lmambr2/klipper` branch `magneto-x-modern`.
+Or point KIAUH / custom update manager at `https://github.com/lmambr2/magneto-x-klipper` branch `magneto-x`.
 
 ### Moonraker update manager (optional)
 
@@ -96,8 +96,8 @@ Or point KIAUH / custom update manager at `https://github.com/lmambr2/klipper` b
 [update_manager klipper]
 type: git_repo
 path: ~/klipper
-origin: https://github.com/lmambr2/klipper.git
-primary_branch: magneto-x-modern
+origin: https://github.com/lmambr2/magneto-x-klipper.git
+primary_branch: magneto-x
 managed_services: klipper
 ```
 
@@ -125,7 +125,7 @@ See `os/install-magneto-services.sh`.
 - Did not reimplement MotionG closed-loop inside Klipper.
 - Did not replace the digital load-cell with upstream `load_cell_probe` (wrong electrical interface).
 - Did not force-push or PR to Klipper3d.
-- Did not claim Peopoly’s squashed `master` is a usable merge base (use `magneto-x` history + our modern branch instead).
+- Did not claim Peopoly’s squashed `master` is a usable merge base (use Peopoly’s `magneto-x` branch for archaeology; ship from `lmambr2/magneto-x-klipper` branch `magneto-x`).
 
 ## Verification checklist
 

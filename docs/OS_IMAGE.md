@@ -33,7 +33,7 @@ Steps:
    # Persist via systemd-networkd or a udev + oneshot service (see os/can0.network)
    ```
 
-5. Point Klipper at **your fork** (`magneto-x-modern`) — not `Klipper3d/klipper` alone, and not `mypeopoly/Klipper`.
+5. Point Klipper at **`lmambr2/magneto-x-klipper`** (branch `magneto-x`) — not `Klipper3d/klipper`, and not `mypeopoly/Klipper`.
 6. Install magneto-manager + Magmotor deps from `os/install-magneto-services.sh`.
 7. Deploy `config/` from this workspace.
 8. Flash MCUs with firmware built from the same host tree.
@@ -49,7 +49,7 @@ Steps:
 Fastest to “get motion,” worst long-term:
 
 1. Boot stock image.
-2. Replace `~/klipper` with `magneto-x-modern`.
+2. Replace `~/klipper` with a clone of `lmambr2/magneto-x-klipper` (branch `magneto-x`).
 3. Rebuild both MCU firmwares.
 4. Keep magneto-manager / Magmotor as-is.
 
@@ -89,7 +89,7 @@ If you want a reproducible custom image:
 
 1. Fork/build via [MainsailOS](https://github.com/mainsail-crew/MainsailOS) Armbian board config for `orangepizero2`.
 2. Add a post-install script that:
-   - clones `lmambr2/klipper` @ `magneto-x-modern`
+   - clones `lmambr2/magneto-x-klipper` @ `magneto-x`
    - installs magneto-manager systemd unit
    - drops default `printer_data/config` from this repo
    - enables `can0`
