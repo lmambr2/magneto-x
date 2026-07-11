@@ -37,12 +37,13 @@ All notable changes to the **magneto-x** umbrella and companion **magneto-x-klip
 - Runbook: `docs/CLEAN_OS_REFRESH.md`; restore helper: `os/restore-after-clean-os.sh`.
 - Physical flash still requires boot media offline — cannot complete over SSH alone.
 
-### KlipperScreen by default (clean OS)
+### HelixScreen by default (clean OS)
 
-- `os/install-klipperscreen.sh` — noninteractive X11 + NetworkManager + upstream KS installer.
-- `postinstall-magneto.sh` installs KlipperScreen **by default** (opt out: `--skip-klipperscreen`).
-- Package `config/KlipperScreen.conf` with localhost Moonraker defaults.
-- Restores local panel UX (printer + Wi‑Fi Network menu); first network join still needs keyboard/Ethernet once before apt.
+- `os/install-helixscreen.sh` — runs upstream [HelixScreen](https://github.com/prestonbrown/helixscreen) installer (first-run wizard: touch, language, Wi‑Fi, Moonraker).
+- `postinstall-magneto.sh` installs HelixScreen **by default** (opt out: `--skip-helixscreen`).
+- Disables KlipperScreen if present; NetworkManager preinstalled for Wi‑Fi wizard.
+- Removed `install-klipperscreen.sh` (use HelixScreen instead).
+- First network join still needs one offline path (keyboard/Ethernet/boot-partition Wi‑Fi) before apt can fetch HelixScreen.
 
 ### Audit findings sweep (remaining B2–B11)
 

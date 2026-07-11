@@ -3,13 +3,13 @@
 #
 # Run as the klipper user (usually pi) AFTER first boot + password change.
 # Does NOT flash MCUs (decision 2A). Does NOT require Magmotor.
-# KlipperScreen (local touch UI + Wi‑Fi panel) is ON by default.
+# HelixScreen (local touch UI + first-run Wi‑Fi wizard) is ON by default.
 #
 # Usage:
 #   ./os/postinstall-magneto.sh
 #   TRACK=magneto-x-kalico ./os/postinstall-magneto.sh
 #   ./os/postinstall-magneto.sh --skip-klipper-clone   # if ~/klipper already correct
-#   ./os/postinstall-magneto.sh --skip-klipperscreen   # headless / no panel
+#   ./os/postinstall-magneto.sh --skip-helixscreen     # headless / no panel
 #   ./os/postinstall-magneto.sh --dry-run
 #
 set -euo pipefail
@@ -19,14 +19,14 @@ TRACK="${TRACK:-magneto-x}"
 REPO_KLIPPER="${REPO_KLIPPER:-https://github.com/lmambr2/magneto-x-klipper.git}"
 REPO_UMBRELLA="${REPO_UMBRELLA:-https://github.com/lmambr2/magneto-x.git}"
 SKIP_KLIPPER=0
-SKIP_KLIPPERSCREEN=0
+SKIP_HELIXSCREEN=0
 DRY_RUN=0
 WITH_MAGMOTOR=0
 
 for arg in "$@"; do
   case "$arg" in
     --skip-klipper-clone) SKIP_KLIPPER=1 ;;
-    --skip-klipperscreen) SKIP_KLIPPERSCREEN=1 ;;
+    --skip-helixscreen|--skip-klipperscreen) SKIP_HELIXSCREEN=1 ;; # --skip-klipperscreen = legacy alias
     --with-magmotor) WITH_MAGMOTOR=1 ;;
     --dry-run) DRY_RUN=1 ;;
     -h|--help)
@@ -281,15 +281,15 @@ if [[ -f "${ROOT}/config/optional/nginx-timeouts.conf.snippet" ]]; then
   echo "Nginx (optional): merge config/optional/nginx-timeouts.conf.snippet under http{} — see FAQ.md"
 fi
 
-# --- KlipperScreen (local panel UI + NetworkManager Wi‑Fi) — default ON ---
-if [[ "${SKIP_KLIPPERSCREEN}" -eq 1 ]]; then
-  echo "Skipping KlipperScreen (--skip-klipperscreen)"
+# --- HelixScreen (local panel + first-run Wi‑Fi wizard) — default ON ---
+if [[ "${SKIP_HELIXSCREEN}" -eq 1 ]]; then
+  echo "Skipping HelixScreen (--skip-helixscreen)"
 else
-  KS_ARGS=()
+  HS_ARGS=()
   if [[ "${DRY_RUN}" -eq 1 ]]; then
-    KS_ARGS+=(--dry-run)
+    HS_ARGS+=(--dry-run)
   fi
-  bash "${ROOT}/os/install-klipperscreen.sh" ${KS_ARGS[@]+"${KS_ARGS[@]}"}
+  bash "${ROOT}/os/install-helixscreen.sh" ${HS_ARGS[@]+"${HS_ARGS[@]}"}
 fi
 
 # --- services ---
@@ -297,8 +297,8 @@ if [[ "${DRY_RUN}" -eq 0 ]]; then
   sudo systemctl restart magneto-manager.service 2>/dev/null || true
   sudo systemctl restart klipper.service 2>/dev/null || true
   sudo systemctl restart moonraker.service 2>/dev/null || true
-  if [[ "${SKIP_KLIPPERSCREEN}" -eq 0 ]]; then
-    sudo systemctl restart KlipperScreen.service 2>/dev/null || true
+  if [[ "${SKIP_HELIXSCREEN}" -eq 0 ]]; then
+    sudo systemctl restart helixscreen.service 2>/dev/null || true
   fi
 fi
 
@@ -318,13 +318,13 @@ echo "Next:"
 echo "  1) Restore IDs if not done: ./os/restore-after-clean-os.sh /path/to/pre-clean-os-backup"
 echo "     (or PRE_CLEAN_BACKUP=/path ./os/postinstall-magneto.sh)"
 echo "  2) curl -s http://127.0.0.1:8880/health  and  RTU should be 400"
-echo "  3) re-login (dialout + KlipperScreen groups); reboot once if panel blank"
-echo "  4) KlipperScreen: Network menu for Wi‑Fi; then FIRMWARE_RESTART; LM_ENABLE; home"
+echo "  3) re-login (dialout + video/input groups); reboot once if panel blank"
+echo "  4) HelixScreen wizard on panel (Wi‑Fi / Moonraker); then FIRMWARE_RESTART; LM_ENABLE; home"
 echo "  5) MCU flash later from same HEAD — docs/MCU_BUILD.md"
 echo "  6) Fill docs/validation/S3_HARDWARE_REPORT.template.md when testing"
 if [[ "${TRACK}" == "magneto-x-kalico" ]]; then
   echo "  (Kalico) optional: enable config/optional/danger_options.cfg"
 fi
-if [[ "${SKIP_KLIPPERSCREEN}" -eq 1 ]]; then
-  echo "  (KlipperScreen skipped — run ./os/install-klipperscreen.sh later for the panel)"
+if [[ "${SKIP_HELIXSCREEN}" -eq 1 ]]; then
+  echo "  (HelixScreen skipped — run ./os/install-helixscreen.sh later for the panel)"
 fi
