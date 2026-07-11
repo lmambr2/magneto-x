@@ -42,7 +42,7 @@ Living checklist vs DESIGN PR plan. Update when PRs land.
 | PR-M9 full | Custom MainsailOS image build | postinstall script is enough for now |
 | PR-M10 | EmperorArthur ESP32 | Vendor FW first |
 | A8 | Moonraker MagXY proxy | If shell risk dominates |
-| GitHub Actions live | `.github/workflows` | Needs `workflow` OAuth scope; use `docs/ci/*.example` |
+| GitHub Actions live | `.github/workflows/magneto-ci.yml` | Enabled (umbrella + both klipper tracks) |
 | HX717 / Beacon | Hardware redesign | Alt only |
 
 ## Local verify
