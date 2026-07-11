@@ -41,3 +41,8 @@ Gate Kalico-only files with a commented include:
 - Default install docs use **`magneto-x`**.  
 - Do not PR Magneto patches to Klipper3d or KalicoCrew.  
 - Reflash MCUs when changing tracks (host/MCU protocol must match).
+
+## Maintainer note
+
+Published `magneto-x-kalico` is a full-tree **snapshot** (Kalico + Magneto extras) so GitHub OAuth without `workflow` scope can push it. Content is complete for A/B installs; linear Kalico git history for merges is maintainer-local only.
+
