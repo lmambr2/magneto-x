@@ -2,7 +2,7 @@
 
 **Date:** 2026-07-11  
 **Scope:** Every link from the original project brief, plus a full crawl of the Peopoly Magneto X wiki subtree (69 pages).  
-**Live cross-check:** printer `LAB_HOST` (stock OS v1.1.3, Klippy ready).
+**Live cross-check:** lab printer on LAN (stock OS v1.1.3, Klippy ready).
 
 ---
 
@@ -88,7 +88,7 @@ Legend: **In** = already absorbed or now archived · **Adopt** = take patterns i
 
 ### 1. Stock CAN is 250 kbit, not 1 Mbit
 
-- Live `LAB_HOST`: `can0` **gs_usb**, **bitrate 250000**  
+- Live lab host: `can0` **gs_usb**, **bitrate 250000**  
 - Schmudus: deliberately stays at 250k / txqueuelen 512 on Magneto Linux-CAN hub; 1M only without that hub  
 - **Action:** fix `OS_IMAGE.md` / DESIGN / `can0.network` defaults to **250000** for stock hardware; document 1M as alternate.
 

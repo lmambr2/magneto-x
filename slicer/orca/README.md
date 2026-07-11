@@ -10,7 +10,7 @@ Use those as the base; apply the Magneto-modern notes below so start G-code matc
 1. Install current [OrcaSlicer](https://github.com/OrcaSlicer/OrcaSlicer/releases).
 2. **Add printer** → vendor **Peopoly** → **Peopoly Magneto X** (0.4 / 0.6 / 0.8 nozzle).
 3. Bed size in system profile is **300 × 400 × 300** (OriginMove / Driver1=X). Matches this package’s default `optional/origin_move.cfg`.
-4. Connect host: Moonraker / Mainsail at the printer IP (e.g. `http://LAB_HOST`).
+4. Connect host: Moonraker / Mainsail at the printer IP (e.g. `http://mainsailos.local` or your LAN IP).
 5. Apply **Machine G-code** and **process** recommendations below (or paste from the files in this folder).
 
 ## Required for adaptive mesh (KAMP)

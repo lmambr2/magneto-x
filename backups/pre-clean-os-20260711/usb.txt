@@ -1,3 +1,6 @@
+# Scrubbed inventory — VID:PID only (no MCU serial by-id paths).
+# Full unredacted dump is local-only; never re-add live serial paths to git.
+
 Bus 008 Device 005: ID 1d50:614e OpenMoko, Inc. stm32h723xx
 Bus 008 Device 001: ID 1d6b:0001 Linux Foundation 1.1 root hub
 Bus 004 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
@@ -12,10 +15,9 @@ Bus 002 Device 002: ID 0c45:6366 Microdia Webcam Vitade AF
 Bus 002 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
 Bus 005 Device 001: ID 1d6b:0001 Linux Foundation 1.1 root hub
 Bus 001 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
-total 0
-drwxr-xr-x 2 root root 80 Jul 11 21:32 .
-drwxr-xr-x 4 root root 80 Jul 11 20:51 ..
-lrwxrwxrwx 1 root root 13 Jul 11 20:51 usb-1a86_USB_Serial-if00-port0 -> ../../ttyUSB0
-lrwxrwxrwx 1 root root 13 Jul 11 21:32 usb-Klipper_stm32h723xx_REDACTED-if00 -> ../../ttyACM0
-crw-rw---- 1 root dialout 166, 0 Jul 11 23:16 /dev/ttyACM0
-crw-rw---- 1 root dialout 188, 0 Jul 11 22:49 /dev/ttyUSB0
+
+# /dev/serial/by-id/ (redacted)
+usb-1a86_USB_Serial-if00-port0 -> ../../ttyUSB0
+usb-Klipper_stm32h723xx_REDACTED-if00 -> ../../ttyACM0
+/dev/ttyACM0  (dialout)
+/dev/ttyUSB0  (dialout)

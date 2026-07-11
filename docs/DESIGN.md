@@ -7,7 +7,7 @@
 | **Date** | 2026-07-11 |
 | **Status** | Rev 3 — software PRs M1–M9lite / K1–K6 landed; **PR-V1 hardware open** |
 | **Repos** | [lmambr2/magneto-x](https://github.com/lmambr2/magneto-x), [lmambr2/magneto-x-klipper](https://github.com/lmambr2/magneto-x-klipper) |
-| **Local workspace** | `` |
+| **Local workspace** | Clone of this umbrella repo (path is machine-local) |
 | **Audience** | Senior engineers / advanced Magneto X owners contributing to the community fork |
 
 ---
@@ -253,7 +253,7 @@ Local workspace already points `klipper/` origin at `https://github.com/lmambr2/
 #### Local workspace (development)
 
 ```
-
+magneto-x/                        # umbrella clone root
 ├── klipper/                      # clone of magneto-x-klipper @ magneto-x
 ├── config/                       # deployable printer configs (must be parse-ready)
 ├── docs/                         # RESEARCH, MODERNIZATION, OS_IMAGE, NAMING
@@ -866,7 +866,7 @@ Tagged **blocking** (need provisional decision — supplied in Key Decisions) vs
 - `docs/MODERNIZATION.md`
 - `docs/OS_IMAGE.md`
 - `docs/NAMING.md`
-- `klipper/docs/Magneto_X.md`
+- `klipper/docs/Magneto_X.md` (nested clone)
 - `os/install-magneto-services.sh`
 - `klipper/config/generic-bigtreetech-octopus-pro-v1.1.cfg` (25 MHz crystal)
 

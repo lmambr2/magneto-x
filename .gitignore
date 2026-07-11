@@ -21,12 +21,23 @@ backups/**/disk/*.img.gz
 backups/mainsailos-images/*.img.xz
 backups/mainsailos-images/*.img
 backups/mainsailos-images/*.partial
-# Lab pre-reimage dumps may include serials — keep local unless scrubbed
+# Lab pre-reimage dumps may include serials / mesh / full configs — local only
 backups/pre-clean-os-*/magneto_device.cfg
 backups/pre-clean-os-*/printer.cfg
 backups/pre-clean-os-*/macros.cfg
 backups/pre-clean-os-*/printer_data_config.tgz
 backups/pre-clean-os-*/moonraker.conf
+backups/pre-clean-os-*/**/*.tgz
+backups/pre-clean-os-*/**/*device*
+# Unredacted host inventory (prefer scrubbed copies or leave untracked)
+backups/pre-clean-os-*/usb.full.txt
+backups/pre-clean-os-*/hostnamectl.full.txt
+# Never commit operator secrets
+**/moonraker.secrets
+**/*_secrets.cfg
+**/.ssh/
+**/id_rsa*
+**/id_ed25519*
 
 # 3D models / print files (never commit)
 *.stl

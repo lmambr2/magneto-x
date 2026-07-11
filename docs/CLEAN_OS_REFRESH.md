@@ -7,7 +7,7 @@ Target: **MainsailOS 3.0.0** Armbian **Trixie** for **Orange Pi Zero 2**, then `
 
 | Item | Notes |
 |------|--------|
-| Orange Pi Zero 2 | Same board currently at `LAB_HOST` |
+| Orange Pi Zero 2 | Lab unit currently on the LAN (see local notes; do not commit host IPs) |
 | Flash media | Lab boots **`mmcblk1` ~29 GB** (SD or eMMC). Prefer a **spare SD** so the old Peopoly image stays a recovery disk. |
 | Host PC | Linux/macOS with USB reader, or `dd`/`balenaEtcher`/`Raspberry Pi Imager` |
 | Network | Ethernet or Wi‑Fi for first SSH |
@@ -23,19 +23,26 @@ Target: **MainsailOS 3.0.0** Armbian **Trixie** for **Orange Pi Zero 2**, then `
 | Printer + mesh SAVE_CONFIG | `backups/pre-clean-os-20260711/printer.cfg` |
 | Host/USB/CAN snapshot | `backups/pre-clean-os-20260711/*.txt` |
 
-**Do not commit live serials to a public remote.** Keep `backups/pre-clean-os-*` local or private.
+**Do not commit live serials, CAN UUIDs, or lab LAN IPs to a public remote.**  
+Device IDs live only in **gitignored** files under `backups/pre-clean-os-*/` (e.g. `magneto_device.cfg`). Keep that directory local or private.
 
-### Lab device IDs (restore after reimage)
+### Device IDs (restore after reimage)
 
-```ini
-[mcu]
-serial: /dev/serial/by-id/usb-Klipper_stm32h723xx_REDACTED-if00
+After backup, `magneto_device.cfg` in the pre-clean directory has your Octopus serial and toolhead CAN UUID. Restore with:
 
-[mcu MAG_TOOL]
-canbus_uuid: REDACTED
+```bash
+./os/restore-after-clean-os.sh ~/pre-clean-os-YYYYMMDD
+# or set PRE_CLEAN_BACKUP=... when running postinstall-magneto.sh
 ```
 
-USB inventory (must reappear after boot):
+If you only have a running machine, re-discover:
+
+```bash
+ls -la /dev/serial/by-id/
+~/klippy-env/bin/python ~/klipper/scripts/canbus_query.py can0
+```
+
+USB inventory (must reappear after boot — VID:PID only, no device serials):
 
 | Device | ID |
 |--------|-----|

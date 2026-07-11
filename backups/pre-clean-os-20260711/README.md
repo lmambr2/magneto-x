@@ -1,6 +1,6 @@
 # Pre–clean-OS backup (lab unit)
 
-Captured **2026-07-11** from Path **C1** bridge host `LAB_HOST` before Path **A / 1B** reimage.
+Captured **2026-07-11** from Path **C1** bridge lab host before Path **A / 1B** reimage.
 
 | File | Contents |
 |------|----------|
