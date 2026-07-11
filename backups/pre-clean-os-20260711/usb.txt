@@ -1,0 +1,21 @@
+Bus 008 Device 005: ID 1d50:614e OpenMoko, Inc. stm32h723xx
+Bus 008 Device 001: ID 1d6b:0001 Linux Foundation 1.1 root hub
+Bus 004 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
+Bus 007 Device 001: ID 1d6b:0001 Linux Foundation 1.1 root hub
+Bus 003 Device 005: ID 1a86:7523 QinHeng Electronics CH340 serial converter
+Bus 003 Device 004: ID 1d50:606f OpenMoko, Inc. Geschwister Schneider CAN adapter
+Bus 003 Device 003: ID 1a86:e5e3 QinHeng Electronics CTP_CONUSB2IIC_TROL
+Bus 003 Device 002: ID 1a40:0201 Terminus Technology Inc. FE 2.1 7-port Hub
+Bus 003 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
+Bus 006 Device 001: ID 1d6b:0001 Linux Foundation 1.1 root hub
+Bus 002 Device 002: ID 0c45:6366 Microdia Webcam Vitade AF
+Bus 002 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
+Bus 005 Device 001: ID 1d6b:0001 Linux Foundation 1.1 root hub
+Bus 001 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
+total 0
+drwxr-xr-x 2 root root 80 Jul 11 21:32 .
+drwxr-xr-x 4 root root 80 Jul 11 20:51 ..
+lrwxrwxrwx 1 root root 13 Jul 11 20:51 usb-1a86_USB_Serial-if00-port0 -> ../../ttyUSB0
+lrwxrwxrwx 1 root root 13 Jul 11 21:32 usb-Klipper_stm32h723xx_REDACTED-if00 -> ../../ttyACM0
+crw-rw---- 1 root dialout 166, 0 Jul 11 23:16 /dev/ttyACM0
+crw-rw---- 1 root dialout 188, 0 Jul 11 22:49 /dev/ttyUSB0

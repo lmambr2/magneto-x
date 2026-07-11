@@ -30,6 +30,13 @@ All notable changes to the **magneto-x** umbrella and companion **magneto-x-klip
 - `QUAD_GANTRY_LEVEL` and `LEVEL_BED` call `LM_ENABLE` before motion (bare panel QGL safe).
 - `check_includes` MagXY path: require active `[magneto_linear_motor]` **or** uncommented `LINEAR_MOTOR_*` shells (commented stubs no longer pass CI).
 
+### Clean OS (1B) prep
+
+- Lab pre-reimage backup under `backups/pre-clean-os-*` (local; device IDs not for public push).
+- MainsailOS **3.0.0** Orange Pi Zero 2 image cached under `backups/mainsailos-images/` (gitignored).
+- Runbook: `docs/CLEAN_OS_REFRESH.md`; restore helper: `os/restore-after-clean-os.sh`.
+- Physical flash still requires boot media offline — cannot complete over SSH alone.
+
 ### Audit findings sweep (remaining B2–B11)
 
 - Hot mesh defaults: `CREATE_BED_MESH` / `FULL_CALIBRATE` use `BED=60` (BED=0 cold).

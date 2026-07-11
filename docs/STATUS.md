@@ -43,7 +43,7 @@ Living checklist vs DESIGN PR plan. Update when PRs land.
 | **PR-V1** | S3 hardware validation | **Draft:** `docs/validation/S3_HARDWARE_REPORT-20260711-mainsailos-draft.md` — short print + sign-off still open |
 | MCU flash | Modern Octopus + Lancer | **Done on lab unit** (same HEAD as host) |
 | v1 git tag | D20 release | Requires PR-V1 green (short print) |
-| Clean OS (1B) | Reimage MainsailOS | **Not done** — lab is Path C1 bridge on Peopoly image |
+| Clean OS (1B) | Reimage MainsailOS | **Prepared** — backup + image + runbook; physical flash pending (`docs/CLEAN_OS_REFRESH.md`) |
 
 ## Deferred (not done offline)
 

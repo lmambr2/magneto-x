@@ -10,7 +10,8 @@
 | **C1 — Bridge + hardened manager** | Keep Peopoly image short-term | Replace stock manager |
 | **C2 — Bridge + firewall only** | Air-gapped LAN, temporary | Stock manager + port 8880 → localhost; residual risk |
 
-**Lab unit (2026-07):** Path **C1** — Peopoly `magneto-x-mainsailOS-…-v1.1.3` still on disk; modern host+MCUs + hardened manager. **Clean OS reimage was not performed.**
+**Lab unit (2026-07):** Path **C1** — Peopoly `magneto-x-mainsailOS-…-v1.1.3` still on disk; modern host+MCUs + hardened manager.  
+**Clean OS (1B) prep:** full config backup + MainsailOS 3.0.0 Zero2 image cached + [CLEAN_OS_REFRESH.md](CLEAN_OS_REFRESH.md) runbook; **physical reimage still operator-gated** (cannot flash boot media over SSH).
 
 Do **not** cherry-pick macros while leaving OS-update `LINER_*` trees active — deploy the full `config/` package.
 

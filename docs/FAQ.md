@@ -142,7 +142,7 @@ A draft that used `position_endstop: 400` homes toward max and never hits the sw
 | **A / 1B clean OS** | New MainsailOS Armbian image + `postinstall-magneto.sh` |
 | **C1 bridge** | Keep Peopoly `magneto-x-mainsailOS-*` image; hardened manager + modern Klipper |
 
-Lab unit work so far is **C1 bridge** (Peopoly OS still present: Magmotor/`auto-uuid`, `magnetox-os-update`). Clean OS is still the long-term v1 path; it is **not** required for S3 motion once modern host+MCUs work.
+Lab unit was long **C1 bridge**. **Clean OS prep is done** (backup + MainsailOS 3.0.0 Zero2 image + runbook); **physical reimage is still pending** until you flash boot media. See [CLEAN_OS_REFRESH.md](CLEAN_OS_REFRESH.md).
 
 ### `LM_ENABLE` does nothing
 

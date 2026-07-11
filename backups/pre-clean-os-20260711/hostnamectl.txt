@@ -1,0 +1,17 @@
+   Static hostname: mainsailos
+         Icon name: computer
+        Machine ID: REDACTED
+           Boot ID: REDACTED
+  Operating System: Debian GNU/Linux 11 (bullseye)
+            Kernel: Linux 5.16.17-sun50iw9
+      Architecture: arm64
+Linux mainsailos 5.16.17-sun50iw9 #3.0.8 SMP Mon Mar 13 04:58:37 UTC 2023 aarch64 GNU/Linux
+PRETTY_NAME="Debian GNU/Linux 11 (bullseye)"
+NAME="Debian GNU/Linux"
+VERSION_ID="11"
+VERSION="11 (bullseye)"
+VERSION_CODENAME=bullseye
+ID=debian
+HOME_URL="https://www.debian.org/"
+SUPPORT_URL="https://www.debian.org/support"
+BUG_REPORT_URL="https://bugs.debian.org/"

@@ -17,6 +17,16 @@ backups/peopoly-os-images/*.img
 backups/**/*.img.gz
 backups/**/rootfs.img*
 backups/**/disk/*.img.gz
+# MainsailOS download cache (multi‑GB)
+backups/mainsailos-images/*.img.xz
+backups/mainsailos-images/*.img
+backups/mainsailos-images/*.partial
+# Lab pre-reimage dumps may include serials — keep local unless scrubbed
+backups/pre-clean-os-*/magneto_device.cfg
+backups/pre-clean-os-*/printer.cfg
+backups/pre-clean-os-*/macros.cfg
+backups/pre-clean-os-*/printer_data_config.tgz
+backups/pre-clean-os-*/moonraker.conf
 
 # 3D models / print files (never commit)
 *.stl

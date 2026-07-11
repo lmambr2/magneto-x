@@ -1,0 +1,7 @@
+origin	https://github.com/lmambr2/magneto-x-klipper.git (fetch)
+origin	https://github.com/lmambr2/magneto-x-klipper.git (push)
+* magneto-x 61fc2f6 [origin/magneto-x] feat(K7): finish magneto_linear_motor hardening and docs
+61fc2f6 feat(K7): finish magneto_linear_motor hardening and docs
+active
+active
+active

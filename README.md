@@ -39,6 +39,8 @@ If you own a Magneto X that never quite worked because of the stock Klipper tree
 - **[docs/AUDIT_PACKAGE_2026-07-11.md](docs/AUDIT_PACKAGE_2026-07-11.md)** — package bug/legacy Peopoly audit  
 
 - **[docs/MIGRATION.md](docs/MIGRATION.md)** — bridge + clean OS install  
+- **[docs/CLEAN_OS_REFRESH.md](docs/CLEAN_OS_REFRESH.md)** — Path A/1B reimage runbook (backup → flash → restore)  
+
 - **[docs/SECURITY.md](docs/SECURITY.md)** · **[docs/FAQ.md](docs/FAQ.md)** · **[docs/MCU_BUILD.md](docs/MCU_BUILD.md)**  
 - **[docs/FIELD_FACTS.md](docs/FIELD_FACTS.md)** — measured CAN `1d50:606f` @ 250k, H723, SSH user  
 - **[docs/DESIGN.md](docs/DESIGN.md)** — full design (architecture, key decisions, PR plan)  

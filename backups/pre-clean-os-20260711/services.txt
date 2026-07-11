@@ -1,0 +1,6 @@
+  crowsnest.service           loaded active running crowsnest - Multi Webcam/Streamer Control Deamon
+  klipper.service             loaded active running Klipper 3D Printer Firmware SV1
+  KlipperScreen.service       loaded active running KlipperScreen
+  magneto-manager.service     loaded active running Magneto X manager (hardened MagXY serial bridge)
+  moonraker.service           loaded active running API Server for Klipper SV1
+  nginx.service               loaded active running A high performance web server and a reverse proxy server
