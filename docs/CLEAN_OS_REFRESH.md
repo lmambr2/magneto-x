@@ -103,35 +103,40 @@ sha256sum -c 2026-05-06-MainsailOS-armbian-orangepi_zero2-trixie-3.0.0.img.xz.sh
    sudo reboot
    ```
 
+## Code readiness (do we need more changes before boot?)
+
+| Area | Status for clean OS |
+|------|---------------------|
+| `postinstall-magneto.sh` | Ready — CAN 250k, manager, config, dialout, gs_usb |
+| Package `config/` | Ready — OriginMove default, KAMP, MagXY module |
+| `restore-after-clean-os.sh` | Ready — **selective** restore (never clobbers Trixie `moonraker.conf` with Peopoly dump) |
+| MCU flash | **Not required** for first boot (2A) if current bins already modern |
+| Magmotor Qt GUI | Optional `--with-magmotor` only; needs local `magnetox-os-update` tree |
+| Moonraker update UI | Prefer git remote on `~/klipper`; v0.8 strip logic only if old Moonraker detected |
+
+No further **blocking** code changes are required to boot Path A. Remaining work is **on-device** (flash already done → boot → postinstall → restore).
+
 ## Postinstall (software stack)
 
 On the **new** host, as `pi`:
 
 ```bash
-# optional: copy pre-clean backup onto the Pi first
-# scp -r backups/pre-clean-os-20260711 pi@NEWHHOST:~/pre-clean-os
+# From laptop — prefer rsync if you have unpushed commits:
+# rsync -a --delete --exclude .venv-test --exclude backups/mainsailos-images \
+#   /path/to/magneto-x/ pi@HOST:~/magneto-x/
+# scp -r backups/pre-clean-os-20260711 pi@HOST:~/pre-clean-os
 
-git clone https://github.com/lmambr2/magneto-x.git ~/magneto-x
+git clone https://github.com/lmambr2/magneto-x.git ~/magneto-x   # or use rsync above
 cd ~/magneto-x
-# If your laptop has commits not yet pushed, rsync the tree instead:
-# rsync -a --delete /path/to/magneto-x/ pi@HOST:~/magneto-x/
 
-./os/postinstall-magneto.sh
-# TRACK=magneto-x-kalico ./os/postinstall-magneto.sh   # Kalico A/B
+# One-shot install + restore device IDs / mesh:
+PRE_CLEAN_BACKUP=~/pre-clean-os ./os/postinstall-magneto.sh
+# or:
+# ./os/postinstall-magneto.sh
+# ./os/restore-after-clean-os.sh ~/pre-clean-os
 ```
 
-Restore device IDs + last-known-good config:
-
-```bash
-# From laptop (example):
-scp backups/pre-clean-os-20260711/magneto_device.cfg pi@HOST:~/printer_data/config/
-# Prefer restoring full config then re-applying package overlays carefully:
-# scp backups/pre-clean-os-20260711/printer_data_config.tgz pi@HOST:/tmp/
-# On Pi:
-#   cd ~/printer_data && tar xzf /tmp/printer_data_config.tgz
-# Or use helper:
-~/magneto-x/os/restore-after-clean-os.sh ~/pre-clean-os
-```
+**Do not** untar the old `printer_data_config.tgz` blindly over `~/printer_data` — that can replace MainsailOS 3 `moonraker.conf` with Peopoly-era settings. The restore helper allowlists safe files only.
 
 ```bash
 ~/magneto-x/scripts/preflight-magneto.sh

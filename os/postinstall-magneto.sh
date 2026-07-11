@@ -53,14 +53,31 @@ run() {
 echo "=== Magneto X postinstall (track=${TRACK}) ==="
 echo "User=$(whoami) HOME=${HOME} ROOT=${ROOT}"
 
+# Serial ports (MagXY CH340) + CAN utils on clean MainsailOS/Trixie
+if command -v groups >/dev/null && ! groups | grep -qw dialout; then
+  if [[ "${DRY_RUN}" -eq 1 ]]; then
+    echo "DRY: usermod -aG dialout ${USER}"
+  else
+    sudo usermod -aG dialout "${USER}" || true
+    echo "NOTE: added ${USER} to dialout — re-login/SSH for MagXY serial access"
+  fi
+fi
+
 # --- packages ---
 if command -v apt-get >/dev/null; then
   if [[ "${DRY_RUN}" -eq 1 ]]; then
     echo "DRY: apt-get update && apt-get install -y git curl jq python3-flask python3-serial can-utils"
   else
     sudo apt-get update
-    sudo apt-get install -y git curl jq python3-flask python3-serial can-utils || true
+    # Trixie/Bookworm: python3-flask/serial from distro is fine for manager
+    sudo apt-get install -y git curl jq python3-flask python3-serial can-utils \
+      python3-pip || true
   fi
+fi
+
+# gs_usb for stock Linux Hub (1d50:606f)
+if [[ "${DRY_RUN}" -eq 0 ]]; then
+  sudo modprobe gs_usb 2>/dev/null || true
 fi
 
 # --- can0 @ 250k (stock Linux Hub) ---
@@ -142,19 +159,25 @@ if [[ -f "${ROOT}/os/can0-txqueuelen.service" ]]; then
 fi
 
 # --- moonraker notes + timelapse ---
-# Moonraker v0.8.x (Peopoly image) already owns built-in "klipper" updater.
-# Do NOT append [update_manager klipper] — causes "Extension klipper already added"
-# + Unparsed config option warnings. Track is the git remote on ~/klipper (above).
+# Peopoly Moonraker v0.8: built-in klipper updater — do NOT add a second
+# [update_manager klipper] (warnings). MainsailOS 3 / modern Moonraker often
+# allows overriding origin via that section — prefer setting git remote on
+# ~/klipper either way (done above by clone -b TRACK).
 MR_CONF="${HOME}/printer_data/config/moonraker.conf"
 SNIP="${ROOT}/config/moonraker-update-manager.conf.snippet"
+MR_VER=""
+if [[ -x "${HOME}/moonraker-env/bin/python" ]] && [[ -d "${HOME}/moonraker" ]]; then
+  MR_VER="$("${HOME}/moonraker-env/bin/python" -c "import sys; sys.path.insert(0,'${HOME}/moonraker'); import moonraker; print(getattr(moonraker,'__version__','?'))" 2>/dev/null || true)"
+fi
 if [[ -f "${MR_CONF}" ]]; then
-  if grep -qE '^\[update_manager klipper\]' "${MR_CONF}" 2>/dev/null; then
-    if [[ "${DRY_RUN}" -eq 1 ]]; then
-      echo "DRY: strip conflicting [update_manager klipper] from moonraker.conf (v0.8 built-in)"
-    else
-      # Comment out conflicting section (keep a backup once)
-      cp -a "${MR_CONF}" "${MR_CONF}.bak-pre-strip-um" 2>/dev/null || true
-      python3 - <<'PY' "${MR_CONF}"
+  # Only strip conflicting [update_manager klipper] on known-old Moonraker (v0.8.x)
+  if [[ "${MR_VER}" == 0.8* ]] || grep -qE 'v0\.8\.|moonraker_version.*0\.8' "${HOME}/printer_data/logs/moonraker.log" 2>/dev/null; then
+    if grep -qE '^\[update_manager klipper\]' "${MR_CONF}" 2>/dev/null; then
+      if [[ "${DRY_RUN}" -eq 1 ]]; then
+        echo "DRY: strip conflicting [update_manager klipper] (Moonraker ${MR_VER:-0.8})"
+      else
+        cp -a "${MR_CONF}" "${MR_CONF}.bak-pre-strip-um" 2>/dev/null || true
+        python3 - <<'PY' "${MR_CONF}"
 import sys
 from pathlib import Path
 p = Path(sys.argv[1])
@@ -164,7 +187,7 @@ skip = False
 for line in lines:
     if line.strip().lower() == "[update_manager klipper]":
         skip = True
-        out.append("# REMOVED by postinstall-magneto.sh — conflicts with Moonraker v0.8 built-in klipper updater\n")
+        out.append("# REMOVED by postinstall — Moonraker v0.8 built-in klipper updater\n")
         out.append("# " + line if not line.startswith("#") else line)
         continue
     if skip:
@@ -178,7 +201,10 @@ for line in lines:
 p.write_text("".join(out))
 print("Stripped [update_manager klipper] from", p)
 PY
+      fi
     fi
+  else
+    echo "Moonraker ${MR_VER:-unknown/modern}: leave moonraker.conf; track is git remote on ~/klipper (${TRACK})"
   fi
   # Drop invalid magneto-x updater if path is not a git repo
   if grep -qE '^\[update_manager magneto-x\]' "${MR_CONF}" 2>/dev/null; then
@@ -213,12 +239,12 @@ PY
     fi
   fi
   if [[ "${DRY_RUN}" -eq 1 ]]; then
-    echo "DRY: moonraker note — see ${SNIP} (do not merge [update_manager klipper] on v0.8)"
+    echo "DRY: moonraker note — see ${SNIP}"
   else
     echo "Moonraker: klipper track is git remote on ~/klipper (branch ${TRACK}); see ${SNIP}"
   fi
 elif [[ -f "${SNIP}" ]]; then
-  echo "Moonraker: no moonraker.conf yet — later, do NOT paste [update_manager klipper] on v0.8; see ${SNIP}"
+  echo "Moonraker: no moonraker.conf yet — after first Mainsail start, see ${SNIP}"
 fi
 
 # Timelapse: if component present, ensure printer.cfg includes macros
@@ -258,13 +284,23 @@ if [[ "${DRY_RUN}" -eq 0 ]]; then
   sudo systemctl restart moonraker.service 2>/dev/null || true
 fi
 
+# Optional: restore device IDs after package deploy
+if [[ -n "${PRE_CLEAN_BACKUP:-}" && -d "${PRE_CLEAN_BACKUP}" ]]; then
+  if [[ "${DRY_RUN}" -eq 1 ]]; then
+    echo "DRY: ${ROOT}/os/restore-after-clean-os.sh ${PRE_CLEAN_BACKUP}"
+  else
+    bash "${ROOT}/os/restore-after-clean-os.sh" "${PRE_CLEAN_BACKUP}"
+  fi
+fi
+
 echo
 echo "=== postinstall finished ==="
 echo "Path note: this is for CLEAN MainsailOS (1B). Bridge on Peopoly image is Path C1 — see docs/MIGRATION.md"
 echo "Next:"
-echo "  1) Fill magneto_device.cfg UUIDs (serial + canbus_uuid)"
+echo "  1) Restore IDs if not done: ./os/restore-after-clean-os.sh /path/to/pre-clean-os-backup"
+echo "     (or PRE_CLEAN_BACKUP=/path ./os/postinstall-magneto.sh)"
 echo "  2) curl -s http://127.0.0.1:8880/health  and  RTU should be 400"
-echo "  3) FIRMWARE_RESTART in Mainsail; LM_ENABLE; home carefully"
+echo "  3) re-login if dialout was just added; FIRMWARE_RESTART; LM_ENABLE; home carefully"
 echo "  4) MCU flash later from same HEAD — docs/MCU_BUILD.md"
 echo "  5) Fill docs/validation/S3_HARDWARE_REPORT.template.md when testing"
 if [[ "${TRACK}" == "magneto-x-kalico" ]]; then
