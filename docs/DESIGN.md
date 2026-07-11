@@ -117,6 +117,12 @@ Owners who want a maintainable machine should not be stuck on a 2023 Klipper sna
 | D8 | **Host OS: current MainsailOS Armbian for Orange Pi Zero 2 (preferred)** | Stock 2024 image is a bridge only; frozen packages and ancient Klipper are the long-term problem. |
 | D9 | **Never contribute Magneto patches upstream** | `gcode_shell_command` is intentionally rejected by Klipper3d (security); MagXY/load-cell latch are machine-specific. |
 | D10 | **Config fixes are first-class**: `LINEAR_*` only, single PAUSE/RESUME, `LM_ENABLE` + `CLEAR_LOAD_CELL` before motion/Z; package must be parse-ready | Stock dual trees and missing includes make machines appear broken. |
+| D21 | **v1 path = clean OS after hardened manager (1B)**; stock image is bridge/recovery only | Operator lock 2026-07-11. PR-M4 before public install script. |
+| D22 | **MCU flash deferred (2A)**: ship host+config against stock MCU bins first | Lower brick risk; full modern MCU flash is a later gate after S3 motion on stock bins. |
+| D23 | **OriginMove is published default XY (3B)**; stock Peopoly XY is alternate include | Matches live lab unit + common field configs. |
+| D24 | **Hardened manager before config polish / clean OS (4C)** | PR-M4 next critical path item. |
+| D25 | **Equal Kalico A/B support (5)** | Both tracks first-class in docs/CI/support; “start here if unsure” may still name mainline for simpler recovery. |
+| D26 | **CAN stock hub: gs_usb `1d50:606f` @ 250 kbit** | Field-measured; close OQ#3 for stock Linux Hub. |
 | D11 | **Vendor ESP32 firmware initially; EmperorArthur path optional later** | Reduce variables for first successful modern boot. |
 | D12 | **Manager paths parameterized from day one of hardened manager** | Stock manager assumes `/home/pi/...`; modern MainsailOS users may differ. |
 | D13 | **Do not redistribute Magmotor / MagnetoWifiHelper binaries in published git** | Proprietary vendor binaries. Install docs say: copy from user-obtained Peopoly `magnetox-os-update` / TF image. Published repo ships only open Python manager source + install scripts. Workspace reference clones stay gitignored. |
@@ -187,7 +193,7 @@ flowchart TB
 |--------|-----|-----------|----------|
 | Host | Allwinner H616 (OPi Zero 2) | — | Linux + Klippy |
 | Main board | STM32H723 family (Octopus Pro 1.1; wiki sometimes says H732 package) | USB | Klipper MCU; optionally `MAGNETO_RELAX_STEPPER_PAST` after A/B |
-| Linux Hub PCB | USB-CAN adapter (chip TBD — OQ#3 field data) | Host `can0` @ 1 Mbit | Kernel `gs_usb` or `slcan` |
+| Linux Hub PCB | USB-CAN **gs_usb `1d50:606f`** (candleLight-class) | Host `can0` @ **250 kbit** | Kernel `gs_usb` (measured; not 1 Mbit) |
 | Toolhead | RP2040 (Lancer) | CAN @ 1 Mbit via Linux Hub | Klipper MCU (no stepper-past option) |
 | MagXY bridge | ESP32-WROOM-32D | USB-serial CH340 | Vendor / optional community |
 | Load-cell FE | STC8051 + CS1237 | Digital probe to Octopus `PE12`; reset via toolhead `gpio24` | Separate binary; DIP thresholds |
@@ -839,11 +845,11 @@ Tagged **blocking** (need provisional decision — supplied in Key Decisions) vs
 | # | Question | Type | Provisional / resolution |
 |---|----------|------|---------------------------|
 | OQ#1 | GitHub rename complete publicly? | Informational | D14: use `magneto-x-klipper`; redirects OK |
-| OQ#2 | Field H723 vs H732 population | Informational | D16 + recovery procedure; defconfig H723 |
-| OQ#3 | Linux Hub USB-CAN VID:PID | **Blocking for perfect can0 docs** | Provisional gs_usb recipe; require `lsusb` verification; collect field data |
+| OQ#2 | Field H723 vs H732 population | **Closed for lab + Peopoly BOM** | Live `stm32h723xx`; marketing Octopus Pro H723; H732 remains silkscreen folklore — DFU if a unit differs |
+| OQ#3 | Linux Hub USB-CAN VID:PID | **Closed (stock hub)** | **`1d50:606f` gs_usb @ 250000** — see `docs/FIELD_FACTS.md` |
 | OQ#4 | Magmotor redistribution | Resolved | D13: do not redistribute in git |
 | OQ#5 | Soft-fail permanence | Resolved | D7 algorithm |
-| OQ#6 | MainsailOS default SSH user | Informational | Document per image |
+| OQ#6 | MainsailOS default SSH user | **Closed for MainsailOS Armbian** | **`pi` / `armbian`** (MainsailOS docs); live stock also `pi` |
 | OQ#7 | Community ESP32 firmware blessing | Informational | Vendor first (D11) |
 | OQ#8 | Semver lockstep | Resolved provisionally | D20: tags when shipping tested combo; day-to-day same HEAD |
 | OQ#9 | KlipperScreen MagXY panels | Informational | Keep manager API compatible; port later |

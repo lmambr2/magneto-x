@@ -135,6 +135,19 @@ Do not commit proprietary binaries, printer models (`*.stl`, `*.gcode`), secrets
 
 ---
 
+## Locked product decisions (operator 2026-07-11)
+
+See [`docs/DECISIONS_LOCKED.md`](docs/DECISIONS_LOCKED.md) and [`docs/FIELD_FACTS.md`](docs/FIELD_FACTS.md).
+
+| ID | Lock |
+|----|------|
+| 1B | Clean OS first (after hardened manager) |
+| 2A | Configs/host first; **keep stock MCU bins** until later |
+| 3B | **OriginMove** is published default XY |
+| 4C | **PR-M4 hardened manager** before more config polish / clean OS |
+| 5 | **Equal** mainline and Kalico A/B support |
+| 7B | Operator: `gh auth refresh -s workflow` for full Kalico history pushes |
+
 ## 1. Non-negotiable policies
 
 1. **No Magneto PRs upstream** (Klipper3d or KalicoCrew).

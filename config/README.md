@@ -13,11 +13,11 @@ Parse-ready Klipper configs for [magneto-x](https://github.com/lmambr2/magneto-x
    - `[mcu MAG_TOOL] canbus_uuid:` → toolhead CAN UUID  
      (`~/klippy-env/bin/python ~/klipper/scripts/canbus_query.py can0`)
 4. Choose **exactly one** motion profile in `printer.cfg`:
-   - **Stock XY** (default): `[include motion_xy_stock.cfg]`  
-     Driver0 = X 400 mm, Driver1 = Y 300 mm  
-   - **OriginMove**: comment stock, enable  
-     `[include optional/origin_move.cfg]`  
-     Driver1 = X 300 mm, Driver0 = Y 400 mm (matches many field machines)
+   - **OriginMove** (**default**): `[include optional/origin_move.cfg]`  
+     Driver1 = X 300 mm, Driver0 = Y 400 mm (many field machines + lab unit)  
+   - **Stock Peopoly XY**: comment OriginMove, enable  
+     `[include motion_xy_stock.cfg]`  
+     Driver0 = X 400 mm, Driver1 = Y 300 mm
 5. Ensure host Klipper includes Magneto extras from **magneto-x-klipper**:
    - default branch **`magneto-x`** (mainline), or  
    - **`magneto-x-kalico`** for Kalico A/B (see [docs/TRACKS.md](../docs/TRACKS.md)).
@@ -60,6 +60,6 @@ Exit code 0 means every `[include …]` from `printer.cfg` resolves inside the p
 
 | Profile | How to enable |
 |---------|----------------|
-| Stock Peopoly XY | Default `motion_xy_stock.cfg` |
-| OriginMove XY | Swap include in `printer.cfg` → `optional/origin_move.cfg` |
+| OriginMove XY | **Default** `optional/origin_move.cfg` |
+| Stock Peopoly XY | Swap include → `motion_xy_stock.cfg` |
 | Kalico `danger_options` | **Only** on host branch `magneto-x-kalico`: uncomment `[include optional/danger_options.cfg]` |
