@@ -111,7 +111,7 @@ Owners who want a maintainable machine should not be stuck on a 2023 Klipper sna
 | D2 | **Rebase/port extras onto current upstream; do not merge Peopoly history** | Peopoly `master` is a squash; their `magneto-x` is ~1300 commits stale. Porting ~4 functional files is cheaper and cleaner than history reconstruction. |
 | D3 | **Keep MagXY outside Klipper** (ESP32 + magneto-manager) | Motors are closed-loop at the driver; Klipper only emits step/dir. Reimplementing Modbus RTU control is out of scope for reliability of first ship. |
 | D4 | **Keep `magneto_load_cell` separate from upstream `load_cell`** | Electrical interface is a digital latch (STC8051+CS1237), not HX71x/ADS ADC. Using the wrong module would mislead users and cannot work without rewiring. |
-| D5 | **Retain `gcode_shell_command` (fork-only) for v1** | MagXY ENABLE/DISABLE currently goes macros → shell → curl → :8880. Native module / Moonraker proxy are future options (A5/A8). |
+| D5 | **MagXY via `magneto_linear_motor` (PR-K7); shell optional** | Default: module → manager HTTP → ESP32. `gcode_shell_command` kept for non-MagXY optional use only. |
 | D6 | **`MAGNETO_RELAX_STEPPER_PAST` is Kconfig, default off; documented for Octopus MagXY step/dir only — not board-locked in Kconfig** | Unlike Peopoly’s unconditional disable, opt-in preserves upstream safety. Kconfig only `depends on LOW_LEVEL_OPTIONS` (no `MACH_STM32H723` lock — locking would break valid cross-board experiments and H732 package naming). **Enforcement = Octopus defconfig + CI assert Lancer defconfig has `=n` + docs.** See also D15 (enable only after A/B reproduction). |
 | D7 | **Sticky-probe policy: auto_clear + clear-with-dwell in gcode + one soft retry then hard fail** | Soft-fail-when-module-present alone can accept a bad first sample. Required algorithm (see §4): on “triggered prior,” if `magneto_load_cell` loaded → clear latch, dwell, **one** retry of the probe move; if still no movement → **hard** `command_error`. Closes former OQ#5. |
 | D8 | **Host OS: current MainsailOS Armbian for Orange Pi Zero 2 (preferred)** | Stock 2024 image is a bridge only; frozen packages and ancient Klipper are the long-term problem. |
@@ -207,29 +207,29 @@ flowchart TB
 
 ```mermaid
 sequenceDiagram
-  participant Macro as G-code macros
-  participant Shell as gcode_shell_command
+  participant Macro as G-code / LM_ENABLE
+  participant MLM as magneto_linear_motor
   participant MM as magneto-manager 127.0.0.1:8880
   participant ESP as ESP32 MagXY
   participant DRV as MotionG drivers
 
-  Macro->>Macro: LM_ENABLE (G4 P500)
-  Macro->>Shell: RUN_SHELL_COMMAND CMD=LINEAR_MOTOR_ENABLE
-  Note over Shell: No PARAMS allowed for LM commands
-  Shell->>MM: curl GET /send_command?command=ENABLE
+  Macro->>MLM: LM_ENABLE (optional enable_dwell)
+  MLM->>MM: GET /send_command?command=ENABLE
   MM->>MM: allowlist ENABLE only
-  MM->>ESP: serial write "ENABLE\n" @ 115200
+  MM->>ESP: serial "ENABLE\n" @ 115200
   ESP->>DRV: Modbus enable / clear errors
   Note over Macro,DRV: Only then home XY / move
 
   Macro->>Macro: CLEAR_LOAD_CELL (dwells) before G28 Z
   Macro->>Macro: G28 Z / QGL / print
-  Macro->>Shell: LM_DISABLE (PRINT_END delayed)
-  Shell->>MM: command=DISABLE
+  Macro->>MLM: LM_DISABLE
+  MLM->>MM: command=DISABLE
   MM->>ESP: "DISABLE\n"
 ```
 
-**Stock naming:** shell command names must be **`LINEAR_MOTOR_*`**, not **`LINER_MOTOR_*`**.
+**Alternate:** `backend: serial` on `[magneto_linear_motor]` talks to ESP32 directly (do not run manager on the same port).
+
+**Stock naming:** panel alias `LINER_MOTOR` → `LINEAR_MOTOR` → `MAGNETO_LINEAR_*`. Prefer `LM_ENABLE` / `LM_DISABLE`.
 
 **Dual stock trees (provenance):**
 
@@ -291,7 +291,8 @@ Branch tip includes:
 | Component | Path | Status |
 |-----------|------|--------|
 | Load-cell latch | `klippy/extras/magneto_load_cell.py` | **Done** PR-K2 — dwell inside clear |
-| Shell command | `klippy/extras/gcode_shell_command.py` | **Done** PR-K5 — PARAMS rejected by default |
+| MagXY native | `klippy/extras/magneto_linear_motor.py` | **Done** PR-K7 — http default, serial optional |
+| Shell command | `klippy/extras/gcode_shell_command.py` | **Done** PR-K5 — optional; not used for MagXY |
 | Homing sticky (D7) | `klippy/extras/homing.py` | **Done** PR-K3 — clear + one retry + hard fail |
 | Stepper past | `src/stepper.c` + `src/Kconfig` | **Done** default n; umbrella defconfigs assert Lancer ≠ y |
 | Docs | `docs/Magneto_X.md`, README | **Done** crystal + D7 + MCU_BUILD pointer |
@@ -393,7 +394,9 @@ Deploy target: `~/printer_data/config/`.
 | `macros.cfg.stock-v1.1.3` | Archaeology | **No** |
 | `moonraker-update-manager.conf.snippet` | Moonraker origin | Merge into moonraker.conf |
 
-**Shell surface (deployable only):**
+**MagXY primary (deployable):** `[magneto_linear_motor]` with `backend: http`.
+
+**Shell surface (legacy optional only):**
 
 ```ini
 [gcode_shell_command LINEAR_MOTOR_ENABLE]
@@ -741,8 +744,9 @@ LM_ENABLE fails or motors dead
 |---------|--------|-------|
 | `CLEAR_LOAD_CELL` / `LC28` | `magneto_load_cell` | Pulse + **internal dwell** |
 | `LL28` / `LH28` | `magneto_load_cell` | Debug |
-| `RUN_SHELL_COMMAND CMD=…` | `gcode_shell_command` | PARAMS restricted |
-| `LM_ENABLE` / `LM_DISABLE` | macros | No PARAMS |
+| `LM_ENABLE` / `LM_DISABLE` | `magneto_linear_motor` | Preferred MagXY path (PR-K7) |
+| `MAGNETO_LINEAR_*` | `magneto_linear_motor` | Explicit names + STATUS/VERSION |
+| `RUN_SHELL_COMMAND CMD=…` | `gcode_shell_command` | Optional only; PARAMS rejected |
 
 ### Host HTTP — see §6 target contract
 
@@ -949,13 +953,13 @@ Each PR lists **type** (new work vs amend/verify already-landed), **acceptance c
 | **Depends on** | PR-K2–K5 preferred |
 | **Acceptance** | Fails if extras missing; py_compile passes; documents rebase playbook |
 
-#### PR-K7 — (Future) Native MagXY module
+#### PR-K7 — Native MagXY module (**landed**)
 
 | Field | Content |
 |-------|---------|
-| **Title** | `extras: magneto_linear_motor (optional shell replacement)` |
-| **Depends on** | Hardened manager or direct serial; umbrella S7 |
-| **Acceptance** | Fixed ENABLE/DISABLE only; no arbitrary serial strings from gcode |
+| **Title** | `extras: magneto_linear_motor` |
+| **Status** | **Done** on `magneto-x` + `magneto-x-kalico` |
+| **Acceptance** | ENABLE/DISABLE/VERSION only; http→manager default; serial optional; localhost manager_url unless allow_remote; config + macros use LM_* aliases |
 
 ---
 

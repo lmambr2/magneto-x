@@ -21,7 +21,7 @@ Living checklist vs DESIGN PR plan. Update when PRs land.
 | PR-K4 | Relax default n + defconfig assert | Kconfig + `os/check-defconfigs.sh` + `klipper/test/configs/magneto-*` |
 | PR-K5 | Shell PARAMS reject | both tracks |
 | PR-K6 lite | CI gate script | `scripts/ci-magneto.sh` (+ example workflow under `docs/ci/`) |
-| **PR-K7** | Native MagXY module | `klippy/extras/magneto_linear_motor.py` (http/serial); macros updated |
+| **PR-K7** | Native MagXY module | **Finished** — localhost http default, serial optional, LM_* aliases, tests, config/docs |
 | Polish | force_move warning, nginx snippet, alt-hardware notes, DESIGN sync | config/ + FAQ + DESIGN rev3+ |
 | Tracks | Mainline + Kalico A/B | `docs/TRACKS.md`, branches |
 | Decisions | Operator locks §1–7, §6 | `docs/DECISIONS_LOCKED.md` |

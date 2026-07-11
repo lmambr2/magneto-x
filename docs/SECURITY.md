@@ -34,11 +34,16 @@ Environment=MAGNETO_MANAGER_HOST=0.0.0.0
 
 Stock manager + localhost firewall still allows **any local** process/gcode that can HTTP to 8880 with arbitrary `command=`. Prefer C1 hardened install.
 
+## MagXY path (PR-K7)
+
+- Prefer `[magneto_linear_motor]` → manager HTTP (localhost only unless `allow_remote_manager`).
+- Module only sends ENABLE/DISABLE/VERSION — no free-form serial from gcode.
+- `backend: serial` exclusive with manager on the same CH340.
+
 ## Shell command policy
 
-- Deploy only `LINEAR_MOTOR_ENABLE` / `DISABLE` / version curl.
+- MagXY no longer needs shell; `shell_command.cfg` is optional fallback only.
 - Do not set `allow_params: True` in production configs.
-- Prefer manager allowlist over “smarter” macros that pass dynamic PARAMS.
 
 ## Operator hygiene
 

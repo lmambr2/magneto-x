@@ -21,7 +21,8 @@ Parse-ready Klipper configs for [magneto-x](https://github.com/lmambr2/magneto-x
 5. Ensure host Klipper includes Magneto extras from **magneto-x-klipper**:
    - default branch **`magneto-x`** (mainline), or  
    - **`magneto-x-kalico`** for Kalico A/B (see [docs/TRACKS.md](../docs/TRACKS.md)).
-6. magneto-manager must answer on `http://127.0.0.1:8880` for `LM_ENABLE` / `LM_DISABLE`.
+6. `[magneto_linear_motor]` in printer.cfg; manager on `http://127.0.0.1:8880` (http backend).
+   Use `MAGNETO_LINEAR_STATUS` to debug.
 7. `FIRMWARE_RESTART` and home carefully (`LM_ENABLE` is required before XY motion).
 
 ## Layout
@@ -42,7 +43,7 @@ Parse-ready Klipper configs for [magneto-x](https://github.com/lmambr2/magneto-x
 ## Defaults worth knowing
 
 - Probe **speed: 0.5** mm/s (stock load-cell accuracy; avoid 2.0)
-- Shell surface: **LINEAR_MOTOR_*** only (no `hello_world`, no `LINER_*` shell cmds)
+- MagXY: **`[magneto_linear_motor]`** (not shell); shell MagXY curls optional/commented
 - `LINER_MOTOR` gcode macro is a thin alias to `LINEAR_MOTOR` for old panels
 - Stock CAN hub is typically **250 kbit** (not 1M)
 

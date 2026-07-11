@@ -35,7 +35,8 @@ This is **not** “just a Klipper config.” It is a **multi-layer machine stack
 | Path | Role |
 |------|------|
 | `klippy/extras/magneto_load_cell.py` | STC8051/CS1237 **digital latch** reset (`CLEAR_LOAD_CELL` / `LC28`) — **not** upstream `load_cell` / `load_cell_probe` |
-| `klippy/extras/gcode_shell_command.py` | `RUN_SHELL_COMMAND` for MagXY (vendored on mainline; **native on Kalico**) |
+| `klippy/extras/magneto_linear_motor.py` | **PR-K7** MagXY ENABLE/DISABLE (http→manager or serial) |
+| `klippy/extras/gcode_shell_command.py` | Optional only; not used for MagXY (vendored mainline / native Kalico) |
 | `klippy/extras/homing.py` patches | Sticky-probe soft-fail / D7 clear+retry (markers) |
 | `src/stepper.c` + `src/Kconfig` | Optional `MAGNETO_RELAX_STEPPER_PAST` (Octopus MagXY only) |
 | `magneto/MANIFEST.json` + `scripts/magneto_guard.py` | Guard against silent merge loss |
@@ -74,7 +75,8 @@ python3 scripts/check_includes.py config
 |-------|------|
 | MotionG DN1-G60xxN ×2 | Closed-loop drivers; RS485 / 48 V |
 | ESP32 bridge | Peopoly firmware; serial “USB Serial” to host |
-| `magneto-manager` HTTP `:8880` | ENABLE/DISABLE; **hardened** tree is `os/magneto-manager/` (localhost, allowlist). Install via `os/install-magneto-services.sh` |
+| `magneto-manager` HTTP `:8880` | ENABLE/DISABLE; **hardened** `os/magneto-manager/`. Called by `[magneto_linear_motor]` http backend |
+| `[magneto_linear_motor]` | Preferred MagXY path from Klippy (no shell) |
 | Magmotor / MagnetoWifiHelper | **Proprietary** — never commit binaries; user copies from Peopoly packages |
 
 Klipper only emits **step/dir**. Do **not** implement MagXY closed-loop inside Klipper for v1.

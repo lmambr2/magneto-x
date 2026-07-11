@@ -31,10 +31,11 @@ Only one of the two includes.
 
 ### `LM_ENABLE` does nothing
 
-1. `curl -s http://127.0.0.1:8880/health` — serial connected?  
-2. ESP32 on CH340 “USB Serial”?  
-3. Hardened manager installed (not stock on clean OS)?  
-4. Shell module present (`gcode_shell_command` in magneto-x-klipper)?
+1. Config has `[magneto_linear_motor]` and host is magneto-x-klipper with PR-K7  
+2. `curl -s http://127.0.0.1:8880/health` — serial connected?  
+3. ESP32 on CH340 “USB Serial”?  
+4. Hardened manager running (http backend default)  
+5. `MAGNETO_LINEAR_STATUS` for backend/errors  
 
 ### Probe: “triggered prior to movement”
 
