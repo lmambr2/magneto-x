@@ -13,7 +13,7 @@ If you own a Magneto X that never quite worked because of the stock Klipper tree
 | **[lmambr2/magneto-x](https://github.com/lmambr2/magneto-x)** (this tree) | Docs, printer configs, Orange Pi host tooling |
 | **[lmambr2/magneto-x-klipper](https://github.com/lmambr2/magneto-x-klipper)** | Modern Klipper + Magneto extras (branch `magneto-x`) |
 
-> GitHub rename may still be pending: the Klipper fork may still appear as `lmambr2/klipper` until renamed. See [docs/NAMING.md](docs/NAMING.md).
+> Published as [lmambr2/magneto-x-klipper](https://github.com/lmambr2/magneto-x-klipper) (default branch `magneto-x`). See [docs/NAMING.md](docs/NAMING.md).
 
 **Policy:** do not open PRs or push Magneto patches to [Klipper3d/klipper](https://github.com/Klipper3d/klipper).
 
@@ -29,13 +29,12 @@ If you own a Magneto X that never quite worked because of the stock Klipper tree
 
 ## Docs
 
+- **[docs/DESIGN.md](docs/DESIGN.md)** — full design (architecture, key decisions, PR plan)  
 - [docs/NAMING.md](docs/NAMING.md) — repo names, GitHub descriptions, topics  
 - [docs/RESEARCH.md](docs/RESEARCH.md) — fork analysis, hardware map, community inventory  
 - [docs/MODERNIZATION.md](docs/MODERNIZATION.md) — build / flash / install  
 - [docs/OS_IMAGE.md](docs/OS_IMAGE.md) — Orange Pi Zero 2 / MainsailOS  
-- [klipper/docs/Magneto_X.md](klipper/docs/Magneto_X.md) — in-tree Magneto modules  
-
-There is **not yet** a full formal design doc (goals, key decisions, PR plan). Research + procedures only.
+- In-tree: [magneto-x-klipper docs/Magneto_X.md](https://github.com/lmambr2/magneto-x-klipper/blob/magneto-x/docs/Magneto_X.md)
 
 ## Layout
 
