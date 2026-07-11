@@ -209,6 +209,7 @@ When you hit a failure mode — especially one an LLM “fixed” wrong — add 
 - [2026-07-11] Committing **Magmotor** / live **UUIDs** / **models** → scrub; use Release assets or local-only backups.
 - [2026-07-11] Merging `magneto-x` ↔ `magneto-x-kalico` as routine → diverged bases. Port Magneto delta intentionally; use MANIFEST as checklist.
 - [2026-07-11] Mixing mainline host with Kalico-built MCU firmware (or reverse) → protocol mismatch. Same track for host + both MCUs.
+- [2026-07-11] Claude branch claimed MagXY stuck at ~250 mm/s due to **default 2 µs** `step_pulse_duration` → stock configs already use **`0.0000002` (200 ns)**. Both-edge is already in play; that “smoking gun” is wrong for field printers. See `docs/vendor-archive/community/CLAUDE_BRANCH_REVIEW.md`.
 
 ---
 

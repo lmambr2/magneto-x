@@ -79,7 +79,20 @@ Do **not** enable by default. If first modern-host print with stock bins never t
 | Moonraker | ~v0.8.0-era |
 | Klippy state | ready (at validation capture) |
 
+## MagXY step pulse (vs Claude analysis branch)
+
+| Fact | Value |
+|------|--------|
+| Stock + our XY steppers | `step_pulse_duration: 0.0000002` (**200 ns**) |
+| Klipper both-edge threshold | `MIN_BOTH_EDGE_DURATION` = **500 ns** |
+| Implication | 200 ns already enables both-edge / single-sched path; **not** the 2 µs default |
+| Claude branch claim | “Default 2 µs caps at ~250 mm/s” — **does not match field configs** |
+| Still open | Why Peopoly disabled stepper-past **despite** short pulses — S3 A/B later |
+
+See `docs/vendor-archive/community/CLAUDE_BRANCH_REVIEW.md`.
+
 ## Remaining optional captures
 
 - Full `dd` of eMMC was incomplete earlier — not required for decisions above.
 - Second machine H732 silkscreen photo — only if community reports non-H723 USB ids.
+- Empirical MagXY pulse tiers (200 ns vs 100 ns vs 1 µs) after first reliable motion.

@@ -30,3 +30,20 @@ Section **6** items (D7 dwell/retry, PARAMS, stepper-past default, Moonraker pac
 ## Field research closed (was “not really decisions”)
 
 See [FIELD_FACTS.md](FIELD_FACTS.md).
+
+## Scope freeze §6 (2026-07-11) — all recommended
+
+| Item | Lock | PR |
+|------|------|-----|
+| A Sticky-probe D7 clear+retry+hard fail | **Yes** | PR-K3 |
+| B `CLEAR_LOAD_CELL` dwell in-command | **Yes** | PR-K2 |
+| C Shell PARAMS ignore/reject for LM | **Yes** | PR-K5 |
+| D Hardened magneto-manager | **Yes** (already 4C) | PR-M4 |
+| E Stepper-past default on Octopus | **No** until S3 A/B | — |
+| F Moonraker update_manager packaging | **Later** | — |
+| G Full image / Magmotor in git | **No** | — |
+| H EmperorArthur ESP32 | **No** v1 | — |
+| I KlipperScreen MagXY port | **Later** | — |
+
+Revisit E/F/G/H/I after S3 / clean-OS success.
+

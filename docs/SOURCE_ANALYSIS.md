@@ -77,7 +77,8 @@ Legend: **In** = already absorbed or now archived · **Adopt** = take patterns i
 | [WilliamJamieson Magneto_x_config](https://github.com/WilliamJamieson/Magneto_x_config) | Modular configs + **Beacon** + nozzle wiper + motor macros | **Adopt** modular layout ideas; Beacon as optional profile |
 | [mitant peopoly-magneto-x-config](https://github.com/mitant/peopoly-magneto-x-config) | Small `ant.cfg` (temp sensors, firmware_retraction) | **Adopt** MCU temp sensors snippet optionally |
 | [nmavor Magneto-X-customize](https://github.com/nmavor/Magneto-X-customize) | SD growpart; **probe speed 0.5** improves load-cell accuracy vs 2.0 | **Adopt** probe speed guidance (live cfg uses 2 — candidate fix) |
-| [Schmudus My-Magneto-X](https://github.com/Schmudus/My-Magneto-X) | Full alt stack: Pi5 + Kalico + toolhead swaps + Beacon; **CAN 250k + txqueuelen 512** | **Cite heavily** in migration/alt-hardware; **do not** make Kalico/Pi5 the default. Text extract archived. Confirms stock Linux Hub CAN is **250000** (live machine matches). |
+| [Schmudus My-Magneto-X](https://github.com/Schmudus/My-Magneto-X) | Full alt stack: Pi5 + Kalico + toolhead swaps + Beacon; **CAN 250k + txqueuelen 512** | **Cite heavily** in migration/alt-hardware; equal Kalico track is now supported, Pi5 still alt. Text extract archived. Confirms stock CAN **250000**. |
+| [lmambr2/magneto-x-klipper `claude/analyze-magneto-x-issues-08j9x`](https://github.com/lmambr2/magneto-x-klipper/tree/claude/analyze-magneto-x-issues-08j9x) | Prior agent analysis: Peopoly delta, stepper timing theory, HX717 upgrade path | **Harvest only** — see `docs/vendor-archive/community/CLAUDE_BRANCH_REVIEW.md`. Correct on step/dir + digital latch; **wrong** that default 2 µs pulse is field reality (configs already 200 ns). Do not merge branch into product. |
 | [JMack89427 magneto_klipper](https://github.com/JMack89427/magneto_klipper) | Accidental home-directory dump | **Skip** as source of truth |
 
 ---
