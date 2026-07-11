@@ -120,7 +120,7 @@ Owners who want a maintainable machine should not be stuck on a 2023 Klipper sna
 | D21 | **v1 path = clean OS after hardened manager (1B)**; stock image is bridge/recovery only | Operator lock 2026-07-11. PR-M4 before public install script. |
 | D22 | **MCU flash deferred (2A)**: ship host+config against stock MCU bins first | Lower brick risk; full modern MCU flash is a later gate after S3 motion on stock bins. |
 | D23 | **OriginMove is published default XY (3B)**; stock Peopoly XY is alternate include | Matches live lab unit + common field configs. |
-| D24 | **Hardened manager before config polish / clean OS (4C)** | PR-M4 next critical path item. |
+| D24 | **Hardened manager before config polish / clean OS (4C)** | PR-M4 **landed**; required for postinstall / clean OS. |
 | D25 | **Equal Kalico A/B support (5)** | Both tracks first-class in docs/CI/support; “start here if unsure” may still name mainline for simpler recovery. |
 | D26 | **CAN stock hub: gs_usb `1d50:606f` @ 250 kbit** | Field-measured; close OQ#3 for stock Linux Hub. |
 | D11 | **Vendor ESP32 firmware initially; EmperorArthur path optional later** | Reduce variables for first successful modern boot. |
@@ -290,11 +290,11 @@ Branch tip includes:
 
 | Component | Path | Status |
 |-----------|------|--------|
-| Load-cell latch | `klippy/extras/magneto_load_cell.py` | Landed; **gaps remain** (dwell in gcode cmd — PR-K2) |
-| Shell command | `klippy/extras/gcode_shell_command.py` | Landed; **PARAMS policy** — PR-K5 |
-| Homing soft-fail | `klippy/extras/homing.py` | Landed soft-log; **must upgrade to clear+retry+hard** — PR-K3 |
-| Stepper past | `src/stepper.c` + `src/Kconfig` | Landed default n; not board-locked — PR-K4 verify + defconfig CI |
-| Docs | `docs/Magneto_X.md`, README | Landed; amend crystal + soft-fail policy |
+| Load-cell latch | `klippy/extras/magneto_load_cell.py` | **Done** PR-K2 — dwell inside clear |
+| Shell command | `klippy/extras/gcode_shell_command.py` | **Done** PR-K5 — PARAMS rejected by default |
+| Homing sticky (D7) | `klippy/extras/homing.py` | **Done** PR-K3 — clear + one retry + hard fail |
+| Stepper past | `src/stepper.c` + `src/Kconfig` | **Done** default n; umbrella defconfigs assert Lancer ≠ y |
+| Docs | `docs/Magneto_X.md`, README | **Done** crystal + D7 + MCU_BUILD pointer |
 
 ```mermaid
 flowchart LR
@@ -334,7 +334,7 @@ auto_clear_on_home: True
 | `CLEAR_LOAD_CELL` / `LC28` | **Must dwell inside the command** for ≥ `pulse_time` after scheduling edges (PR-K2). Callers must not rely on external `G4` alone, though `homing_override` may still `G4 P500` as belt-and-suspenders. |
 | `LL28` / `LH28` | Debug force low/high; document as unsafe during prints |
 
-**Homing sticky-probe algorithm (D7) — implement in PR-K3:**
+**Homing sticky-probe algorithm (D7) — implemented (PR-K3):**
 
 ```
 probing_move(..., check_movement=True):
@@ -343,17 +343,13 @@ probing_move(..., check_movement=True):
     return epos
   if printer.lookup_object('magneto_load_cell', None) is None:
     raise "Probe triggered prior to movement"
-  # Magneto path:
-  load_cell.clear_load_cell()
-  toolhead.dwell(pulse_time + 0.15)
-  epos = homing_move(...)   # single retry
+  load_cell.clear_load_cell()   # includes dwell (PR-K2)
+  epos = HomingMove(...).homing_move(...)   # single retry
   if check_no_movement() is not None:
     raise "Probe triggered prior to movement (after load-cell clear retry)"
   gcode.respond_info("Probe was sticky; cleared load cell and retried once")
   return epos
 ```
-
-This **replaces** the current “log and return epos without retry” behavior, which can accept a bad sample.
 
 **`MAGNETO_RELAX_STEPPER_PAST`**
 
@@ -379,22 +375,23 @@ This **replaces** the current “log and return epos without retry” behavior, 
 
 Deploy target: `~/printer_data/config/`.
 
-**Deployable = include graph resolves + no forbidden patterns.** PR-M2 is not complete until a fresh directory containing only the published package starts Klipper far enough to fail on missing MCU serial (not missing includes).
+**Deployable = include graph resolves + no forbidden patterns.** PR-M2 **done** (`scripts/check_includes.py config`). Live “Klippy fails only on missing MCU serial” is PR-V1.
 
 | File | Role | Deploy? |
 |------|------|---------|
-| `printer.cfg` | Kinematics, bed, probe, QGL, mesh, steppers, fans, kill, `homing_override` | Yes |
-| `mainsail.cfg` | **Must ship (PR-M2)** — Mainsail extras **without** PAUSE/RESUME | Yes |
+| `printer.cfg` | Kinematics, bed, force_move warning, includes | Yes |
+| `mainsail.cfg` | Mainsail extras **without** PAUSE/RESUME | Yes |
 | `magneto_device.cfg` | MCU serial + CAN UUID placeholders | Yes |
 | `magneto_toolhead.cfg` | Load cell, extruder, ADXL, filament buttons | Yes |
-| `shell_command.cfg` | **Only** `LINEAR_MOTOR_ENABLE/DISABLE` (+ optional version curl) | Yes |
+| `shell_command.cfg` | **Only** `LINEAR_MOTOR_*` (+ version curl) | Yes |
 | `macros.cfg` | PRINT_START/END, PAUSE/RESUME, LM_*, mesh/QGL | Yes |
-| `KAMP*` | Adaptive meshing | Yes (optional include) |
-| `KlipperScreen.conf` | Minimal screen config | Yes |
-| `macros.cfg.stock-v1.1.3` | Archaeology only | **No — do not install** (header: non-deployable; may contain `RM_UPDATE` / resize patterns) |
-| `moonraker-update-manager.conf.snippet` | Origin for fork | Yes (document merge into moonraker.conf) |
-
-**Current gap (workspace today):** `printer.cfg` has `[include mainsail.cfg]` but **`mainsail.cfg` is not in `config/`** → hard fail. PR-M2 must add it (D18). Source can be trimmed from MainsailOS / stock image `mainsail.cfg` with PAUSE/RESUME removed.
+| `motion_xy_stock.cfg` / `optional/origin_move.cfg` | XY frame (default **OriginMove**) | Yes (one of) |
+| `optional/danger_options.cfg` | Kalico only | Optional |
+| `optional/nginx-timeouts.conf.snippet` | Host nginx (not Klipper) | Optional |
+| `optional/alt_hardware_notes.cfg` | Beacon/Eddy/HX comments only | Optional |
+| `KAMP*` | Adaptive meshing | Yes |
+| `macros.cfg.stock-v1.1.3` | Archaeology | **No** |
+| `moonraker-update-manager.conf.snippet` | Moonraker origin | Merge into moonraker.conf |
 
 **Shell surface (deployable only):**
 
@@ -416,22 +413,22 @@ timeout: 2.
 verbose: True
 ```
 
-**Remove from production package:** `hello_world` / `HELLO_WORLD` (present today — violates policy).
+**Removed from production package:** `hello_world` / `HELLO_WORLD`; `LINER_*` shell cmds.
 
-**LM macros must never pass `PARAMS=`** to `RUN_SHELL_COMMAND`.
+**LM macros must never pass `PARAMS=`** to `RUN_SHELL_COMMAND` (enforced by PR-K5).
 
-**Known stock fixes required in package:**
+**Stock fixes in package (done):**
 
 1. **LINEAR only** (no LINER).
-2. **Single PAUSE/RESUME** with `rename_existing`; mainsail.cfg must not redefine them.
-3. **`homing_override`**: `LM_ENABLE` → home XY if needed → center → `CLEAR_LOAD_CELL` → `G28 Z`.
+2. **Single PAUSE/RESUME**; mainsail.cfg does not redefine them.
+3. **`homing_override`**: LM + clear + Z home path in macros.
 4. **PRINT_START / PRINT_END** with LM enable/disable.
-5. UUID placeholders.
-6. Comment on `force_move` risk.
+5. UUID placeholders in `magneto_device.cfg`.
+6. **`force_move` risk** comment in `printer.cfg` + FAQ.
+7. **OriginMove default**; stock XY alternate include.
+8. **Beacon/Eddy/HX** non-default notes (`optional/alt_hardware_notes.cfg`).
 
-**Still to add:** optional PlazmaZero origin-move include; Beacon/Eddy comments as non-default.
-
-**Runtime dependency (operators):** package requires `magneto-x-klipper` branch `magneto-x` extras (`gcode_shell_command`, `magneto_load_cell`). Will not work on stock Klipper3d.
+**Runtime dependency:** `magneto-x-klipper` branch `magneto-x` or `magneto-x-kalico` extras.
 
 ### 6. Host services & OS
 
@@ -473,7 +470,7 @@ sudo ip link set can0 up type can bitrate 250000  # stock Linux Hub; 1000000 onl
 # If slcan: follow adapter-specific slcand setup (document when VID:PID known)
 ```
 
-Design treats exact chip as **TBD with field data**; install docs must say “verify with `lsusb` before assuming gs_usb.”
+Stock hub field-closed: **`1d50:606f` gs_usb @ 250000** (`docs/FIELD_FACTS.md`). Still verify with `lsusb` if the hub was replaced.
 
 #### magneto-manager — current vs target
 

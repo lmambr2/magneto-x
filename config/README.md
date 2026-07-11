@@ -63,3 +63,5 @@ Exit code 0 means every `[include …]` from `printer.cfg` resolves inside the p
 | OriginMove XY | **Default** `optional/origin_move.cfg` |
 | Stock Peopoly XY | Swap include → `motion_xy_stock.cfg` |
 | Kalico `danger_options` | **Only** on host branch `magneto-x-kalico`: uncomment `[include optional/danger_options.cfg]` |
+| nginx large uploads | Host: merge `optional/nginx-timeouts.conf.snippet` into nginx (not Klipper) |
+| Beacon/Eddy/HX notes | Comments only: `optional/alt_hardware_notes.cfg` (no active sections) |

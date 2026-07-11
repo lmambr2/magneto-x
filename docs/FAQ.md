@@ -4,7 +4,8 @@
 
 ### Large Orca / PrusaSlicer uploads fail
 
-Raise nginx timeouts under `http {` in `/etc/nginx/nginx.conf`:
+Raise nginx timeouts under `http {` in `/etc/nginx/nginx.conf`.
+Snippet in-repo: `config/optional/nginx-timeouts.conf.snippet`.
 
 ```nginx
 proxy_send_timeout 500s;
@@ -64,6 +65,17 @@ Both supported. Start with `magneto-x` if unsure. Switch: [TRACKS.md](TRACKS.md)
 ## Pause / resume broken in Mainsail
 
 Duplicate PAUSE macros. Our package: PAUSE only in `macros.cfg`; `mainsail.cfg` has none.
+
+## `force_move` / STEPPER_BUZZ / recovery moves
+
+`[force_move] enable_force_move: True` is on for Magneto recovery culture.
+It can move axes **without** normal soft limits and with MagXY still armed.
+**Prefer `LM_DISABLE` first.** Expert-only; easy to crash the toolhead.
+
+## Beacon / Eddy / HX717 load cell
+
+Not stock. Require hardware redesign. Keep `magneto_load_cell` on Lancer.
+See `config/optional/alt_hardware_notes.cfg` and community alt-stack guides.
 
 ## Where are Magmotor binaries?
 

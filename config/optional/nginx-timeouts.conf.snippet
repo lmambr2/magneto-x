@@ -1,0 +1,10 @@
+# Large Orca / PrusaSlicer uploads via Mainsail (community FAQ).
+# Merge under the http { } block in /etc/nginx/nginx.conf, then:
+#   sudo systemctl restart nginx
+#
+# Not a Klipper include — do not put this in printer.cfg.
+
+proxy_send_timeout 500s;
+proxy_read_timeout 500s;
+fastcgi_send_timeout 500s;
+fastcgi_read_timeout 500s;

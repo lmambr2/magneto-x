@@ -18,9 +18,10 @@ Living checklist vs DESIGN PR plan. Update when PRs land.
 | PR-K1 | Crystal / MCU docs | magneto-x-klipper `docs/Magneto_X.md` |
 | PR-K2 | CLEAR_LOAD_CELL dwell | both tracks |
 | PR-K3 | Sticky probe D7 retry | both tracks |
-| PR-K4 | Relax default n + defconfig assert | Kconfig + `os/check-defconfigs.sh` |
+| PR-K4 | Relax default n + defconfig assert | Kconfig + `os/check-defconfigs.sh` + `klipper/test/configs/magneto-*` |
 | PR-K5 | Shell PARAMS reject | both tracks |
 | PR-K6 lite | CI gate script | `scripts/ci-magneto.sh` (+ example workflow under `docs/ci/`) |
+| Polish | force_move warning, nginx snippet, alt-hardware notes, DESIGN sync | config/ + FAQ + DESIGN rev3+ |
 | Tracks | Mainline + Kalico A/B | `docs/TRACKS.md`, branches |
 | Decisions | Operator locks §1–7, §6 | `docs/DECISIONS_LOCKED.md` |
 | Field | CAN/H723/SSH | `docs/FIELD_FACTS.md` |
@@ -65,3 +66,4 @@ bash scripts/ci-magneto.sh
 | S5 moonraker snippet | **done** |
 | S6 defconfigs | **done** |
 | S7 optional | deferred |
+| Doc/config polish (force_move, nginx, Beacon notes, DESIGN sync) | **done** |
