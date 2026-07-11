@@ -1,0 +1,256 @@
+
+ Peopoly Magneto X Community FAQ
+       Peopoly Magneto X Community FAQ
+       Last Updated: 2025-01-13 06:18
+ Notes
+   All answers pertain to printer shipping version of 10/1/24 and firmware v1.1.4 or later unless otherwise specified.
+   Where authors are provided it only reflects who wrote the FAQ as all answers have many community contributions, with references provided when possible.
+   All outbound links, such as to Amazon, are unaffiliated.
+ Please send any questions, comments, suggestion, new FAQs to  @kaihanga  on Discord or via  kaihanga@nulleta.com .
+ An  Official FAQ  is also available.
+ Read your manual, confirm what you’re doing, everything’s at your own risk.
+ General
+    What’s the size, measurements, etc.?
+    Setup Guides are wrong or don’t make sense?
+ Printer
+    How to install a Beacon?
+    How to SSH into the printer?
+    What and how to lubricate?
+    How to install the Nozzle Wiper?
+    How to lower the print bed after a print?
+    Received a timeout in Orcaslicer when sending a print?
+    How to fix Pause and Resume
+    How to backup the printer configuration and macros?
+    Troubleshooting the 24v side of the electronics
+ Enclosure
+    Enclosure installation tips
+    How to install Display at top?
+ Support & Community
+    Is there a community to share and learn about other’s experiences?
+ Filament Profiles
+    PET-CF Profile
+ Parts
+    Rails and Carriages
+ Other Section Ideas
+ Printing (common VFA, Ringing suggestions, etc.)
+ Answers… ish
+ What’s the size, measurements, etc.?
+ Author(s): @kaihanga
+  Bed : 400mm x 300mm x 300mm
+  Printer : 60.5cm x 54cm x 70cm (length, width, height)
+   Add 26cm on left side (printer facing you) for filament spool & power cable
+   Measurements includes feet and slack height for the filament feed line
+   Front display adds 6.5cm to height and 4cm to width
+  Enclosure : Total of 79cm with 25cm for front door(s) access
+   Same additions for the display, if mounted on top, otherwise for regular position just add for width
+  Jetstream Side Cooling : Increases printer length to 68cm (adds 7.5cm)
+ Setup Guides are wrong or don’t make sense?
+ Author(s): @kaihanga
+ The Setup Guides, such as for the  Printer ,  JetStream , and  Enclosure  don’t match what you recevied or they’re wrong or they don’t make sense.
+ The setup guides represent the state of the printer back when it was first introduced and - for the most part - haven’t been updated since, including to accomodate all the improvements.
+ Here are various notes for each, please message the author with any others inconsistencies.
+ Printer
+   The parts kit is under the bed rather than over it
+   Wifi antennas a traditional rather than flat style
+   Parts kit doesn’t include a PTFE tube, rather it’s coiled around the toolhead
+   Various pictures throughout
+ JetStream
+   Installs on right side rather than left as that’s where the four needed screw holes are
+   Power & control connection is also under the bottom right panel rather than left side and is unlabeled
+ How to install a Beacon
+ Author(s): @kaihanga
+  WARNING - In progress, proceed with caution
+ What’s a  Beacon ?
+ Notes:
+   Order Beacon Normal, not low-profile, and 10’ cable
+   You’ll need to be comfortable with SSH access and Klipper UI navigation
+   Print mount, I used  this mod  in ASA-CF
+       It’s going to be near bedheat so heat deflection, etc. is good
+       Included PETG-CF isn’t enough, reports of sagging
+       Must be stable
+   Using linked mount
+       unscrew 4 screws near nozzle
+       Slightly move nozzle cable out of way and return when done, 2 are clockwise while two are counter-clockwise
+       Attache Beacon with pointed side facing the nozzle
+       Hand-tighten
+   Attach cable connection to beacon, tab facing nozzle
+   Unscrew bottom right side base cover, 10 screws
+   Attach USB cable to any USB port
+       Be sure there’s plenty of slack and the cable’s not interferring with the toolhead
+   Power on printer
+    Follow Beacon Quickstart
+       Including Moonraker configuration
+        ls /dev/serial/by-id
+       See sample  printer.cfg
+       TODO measure Beacon offset direction
+       TODO Not doing safe section
+       Calibrate, via commands in Klipper UI
+           Home  g28 x y
+           Center  G0 X150 Y200
+           With paper under nozzle, manually move Z until drags
+               Beacon RED LED will light
+            BEACON_CALIBRATE
+               Move up & down -.001
+               ACCEPT
+            BEACON_AUTO_CALIBRATE
+               Be sure not to have drag on USB line, will disrupt measure
+       TODO Finish and do a print
+   Tidy up cabling
+       Cable can be routed in the cable chain but needs to have distance from the motor wiring due to noise  Source
+   Reattach bottom right panel
+  Config examples
+ How to SSH into the printer?
+ SSH access is needed for a number of low-level tasks such as installing addons.
+ Open a terminal and  ssh pi@<your Magneto X IP address>
+ The default username is “pi” and the password is “armbian”.
+ References
+  Guides to modify the timezone
+ What and how to lubricate?
+ Author(s): @kaihanga
+ Peopoly’s  Linear Guide Maintenance .
+ Lubricate every 4 - 6 weeks is necessary with some evidence it helps with VFAs, Ringing, etc.
+ Use an NLGI 2 grease such as  Mobil Polyrex EP2
+    NLGI  refers to the consistency, in this case like peanut butter.
+ Recommended  syringes , for getting into tighter places, such as the X carraige.
+ References
+    “I’m using Mobilux EP2 based on recommendations and what some folks selling linear rails were selling”
+ General maintenance tips:  Lubrication Basics - Keep your 3D printer running smooth and quiet .
+   Ensure printer is powered off
+   Inspect the rails, if rust found, remove with WD-40
+   Using a gloved hand, smooth it onto both side of all the rails:
+       2 on top for the Y axis
+       1 under the gantry for the X axis
+       All 4 vertical Z axis
+   Manually move the toolhead back and forth in both X & Y axes to ensure even distribution of the grease along the entire rail.
+   Clean up any excees on the toolhead
+ References
+  “If the grease isn’t oozing out and making a mess then you’re not using enough.”
+ How to install the Nozzle Wiper
+ Author(s): @kaihanga
+ The  nozzle wiper installation docs  suggest placing the felt before moving the toolhead to align. Unfortunately, the toolhead cannot move as far X as suggested due to the part cooling fan. This may be due to the docs being written before the present fan design.
+   Follow the installation
+       EXCEPT do the toolhead move first then place the felt
+       Note the two x & y coordinate sets
+   In the macros.cfg file
+       Copy & Paste the GCODE into the macros.cfg file
+       Replace the two x, y coordinates as the installation directs
+       Add the  MAG_WIPE_NOZZLE  macro near the bottom of the  PRINT_START  macro, before  LINE_PURGE
+ How to lower the print bed after a print?
+ Author(s): @kaihanga
+ Replace the  PRINT_END  macro in  macros.cfg  with the following…
+    [gcode_macro PRINT_END]
+variable_max_z: 300  # Set this to your printer's max Z height
+gcode:
+  G91                              # Switch to relative positioning
+  G1 Z5 F600                       # Raise the nozzle by 5mm (lower bed by 5mm)
+  G1 E-5 F300                      # Retract filament
+  G90                              # Switch back to absolute positioning
+  G1 X150 Y10 F12000               # Move nozzle to park position
+  M104 S0                          # Turn off hotend
+  M140 S0                          # Turn off bed heater
+  M106 S0                          # Turn off part cooling fan
+  {% set target_z = ((printer.toolhead.position.z + max_z) / 2)|round(1) %}
+  G1 Z{target_z} F600              # Move bed to halfway point between current Z and max Z
+  UPDATE_DELAYED_GCODE ID=delay_disable_motor DURATION=30  # Delay motor disable
+ References
+  “This is tested to and works on my V0.  I changed the values here to match the Magneto:”
+ Received a timeout in Orcaslicer when sending a print?
+ You received the following timeout error when sending a print, which may have still started.
+ The Magneto X is closing the Orcaslicer connection before fully processing and accepting the print request.
+ To fix, a network component of the Magneto X needs to be adjusted to allow the printer to take longer to process the print request. The catch is that this isn’t a one-size-fix-all solutoon as the timeout period may need to be further adjusted for larger and larger print sizes. It also can’t be made excessively big, or even infinite, as that creates other issues. The suggestion is to start with the recommendation below, increasing to as much as 1600s as needed.
+ This improvement requires SSH access.
+   SSH into the printer
+   Edit nginx’s settings, add the following 4 lines to the bottom of the  http  section of /etc/nginx/nginx.conf, such as  sudo nano /etc/nginx/nginx.conf
+       proxy_send_timeout 500s;
+       proxy_read_timeout 500s;
+       fastcgi_send_timeout 500s;
+       fastcgi_read_timeout 500s;
+   Restart nginx,  sudo systemctl restart nginx
+   Confirm nginx is running,  sudo systemctl status nginx
+       Should see  active (running)  in the middle
+ References
+  “If the plate upload size is too big I get that error. It looks like you can change some config settings…”
+  “It’s not an issue with orcaslicer, but with nginx on the printer.”
+ How to fix Pause and Resume
+ Author(s): @kaihanga
+ The Pause & Resume funtionality’s broken due to there being multiple defitions of the  [gcode_macro PAUSE]  and  [gcode_macro RESUME]  macros across the  macros.cfg  and  mainsail.cfg  files. The ones in  mainsale.cfg  need to be commented out as those in  macros.cfg  are correct.
+ This file cannot be edited by the Klipper web interface as it’s read-only.
+   SSH into the printer
+    nano mainsail-config/mainsail.cfg
+   Comment out, that is put a  #  in front of every line, of the  [gcode_macro PAUSE]  and  [gcode_macro RESUME]  macros. That is every line from those macros through to the next  [gcode_macro ...]  line.
+   Exit and save the file
+ References
+  “Wow. Downloaded mailsail, commented out the pause and resume and then uploaded it …”
+ How to backup the printer configuration and macros?
+ Author(s): @kaihanga
+ Many fixes and improvements referenced here as well as those you find on the Peopoly Discord involve editing the printer’s settings and macros. Backing them up ensure you don’t lose that work.
+ Here are a couple of videos on how to do so. Watching both is recommended as they provide different perspectives.
+ Modbot -  This Klipper Add-on Could Save You! (Klipper-Backup)
+ Minimal 3DP -  Klipper Backups! A New Guide to Using Klipper Macros to Backup Your Configuration Files
+ References
+  I’d recommend watching both as they give overlapping but slightly different insights.
+ Troubleshooting the 24v side of the electronics
+ Author(s): @kaihanga
+ Symptoms of a failure include part of the printer system powering off. Troubleshooting includes isolating where the failure’s ocurring. For one user it was a failure of the  Octopus control board  in the printer’s base. As the printer was still under warranty, Peoply sent a new card. Peoply sent the following  MagnetoX 24V power supply troubleshooting steps  to figure out the cause.
+ References
+  I started a print and everything on the 24v side powered off.
+ Enclosure installation tips
+ Author(s): @kaihanga
+   Bring your own allen key set
+       You’ll be installing many screws and the keys included witrh the printer aren’t fun to use for extended periods
+       Something like the  SHOWPIN Electronics Precision Screwdriver Set  or the  iFixit Pro Tech Toolkit
+   Try to position panels with the text describing the part number facing inward, at the bottom
+       It’s not always possible
+   Peel back the scratch protection to only what’s needed to access the screw holes until you’re done
+   Start printing the reinforcements
+       Suggest heat deflective filament, as it’s inside. The PETG-CF that comes with the printer should be fine.
+ How to install Display at top?
+ Author(s): @kaihanga
+ The cables two cables needed for the display don’t easily reach the top.
+   Extend cables at bottom
+   Buy  Micro HDMI  and  USB Type-A  Extenders
+       Yes, it’s Mini HDMI and USB Type C at the console but it’s micro HDMI and USB Type-A connecting to the Orange PI computer
+   Remove bottom right panel
+   Clip zip ties binding cables
+   Unscrew Z motor; it can be torqued in tough
+   What’s first and second here may differ for you
+       Use needle-nose pliers to remove glue
+       Pull out cables
+       Rinse, repeat as necessary
+       Keep enough cable slack to connect to extenders
+   Carefully pull each cable from top feeding additional cable from the bottom - Don’t stress the cables!
+   Check for good slack and the three points: top out for the screen, middle in to take the cables down the rail, and space around the z motor
+   Hook up extensions and mount screen, confirming you have the needed cable length
+   Reattach Z motor
+   Turn on and test screen works
+   Clean up
+       Optional - Zip tie cables
+       Reattach bottom right panel
+ Is there a community to share and learn about other’s experiences?
+ There’s an “official” discord with an active community.  Click here for an invitation .
+  Information from Peopoly about the community
+ PET-CF Profile
+ Author(s): @kaihanga
+   Nozzle temp: 300
+   Build plate temp: 75
+   Max volumetric: 30
+   Flow ratio: 0.9
+   Pressure advance: 0.022
+   Gluestick: Required
+ References
+  “Thanks for a reminder. My max volumetric is 30, flow ratio is .9, PA is 0.022…”
+ Rails and Carriages
+ Author(s): @kaihanga
+  Dimensions
+   X is 400mm MGN12H with 1 rail and 1 carriage
+   Y is 500mm MGN12C with 2 rails and 4 carriages
+  Misc.
+   Medium load is preferred
+   Motion Perfect is preferred but costly and Y length is difficult to find
+   Berserker’s great
+   X takes most abuse so prefer that
+ References
+    X is MGN12H Y is MGN12C.
+    MP rails are 👌
+    Again, X sees a lot of forces, a lot of abuse, a lot more riding on that one bearing and rail
+ 

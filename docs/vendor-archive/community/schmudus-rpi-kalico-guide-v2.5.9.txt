@@ -1,0 +1,608 @@
+HOW TO ...
+... Upgrade Magneto X to:
+–
+
+Raspberry Pi from scratch
+
+–
+
+Use Kalico instead of Klipper
+
+–
+
+Use Nitehawk36 (USB) instead of original CAN-Toolboard
+
+–
+
+Use BTT ebb36 because USB made too many problems
+
+–
+
+Finally change to Fysetc H36 because more ports and higher temperature resistance
+
+–
+
+Use BTT eddy instead of load cell (load cell is no more working after upgrade)
+
+–
+
+Change eddy to beacon3D, because of not fully compatible eddy
+
+–
+
+Implementation of Spoolman (I run it on a different Pi)
+
+–
+
+Upgraded to Raspberry Pi 5 with PCIe to USB+NVMe HAT (no more SD card)
+
+–
+
+CAUTION: I have some other modification on my machine like 0.9° motors, different lead screw, BoxTurtle,
+so my config is modded and I don't offer it here
+
+–
+
+Requirement: You need a working magneto and a good configs before upgrading
+
+! USE AT YOUR OWN RISK !
+! MACHINE'S WARRANTY MAY BE VOID !
+! DOING IT WRONG CAN DAMAGE YOUR PRINTER !
+! I AM NOT RESPONSIBLE FOR ANYTHING YOU DO !
+>> I slow down to CAN speed to 250000 with 512 txqueue length. Looks like it is more reliabel on my machine <<
+
+Copy and safe your config!
+/home/pi/printer_data/config
+Copy and safe Magneto specific files:
+/home/pi/klipper/klippy/extras/gcode_shell_command.py
+home/pi/klipper/klippy/extras/magneto_load_cell.py
+/home/pi/auto-uuid
+(can be found as well in github repo: https://github.com/mypeopoly/Klipper/tree/master)
+Step 1: Install a Raspberry Pi image
+use Raspberry Pi imager
+Select Raspberry Pi OS other --> Raspberry Pi OS lite (64-bit or 32-bit)
+Set network and SSH using “pi” and “raspberry”
+
+IMPORTANT
+BTT SKSM is NOT working with Raspberry Pi 5 (too much power needed for Pi 5)
+
+It is necessary to use a high power (5 Amps) power device! The original Raspberry power supply is a little
+weak if you want to run several USB devices. There is a 45W power supply available which is better.
+Use a separate power supply for each HAT
+The Pi 5 should boot directly from NVMe without SD card, so you can use Pi Imager to write image directly
+to your NVMe and install it to the Raspberry hat.
+After finishing the steps and your Pi is booting just fine we continue.
+1st of all you need to do a complete upgrade/update:
+
+sudo rpi-update
+sudo apt update
+sudo apt full-upgrade
+sudo rpi-eeprom-update
+if update is available:
+sudo rpi-eeprom-update -d -a
+restart with
+sudo reboot
+sudo apt-get update --fix-missing
+sudo apt install rpi-update
+sudo apt-get install -y crudini
+sudo apt autoremove
+
+restart with
+sudo reboot
+Then install git with
+sudo apt-get update && sudo apt-get install git -y
+Info: It is better to flash the new bootloader via command than via raspi-config.
+Install the necessary packages
+sudo apt install python3
+python3 -m pip cache purge
+~/klippy-env/bin/pip install -r ~/klipper/scripts/klippy-requirements.txt
+sudo apt install python3-pip
+sudo apt install python3-pil
+sudo apt install python3-numpy
+sudo apt install python3-flask
+sudo apt install python3-serial
+sudo apt install python3-scipy
+python3 -m pip config set global.break-system-packages true
+sudo apt install gfortran
+sudo apt install cmake
+sudo apt install libopenblas-dev
+sudo pip3 install Rpi.GPIO --break-system-packages
+sudo pip3 install spidev --break-system-packages
+sudo pip3 install python-can --break-system-packages
+python3 -m pip cache purge
+
+Change boot order if using NVMe
+
+sudo -E rpi-eeprom-config --edit
+change boot order to:
+BOOT_ORDER=0xf146
+If not already add:
+PCIE_PROBE=1
+Save and reboot.
+INFO: You can change boot order via raspi-config as well, but it will maybe not add the PCIE_PROBE=1.
+Some NVMe will not start properly without this order.
+
+For Raspberry Pi 5 only
+You can switch on/off the USB Power control via “sudo raspi-config”
+4 Performance options --> USB Current --> switch off current limit
+You can set PCIe to version 3 via “sudo raspi-config”
+6 Advanced Options --> A8 PCIe speed
+Cooling fan speed:
+If you like to change the cooling fan speed you need to change the boot/firmware/config.txt
+Add e.g. the following:
+[all]
+dtparam=fan_temp0=30000
+dtparam=fan_temp0_hyst=3000
+dtparam=fan_temp0_speed=65
+dtparam=fan_temp1=55000
+dtparam=fan_temp1_hyst=5000
+dtparam=fan_temp1_speed=128
+dtparam=fan_temp2=75000
+dtparam=fan_temp2_hyst=5000
+dtparam=fan_temp2_speed=154
+dtparam=fan_temp3=80000
+dtparam=fan_temp3_hyst=4000
+dtparam=fan_temp3_speed=192
+dtparam=fan_temp4=90000
+dtparam=fan_temp4_hyst=4000
+dtparam=fan_temp4_speed=255
+# add this for enabling maximum current for usb
+usb_max_current_enable=1
+#add this for PCIe in V3 mode
+dtparam=pciex1_gen=3
+# add this to disable Bluetooth
+dtoverlay=disable-bt
+
+To remove the bluetooth package completely:
+
+sudo systemctl disable hciuart.service
+sudo systemctl disable bluealsa.service
+sudo systemctl disable bluetooth.service
+Disable WIFI power saver
+
+check status with:
+sudo iwconfig wlan0
+Disable power saver with
+sudo crontab -e
+which opens the root crontab in your chosen editor... (or select your editor, usually nano)
+add the following line at the bottom of the root crontab:
+@reboot /usr/sbin/iw wlan0 set power_save off
+Save, exit and reboot. Check again with sudo iwconfig wlan0 if it is disabled.
+
+Steps to install Klipper / Kalico
+Install KIAUH (https://github.com/dw-0/kiauh)
+Use V6 !!!
+Change repository to kalico (see https://github.com/KalicoCrew/kalico), bleeding-edge-v2 as the new branch name
+Install klipper, mainsail, klipperscreen, crowsnest via KIAUH
+For Raspberry Pi5 and Klipperscreen it is neccessary to uise WAYLAND and NETWORK MANAGER
+To have a faster reboot just disable waiting for network manager with:
+sudo systemctl disable NetworkManager-wait-online.service
+sudo systemctl mask NetworkManager-wait-online.service
+
+--> USING A CAMERA WITH CROWSNEST AND TIMELAPSE CAN CAUSE USB FAILURES (LOST COMMUNICATION) IF
+USING A PI 5 <--
+
+Install timelapse
+https://github.com/mainsail-crew/moonraker-timelapse
+Install your personal add ons (TMC autotune, Sonar, shaketune, ...):
+https://github.com/ArmoredTurtle/AFC-Klipper-Add-On
+https://github.com/julianschill/klipper-led_effect
+https://github.com/andrewmcgr/klipper_tmc_autotune
+https://github.com/mainsail-crew/sonar
+https://github.com/Frix-x/klippain-shaketune
+git clone https://github.com/mitant/peopoly-magneto-x-theme ~/printer_data/config/.theme
+https://github.com/ArmoredTurtle/AFC-Klipper-Screen-Add-On
+https://klipperbackup.xyz/
+https://docs.beacon3d.com/quickstart/
+https://github.com/moggieuk/KlipperScreen-Happy-Hare-Edition?tab=readme-ov-file
+https://github.com/moggieuk/Happy-Hare/wiki/Installation
+
+For Boxturtle only:
+Update mainsail to AFC mainsail, just copy/paste the mainsail folder
+(my copy is safed at: E:\3D-Drucker\config\Box Turtle\mainsail)
+Steps to install magneto service and other files needed
+Copy back to Raspberry Pi:
+/home/pi/klipper/klippy/extras/gcode_shell_command.py --> not necessary,
+Kalico have its own
+Copy back:
+home/pi/klipper/klippy/extras/magneto_load_cell.py
+/home/pi/auto-uuid
+home/pi/printer_data/config
+
+Create the magneto service file
+sudo nano /etc/systemd/system/magneto.service
+Copy and paste the text below into the nano editor
+[Unit]
+Description=Magneto Manager Service
+After=network.target
+[Service]
+Type=simple
+User=root
+ExecStart=/bin/bash /home/pi/auto-uuid/magneto-run.sh
+[Install]
+WantedBy=multi-user.target
+
+Change file permissions
+Now, we need to change the file permissions to make it readable by all by typing
+sudo chmod 644 /etc/systemd/system/magneto.service
+As the last step, you need to tell the system that you have added this file and want to enable this service so that it
+starts at boot.
+sudo systemctl daemon-reload
+sudo systemctl enable magneto.service
+change can config (if using CAN):
+sudo nano /etc/network/interfaces.d/can0
+----paste this:
+allow-hotplug can0
+iface can0 can static
+bitrate 250000
+up ifconfig $IFACE txqueuelen 512
+pre-up ip link set can0 type can bitrate 250000
+pre-up ip link set can0 txqueuelen 512
+
+txqueuelen 1024 can work, but Kevin recommends to use txqueuelen 128, I set it to 512.
+see also https://www.klipper3d.org/CANBUS.html
+
+If you don't use the Magneto Linux-CAN-board you can use the standard setting:
+allow-hotplug can0
+iface can0 can static
+bitrate 1000000
+up ifconfig $IFACE txqueuelen 128
+pre-up ip link set can0 type can bitrate 1000000
+pre-up ip link set can0 txqueuelen 128
+Install Beacon software
+cd ~
+git clone https://github.com/beacon3d/beacon_klipper.git
+./beacon_klipper/install.sh To install Beacon
+Strictly follow the guide on https://docs.beacon3d.com/quickstart/
+Especialy don't forget to check your [stepper_z], it is necessary to have:
+homing_retract_dist: 0
+Wiring Beacon to nitehawk36:
+
+Helpful for adjustment:
+Here the probe touches the bed and measures the distance. Then do the auto-calibrate. No more paper test
+necessary :-)
+Example:
+BEACON_AUTO_CALIBRATE SPEED=3.0 ACCEL=400.0 RETRACT=5.5 RETRACT_SPEED=3.0 SAMPLES=5
+SAMPLES_TOLERANCE=0.0090 SAMPLES_TOLERANCE_RETRIES=5
+
+For using BTT SKSM:
+https://github.com/bigtreetech/SKSM
+Insert the Micro SD card with the OS image into the computer. Add the following line to the config.txt file:
+dtoverlay=gpio-shutdown,gpio_pin=21. Then save and exit.
+Wiring PB2 is not necessary
+
+IMPORTANT
+BTT SKSM is NOT working with Raspberry Pi 5 (too much power needed for Pi 5)
+
+BTT Octopus firmware (necessary to flash for Kalico):
+→ make menuconfig:
+[*] Enable extra low-level configuration options
+STMicroelectronics
+STM32H723
+128 kiB Bootloader
+25 MHz crystal clock
+communication interface (USB (on PA11/PA12))
+(x) high precision stepping support
+
+→ safe and close
+→make clean
+→make
+Firmware is in output directory ~/klipper/out.
+
+Flash Mainboard
+ls /dev/serial/by-id/*
+ls /dev/serial/by-path/*
+sudo service klipper stop
+make flash FLASH_DEVICE=/dev/serial/by-id/usb-Klipper_stm32h723xx_21003C001851333031373837-if00
+udo service klipper start
+Install BTT eddy and flash the device according to:
+https://github.com/bigtreetech/Eddy
+Wiring USB connection from nitehawk36 to eddy USB:
+I used the original eddy cable, cut it and soldered it to the nitehawk36 USB extension cable.
+
+Check and update all mcu serial with either
+ls /dev/serial/by-id/*
+or
+
+ls /dev/serial/by-path/*
+(by path can help to avoid timeout / lost communications)
+Easiest way for me is to plug in one after the other USB device and run ls /dev/... after each plug to find out which is
+which.
+Config hotend temperature
+
+Make sure the <pullup_resistor> in [extruder] section is set to 2200 (nitehawk36 and H36)
+
+Make sure the <pullup_resistor> in [extruder] section is set to 4700 (ebb36 only)
+Magneto toolhead board
+Now we can take out the toolhead board as well. We only need the U, V, W to be connected to the mover board. I
+soldered the wires directly to the top of the mover board and make a new plug for easier remove. Now 2 cables can
+be removed from the printer.
+Take care for the wiring and double check it.
+
+IMPORTANT
+After doing this mod it is necessary to re-run the Linear motor host software to re-adjust the controller settings!!!!!
+Filament sensor
+nitehwak36
+RGB Port 5V
+RGB Port GND
+Filament sensor +
+
+Magneto runout sensor
+VCC (blue)
+GND (red)
+Sensor (black)
+
+Danger_Options (Kalico only)
+
+Create a new file “danger_options.cfg”
+Open it and copy/paste the danger options from
+https://docs.kalico.gg/Config_Reference.html#danger-options
+Read carefully through the options and set whatever you need, e.g. #multi_mcu_trsync_timeout: 0.025 is
+maybe too small and need to set to e.g. 0.050.
+Save
+Open printer.cfg and include the new file
+[include danger_options.cfg]
+New PID routine
+
+I am happy with my bed PID but not that much with extruder PID. It overshoots at about 8 to 10°C. Now
+with KALICO we can use another PID
+change as follows
+[extruder]
+control = pid_v
+pid_kp = 17.089
+
+pid_ki = 1.238
+pid_kd = 58.960
+an re-calibrate with:
+PID_CALIBRATE HEATER=extruder TARGET=250 WRITE_FILE=1 TOLERANCE=0.005
+
+Extruder stepper motor (only nitehawk36)
+
+The nitehawk36 board delivers a sense_resistor of 0.100, so change it in your config
+[tmc2209 extruder]
+uart_pin: nhk:gpio0
+interpolate: true
+run_current: 1.0
+#run and hold current are depending on motor you have.
+#Keep it on the original values if you don't change the motor
+#Additional cooling (cooling fan e.g.) is necessary with current higher than 0.7
+hold_current: 0.6
+sense_resistor: 0.100
+stealthchop_threshold: 0
+Additional cooling fan
+
+The stands on the magneto toolhead can fit a 40 x 40 cooling fan. It can be wired to nitehawk36 Probe port,
+using GND and PRB+. Its always on, so a quite fan is recommended (Noctua e.g.). Voltage can be set to 24 or
+5V by jumper.
+
+Fysetc H36 Combo toolhead board
+Pinout:
+
+ATTENTION: This board switch the -24V, not the +24V!!! All fans will have +24V all time!!!
+Find more information at https://wiki.fysetc.com/docs/H36-Combo
+
+Firmware settings
+
+Connect ONLY USB to your Raspberry Pi
+Power cycle the printer
+press and hold BOOT0,
+
+•
+•
+•
+•
+
+then press the RESET button for one second,
+then release RESET,
+wait for 3 seconds,
+and release BOOT0.
+
+Check if device is in DFU mode with lsusb
+flash new firmaware with
+make flash FLASH_DEVICE=0483:df11
+
+Find the canbus UUID with
+sudo service klipper stop
+~/klippy-env/bin/python ~/klipper/scripts/canbus_query.py can0
+sudo service klipper restart
+
+Spoolman
+Create an entry in moonraker.conf:
+[spoolman]
+server: http://192.168.xxx.xxx:7912
+# URL to the Spoolman instance. This parameter must be provided.
+sync_rate: 60
+# The interval, in seconds, between sync requests with the
+# Spoolman server. The default is 5.
+BOXTURTLE – Spoolman:
+delete --- it works now via web-interface
+Fault: Neopixel update did not succeed
+Modify the klipper/klippy/extras/neopixel.py file and increase the BIT_MAX_TIME parameter to 0.000030. After any
+change to the source code you must run a sudo service klipper restart for that change to take effect.
+UPDATE ESP32 board
+“The ESP32 is responsible for the buttons and LEDs at the bottom of the frame. It turns the motors on/off, handles
+errors, and similar. “ (EmperorArthur)
+Download the *.bin File:
+https://github.com/EmperorArthur/magneto_x_linear_motor_controller_firmware/releases
+Update using the Peopoly instructions:
+https://wiki.peopoly.net/magneto/magneto-x/how-to-update-linear-motor-controller-firmware
+
+Installation of the Waveshare 2-CH_CAN_HAT+
+
+!!! Attention, don't mix it with the very similar 2-CH_CAN_FD_HAT, you see the difference
+if there is one (hat+) or two (fd_hat) jumper for 3.3/5V voltage selection!!!
+refer to: https://www.waveshare.com/wiki/2-CH_CAN_HAT+
+
+edit boot/firmware config.txt :
+dtparam=spi=on
+dtoverlay=i2c0
+dtoverlay=spi1-3cs
+dtoverlay=mcp2515,spi1-1,oscillator=16000000,interrupt=22
+dtoverlay=mcp2515,spi1-2,oscillator=16000000,interrupt=13
+Sudo reboot your Pi
+
+Check with dmesg | grep spi1
+you should receive something like:
+
+Just for information
+→ IFCONFIG HAS BEEN DEPRECATED. THE REPLACEMENT IS “IP ADDRESS” ←
+Add CAN information to network:
+Go to etc\network
+create a directory called interfaces.d (sudo mkdir interfaces.d)
+open the new directory
+make two files:
+sudo nano can0
+insert:
+auto can0
+allow-hotplug can0
+iface can0 can static
+bitrate 250000
+up ip link set $IFACE txqueuelen 512
+close and safe
+
+next file is very similar:
+sudo nano can1
+insert:
+auto can1
+allow-hotplug can1
+iface can1 can static
+bitrate 250000
+up ip link set $IFACE txqueuelen 512
+reboot with sudo reboot
+sudo systemctl enable systemd-networkd
+sudo systemctl start systemd-networkd
+sudo systemctl disable systemd-networkd-wait-online.service
+next is one row:
+echo -e 'SUBSYSTEM=="net", ACTION=="change|add", KERNEL=="can*" ATTR{tx_queue_len}="512"' | sudo tee
+/etc/udev/rules.d/10-can.rules > /dev/null
+next is one row:
+echo -e "[Match]\nName=can*\n\n[CAN]\nBitRate=250000\nRestartSec=0.1s\n\n[Link]\nRequiredForOnline=no" |
+sudo tee /etc/systemd/network/25-can.network > /dev/null
+After another sudo reboot and with ip a you should see something like this: (ip a is a shortcut for ip address)
+[...]
+4: can0: <NOARP,UP,LOWER_UP,ECHO> mtu 16 qdisc pfifo_fast state UP group default qlen 512
+link/can
+5: can1: <NOARP,UP,LOWER_UP,ECHO> mtu 16 qdisc pfifo_fast state UP group default qlen 512
+link/can
+State UP means, its running :-)
+CAN txqueuelen different value after reboot
+If you see the txqueuelen as a different number than set try the following (group default qlen set it to different value):
+check:
+etc/udev/rules.d/10-can.rules
+etc/udev/rules.d/10-can-queue.rules
+Both should look like this:
+SUBSYSTEM=="net", ACTION=="change|add", KERNEL=="can*" ATTR{tx_queue_len}="512"
+
+After change do the usual sudo reboot and check again with ip a
+If you want the Peopoly logo in your mainsail web interface use this:
+https://github.com/mitant/peopoly-magneto-x-theme
+BTT EBB36
+Very similar to nitehawk but with CAN support.
+[mcu ebb36]
+canbus_uuid: 84a63291b9dd
+canbus_interface: can0
+Follow the BTT guide to update the firmware. And find the ebb UUID.
+In my setup I use the second CAN for EBB36.
+Wiring at EBB36 is very limited. Need to do a splitter for part cooling fan.
+There is no rpm feedback for the fans.
+DIR_PIN for extruder need to be turned
+[extruder]
+step_pin: ebb36:PD0
+dir_pin: !ebb36:PD1
+enable_pin: !ebb36:PD2
+Filament runout sensor is wired to the ebb36 endstop port PB6
+Filament sensor
+nitehwak36
+ebb36
+Magneto runout sensor
+RGB Port 5V
++5V
+VCC (blue)
+RGB Port GND
+GND
+GND (red)
+Filament sensor +
+PB6
+Sensor (black)
+
+How to find CAN UUID
+Stop Klipper and query the corrssponding CANBUS (CAN0 / CAN1)
+sudo systemctl stop klipper.service
+~/klippy-env/bin/python ~/klipper/scripts/canbus_query.py can0
+~/klippy-env/bin/python ~/klipper/scripts/canbus_query.py can1
+sudo systemctl start klipper.service
+It may be possible that you have to do a complete powercycle before changes are working. EBB36 seems to need a
+powercycle before new firmware takes part.
+Find my Configs on GitHub (branch: backup):
+https://github.com/Schmudus/My-Magneto-X/tree/backup
+
+SPECIAL THANKS TO:
+Jetguy
+mikebcbc
+Arsoth
+Deathzo
+Infowolfe
+EmperorArthur
+
+and all others on discord who figured out how things could be done
+
+– - - - - - - TO BE CONTINUED - - - - - - (Next will be Fysetc H36 v1.3 toolhead board)
+November, 09th 2025
+Schmudi
+
+HISTORY:
+Version 2.4 :
+Version 2.4.1 :
+Version 2.4.2 :
+Version 2.4.3 :
+Version 2.4.4 :
+Version 2.4.5 :
+Version 2.4.6 :
+Version 2.4.7 :
+Version 2.4.8 :
+
+Version 2.4.9 :
+Version 2.4.10 :
+Version 2.4.11 :
+Version 2.4.12:
+Version 2.5.0:
+Version 2.5.1:
+Version 2.5.2:
+Version 2.5.3:
+Version 2.5.4:
+Version 2.5.5:
+Version 2.5.6:
+Version 2.5.7:
+Version 2.5.8:
+Version 2.5.9:
+
+PI5 added
+Error handling added
+Moonraker theme for Peopoly logo added
+Neopixel fault added
+small corrections
+small corrections + add picture for Raspberry WiFi power saver +
+update ESP32 board
+added information about Raspberry 5 bootloader, boot from
+NVMe and upgrade/update Raspberry Pi 5
+added information about upgrade/update Raspberry Pi 5
+change order to make it easier to follow
+delete unneccessary entries
+add more installations which are necessary for additional
+hardware like beacon
+added information to install waveshare 2 channel CAN HAT+
+add starting network.d service and small spell corrections
+add Peopoly Logo in mainsail
+CAN txqueuelen different value after reboot
+Added BTT EBB36 and corrected CAN settings
+small corrections and link to klipper backup added
+eeprom update added
+Find UUID added, GitHub added
+nothing new, order changed and formatting adjusted
+add Fysetc H36 Combo toolhead board
+fixed typo
+fixed update order
+add instruction to flash mainboard
+add additional information for Klipperscreen. Add Happ Hare installation.
+
+

@@ -4,7 +4,7 @@ magneto-x-klipper-config/
 magneto-x-os-mirror/
 magnetox-os-update/
 magneto-manager-tool/
-community/
+/community/
 klipper/
 
 # Keep our fork changes only via klipper remote; workspace tracks configs/docs
