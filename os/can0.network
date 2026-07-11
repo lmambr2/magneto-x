@@ -1,0 +1,7 @@
+# Example systemd-networkd unit for 1 Mbit CAN (gs_usb / similar).
+# Install as /etc/systemd/network/80-can0.network and adjust Name= to match `ip link`.
+[Match]
+Name=can0
+
+[CAN]
+BitRate=1M

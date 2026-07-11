@@ -1,0 +1,12 @@
+# Reference clones (large / third-party)
+peopoly-klipper/
+magneto-x-klipper-config/
+magneto-x-os-mirror/
+magnetox-os-update/
+magneto-manager-tool/
+community/
+klipper/
+
+# Keep our fork changes only via klipper remote; workspace tracks configs/docs
+*.pyc
+__pycache__/
