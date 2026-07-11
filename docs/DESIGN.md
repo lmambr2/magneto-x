@@ -835,7 +835,7 @@ Owners choose via Moonraker `primary_branch` / clone branch. See `klipper/docs/T
 | No `gcode_shell_command`; fixed argv curl/serial from Moonraker; smaller than full Klippy MagXY module | Still a host service; macros become Moonraker gcode shell or custom macros calling HTTP already localhost |
 | Aligns with security goals | Another component to package |
 
-**Decision:** Viable **middle ground** between shell (v1) and A5. Track under S7 alongside PR-K7; prefer if shell risk becomes the dominant support issue before a full Klippy module is ready. Does not replace hardened magneto-manager serial ownership for v1.
+**Decision (updated):** **A8 lite landed** as optional Moonraker component `os/moonraker/magneto_magxy.py`. Primary path remains K7. Does not replace hardened manager.
 
 ---
 

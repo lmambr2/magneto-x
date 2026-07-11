@@ -29,7 +29,8 @@ If you own a Magneto X that never quite worked because of the stock Klipper tree
 
 ## Agent / contributor steering
 
-- **[AGENTS.md](AGENTS.md)** — system map, ownership seams, policies, known-bad patterns, and pre-merge checks for AI assistants and humans
+- **[AGENTS.md](AGENTS.md)** — system map  
+- **[CONTRIBUTING.md](CONTRIBUTING.md)** · **[CHANGELOG.md](CHANGELOG.md)** — contrib + release notes, ownership seams, policies, known-bad patterns, and pre-merge checks for AI assistants and humans
 
 ## Docs
 
@@ -68,7 +69,7 @@ If you own a Magneto X that never quite worked because of the stock Klipper tree
 # ./os/postinstall-magneto.sh --dry-run
 ```
 
-Then edit `magneto_device.cfg`, `LM_ENABLE`, home. MCU flash later: [docs/MCU_BUILD.md](docs/MCU_BUILD.md).  
+Then edit `magneto_device.cfg`, run `./scripts/preflight-magneto.sh`, `LM_ENABLE`, home. MCU flash later: [docs/MCU_BUILD.md](docs/MCU_BUILD.md).  
 Hardware sign-off: [docs/validation/S3_HARDWARE_REPORT.template.md](docs/validation/S3_HARDWARE_REPORT.template.md).
 
 Details: [docs/MIGRATION.md](docs/MIGRATION.md) · [docs/STATUS.md](docs/STATUS.md).

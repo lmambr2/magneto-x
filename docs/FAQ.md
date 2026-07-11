@@ -82,6 +82,14 @@ See `config/optional/alt_hardware_notes.cfg` and community alt-stack guides.
 
 Not in this repo (proprietary). Copy from Peopoly `magnetox-os-update` / stock image; optional `./os/install-magneto-services.sh --with-magmotor` if the tree is present locally.
 
+## Preflight on the host
+
+```bash
+~/magneto-x/scripts/preflight-magneto.sh
+```
+
+Checks USB CAN `1d50:606f`, can0 @ 250k / txqueuelen, manager health/allowlist, K7 files, config placeholders.
+
 ## Troubleshooting tree (LM_ENABLE fail)
 
 ```
@@ -92,3 +100,7 @@ LM_ENABLE fails?
 ├─ curl to wrong host → must be 127.0.0.1 from printer
 └─ shell module missing → wrong Klipper tree / branch
 ```
+
+## Filament runout on gpio29
+
+Optional: `[include optional/runout_double_check.cfg]` (EmperorArthur-style delayed double-check). Do not also enable stock `filament_switch_sensor` on the same pin.

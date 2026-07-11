@@ -71,7 +71,8 @@ Legend: **In** = already absorbed or now archived · **Adopt** = take patterns i
 | Source | Value | Inclusion |
 |--------|-------|-----------|
 | [kaihanga FAQ](https://kaihanga.github.io/peopoly-magnetox-faq/) | Pause/resume, SSH, nginx, Beacon, dimensions, real-world fixes | **Adopt** into future `docs/FAQ.md`; text extract in `vendor-archive/community/` |
-| [EmperorArthur linear motor FW](https://github.com/EmperorArthur/magneto_x_linear_motor_controller_firmware) | MIT ESP32 reverse eng: `ENABLE`/`DISABLE`, Modbus registers, ASCII/RTU modes | **Cite + optional later PR-M10**; do not vendor their tree as submodule unless they want collaboration — document protocol for native Klippy module |
+| [EmperorArthur linear motor FW](https://github.com/EmperorArthur/magneto_x_linear_motor_controller_firmware) | MIT ESP32 reverse eng: `ENABLE`/`DISABLE`, Modbus registers, ASCII/RTU modes | **Cite**; protocol used by K7/manager; optional flash after S3 (COMMUNITY_ESP32.md) |
+| [EmperorArthur/magneto-x-klipper-config](https://github.com/EmperorArthur/magneto-x-klipper-config) | Fork of Peopoly config; **gpio29 runout double-check** + Arsoth button pull tweaks; still LINEAR+LINER shell | **Harvested** runout → `config/optional/runout_double_check.cfg`; not a full alt stack |
 | [PlazmaZero OriginMove](https://github.com/PlazmaZero/MagnetoX-OriginMove) | XY port swap without rewiring | **Adopt** as `config/optional/origin-move.cfg` notes — **matches live printer** (X=300 Driver1, Y=400 Driver0) |
 | [hazyavocado CFG](https://github.com/hazyavocado/Peopoly-MagnetoX-CFG) | Stock 1.1.4 + pause/resume via client.cfg | **Adopt** `mainsail.cfg` / client pattern for PR-M2 |
 | [WilliamJamieson Magneto_x_config](https://github.com/WilliamJamieson/Magneto_x_config) | Modular configs + **Beacon** + nozzle wiper + motor macros | **Adopt** modular layout ideas; Beacon as optional profile |

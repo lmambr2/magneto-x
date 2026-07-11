@@ -1,0 +1,53 @@
+# Sample Moonraker config fragments for Magneto X (merge into ~/printer_data/config/moonraker.conf).
+# Not a drop-in full file — adapt paths/users to your MainsailOS install.
+
+[server]
+host: 0.0.0.0
+port: 7125
+max_upload_size: 1024
+klippy_uds_address: ~/printer_data/comms/klippy.sock
+
+[file_manager]
+# enable_object_processing: False   # leave False on Orange Pi Zero 2 (weak CPU)
+
+[authorization]
+cors_domains:
+    https://my.mainsail.xyz
+    http://my.mainsail.xyz
+    http://*.local
+    http://*.lan
+trusted_clients:
+    10.0.0.0/8
+    127.0.0.0/8
+    169.254.0.0/16
+    172.16.0.0/12
+    192.168.0.0/16
+    FE80::/10
+    ::1/128
+
+[octoprint_compat]
+[history]
+
+[announcements]
+subscriptions:
+    mainsail
+
+# --- Magneto: track host firmware ---
+[update_manager klipper]
+type: git_repo
+path: ~/klipper
+origin: https://github.com/lmambr2/magneto-x-klipper.git
+primary_branch: magneto-x
+# primary_branch: magneto-x-kalico
+managed_services: klipper
+
+# Optional: track this umbrella (manual config deploy still recommended)
+# [update_manager magneto-x]
+# type: git_repo
+# path: ~/magneto-x
+# origin: https://github.com/lmambr2/magneto-x.git
+# primary_branch: master
+
+# --- Optional A8: Moonraker MagXY proxy (see os/moonraker/README.md) ---
+# [magneto_magxy]
+# manager_url: http://127.0.0.1:8880

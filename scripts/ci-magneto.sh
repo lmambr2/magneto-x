@@ -13,6 +13,9 @@ bash os/check-defconfigs.sh
 echo "== postinstall dry-run =="
 bash os/postinstall-magneto.sh --dry-run
 
+echo "== preflight script syntax =="
+bash -n scripts/preflight-magneto.sh
+
 echo "== unit tests =="
 if [[ -x .venv-test/bin/python ]]; then
   PY=.venv-test/bin/python

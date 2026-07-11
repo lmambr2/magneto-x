@@ -1,7 +1,9 @@
-# Stock Magneto X Linux Hub USB-CAN (gs_usb): Peopoly + field reports use 250 kbit.
-# Live machine 192.168.1.214: bitrate 250000. Schmudus guide: 250000 + txqueuelen 512.
-# Use 1M only if you replace the hub / run a pure toolhead CAN path without that bridge.
-# Install as /etc/systemd/network/80-can0.network (adjust Name= to match `ip link`).
+# Stock Magneto X Linux Hub USB-CAN (gs_usb 1d50:606f): 250 kbit.
+# Schmudus + field practice: BitRate 250000 and txqueuelen 512.
+# Install: /etc/systemd/network/80-can0.network
+# Also set: sudo ip link set can0 txqueuelen 512
+# (systemd-networkd [CAN] does not set qlen on all versions — postinstall does.)
+# Use 1M only if you replace the hub / pure toolhead CAN without that bridge.
 [Match]
 Name=can0
 

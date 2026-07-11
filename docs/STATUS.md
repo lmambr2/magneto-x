@@ -26,6 +26,10 @@ Living checklist vs DESIGN PR plan. Update when PRs land.
 | Tracks | Mainline + Kalico A/B | `docs/TRACKS.md`, branches |
 | Decisions | Operator locks §1–7, §6 | `docs/DECISIONS_LOCKED.md` |
 | Field | CAN/H723/SSH | `docs/FIELD_FACTS.md` |
+| Preflight | Host checklist script | `scripts/preflight-magneto.sh` |
+| CHANGELOG / CONTRIBUTING | Release + contrib guide | root |
+| A8 lite | Moonraker MagXY proxy | `os/moonraker/` |
+| Optional configs | runout, temps, client vars, beacon notes, fw retract | `config/optional/` |
 
 ## Blocked on hardware (not “software done”)
 
@@ -35,22 +39,21 @@ Living checklist vs DESIGN PR plan. Update when PRs land.
 | MCU flash | Modern Octopus + Lancer | After host path works (2A); recipe in MCU_BUILD |
 | v1 git tag | D20 release | Requires PR-V1 green |
 
-## Deferred / optional (explicit non-goals for now)
+## Deferred (not done offline)
 
 | ID | Title | Notes |
 |----|--------|--------|
-| PR-M9 full | Custom MainsailOS image build | postinstall script is enough for now |
-| PR-M10 flash guide depth | EmperorArthur flash cookbook | Docs: COMMUNITY_ESP32.md; flash still operator-owned |
-| A8 | Moonraker MagXY proxy | If shell risk dominates |
-| GitHub Actions live | `.github/workflows/magneto-ci.yml` | Enabled (umbrella + both klipper tracks) |
-| HX717 / Beacon | Hardware redesign | Alt only |
+| PR-M9 full | Custom MainsailOS image | postinstall is enough |
+| PR-M10 deep ESP32 flash | Community FW cookbook | overview only in COMMUNITY_ESP32.md |
+| Beacon/HX717 **hardware** | Toolhead redesign | notes only under `optional/` |
 
 ## Local verify
 
 ```bash
 bash scripts/ci-magneto.sh
-# dry-run postinstall:
 ./os/postinstall-magneto.sh --dry-run
+# on printer:
+./scripts/preflight-magneto.sh
 ```
 
 ## Rollout stages

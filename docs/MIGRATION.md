@@ -45,10 +45,11 @@ Do **not** cherry-pick macros while leaving OS-update `LINER_*` trees active —
    `os/install-magneto-services.sh` → rsync `config/` → moonraker snippet.
 
 6. Edit `~/printer_data/config/magneto_device.cfg` (serial + canbus_uuid).
-7. nginx large uploads: see [FAQ.md](FAQ.md).
-8. **MCU flash** — deferred until host talks to stock bins (2A). When ready: [MCU_BUILD.md](MCU_BUILD.md).
-9. `FIRMWARE_RESTART` → `LM_ENABLE` → home carefully.
-10. Fill [validation/S3_HARDWARE_REPORT.template.md](validation/S3_HARDWARE_REPORT.template.md) for PR-V1.
+7. `~/magneto-x/scripts/preflight-magneto.sh`
+8. nginx large uploads: see [FAQ.md](FAQ.md).
+9. **MCU flash** — deferred until host talks to stock bins (2A). When ready: [MCU_BUILD.md](MCU_BUILD.md).
+10. `FIRMWARE_RESTART` → `LM_ENABLE` → home carefully.
+11. Fill [validation/S3_HARDWARE_REPORT.template.md](validation/S3_HARDWARE_REPORT.template.md) for PR-V1.
 
 ### Rollback (clean OS)
 
