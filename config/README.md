@@ -18,7 +18,9 @@ Parse-ready Klipper configs for [magneto-x](https://github.com/lmambr2/magneto-x
    - **OriginMove**: comment stock, enable  
      `[include optional/origin_move.cfg]`  
      Driver1 = X 300 mm, Driver0 = Y 400 mm (matches many field machines)
-5. Ensure host Klipper includes Magneto extras (`magneto_load_cell`, `gcode_shell_command`) from **magneto-x-klipper** branch `magneto-x`.
+5. Ensure host Klipper includes Magneto extras from **magneto-x-klipper**:
+   - default branch **`magneto-x`** (mainline), or  
+   - **`magneto-x-kalico`** for Kalico A/B (see [docs/TRACKS.md](../docs/TRACKS.md)).
 6. magneto-manager must answer on `http://127.0.0.1:8880` for `LM_ENABLE` / `LM_DISABLE`.
 7. `FIRMWARE_RESTART` and home carefully (`LM_ENABLE` is required before XY motion).
 
@@ -60,3 +62,4 @@ Exit code 0 means every `[include …]` from `printer.cfg` resolves inside the p
 |---------|----------------|
 | Stock Peopoly XY | Default `motion_xy_stock.cfg` |
 | OriginMove XY | Swap include in `printer.cfg` → `optional/origin_move.cfg` |
+| Kalico `danger_options` | **Only** on host branch `magneto-x-kalico`: uncomment `[include optional/danger_options.cfg]` |

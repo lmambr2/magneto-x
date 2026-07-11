@@ -12,7 +12,7 @@
 
 ```
 Projects/magneto-x/
-├── klipper/                 # lmambr2/magneto-x-klipper, branch magneto-x
+├── klipper/                 # lmambr2/magneto-x-klipper (magneto-x or magneto-x-kalico)
 ├── config/                  # Printer configs ready to deploy
 ├── docs/                    # This research + guides
 ├── os/                      # Host image / service install notes
@@ -22,14 +22,21 @@ Projects/magneto-x/
 └── community/               # Community reference clones
 ```
 
-## Klipper branch: `magneto-x`
+## Klipper branches (A/B tracks)
 
-### Ported extras
+| Branch | Base | When |
+|--------|------|------|
+| **`magneto-x`** (default) | Klipper3d | First recovery / most owners |
+| **`magneto-x-kalico`** | Kalico | Optional A/B for danger_options, MPC, etc. |
+
+Full switch guide: [TRACKS.md](TRACKS.md) and in-tree `docs/TRACKS.md`.
+
+### Ported extras (both tracks)
 
 | Module | Path | Notes |
 |--------|------|-------|
 | Load-cell latch | `klippy/extras/magneto_load_cell.py` | Cleaned; `CLEAR_LOAD_CELL`/`LC28`; auto-clear on probe home |
-| Shell command | `klippy/extras/gcode_shell_command.py` | Updated to modern `GCodeCommand` API |
+| Shell command | `klippy/extras/gcode_shell_command.py` | Vendored on mainline; **native on Kalico** |
 | Homing soft-fail | `klippy/extras/homing.py` | Soft message if `magneto_load_cell` present |
 | Stepper past | `src/stepper.c` + `src/Kconfig` | Optional `MAGNETO_RELAX_STEPPER_PAST` |
 
@@ -41,7 +48,7 @@ SSH on printer (or cross-build):
 cd ~/klipper
 git remote add mine https://github.com/lmambr2/magneto-x-klipper.git   # once
 git fetch mine
-git checkout magneto-x   # after you push the branch
+git checkout magneto-x   # or magneto-x-kalico for Kalico track
 
 make menuconfig
 ```
@@ -64,12 +71,12 @@ make
 
 ```bash
 make menuconfig
-# RP2040, Communication: CAN bus, Speed 1M
+# RP2040, Communication: CAN bus, Speed 250000 (stock Linux Hub)
 make clean && make
 # out/klipper.uf2 → hold BOOT, Type-C to PC, copy to RPI_RP2
 ```
 
-Then set `canbus_uuid` in `magneto_device.cfg`.
+Then set `canbus_uuid` in `magneto_device.cfg`. Host `can0` must also be **250000**.
 
 ### Install host Klippy from the fork
 
@@ -81,6 +88,7 @@ cd ~
 # Prefer a clean clone of YOUR fork, not mypeopoly
 mv klipper klipper-peopoly-backup
 git clone -b magneto-x https://github.com/lmambr2/magneto-x-klipper.git klipper
+# Kalico A/B:  -b magneto-x-kalico
 
 # Reuse existing venv if present
 ~/klippy-env/bin/pip install -r ~/klipper/scripts/klippy-requirements.txt
@@ -88,7 +96,7 @@ git clone -b magneto-x https://github.com/lmambr2/magneto-x-klipper.git klipper
 sudo systemctl start klipper
 ```
 
-Or point KIAUH / custom update manager at `https://github.com/lmambr2/magneto-x-klipper` branch `magneto-x`.
+Or point KIAUH / custom update manager at `https://github.com/lmambr2/magneto-x-klipper` branch `magneto-x` or `magneto-x-kalico`.
 
 ### Moonraker update manager (optional)
 
@@ -98,6 +106,7 @@ type: git_repo
 path: ~/klipper
 origin: https://github.com/lmambr2/magneto-x-klipper.git
 primary_branch: magneto-x
+# primary_branch: magneto-x-kalico
 managed_services: klipper
 ```
 

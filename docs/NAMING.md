@@ -18,7 +18,7 @@ We deliberately use **adjacent but distinct** names so search still hits “magn
 | Role | GitHub name | Branch / notes |
 |------|-------------|----------------|
 | **Umbrella project** (docs, config, host tooling) | **`magneto-x`** | Default branch `main` |
-| **Klipper fork** (modern host + MCU + Magneto extras) | **`magneto-x-klipper`** | Default branch **`magneto-x`** (not `master`) |
+| **Klipper fork** (modern host + MCU + Magneto extras) | **`magneto-x-klipper`** | Default **`magneto-x`** (Klipper3d); optional **`magneto-x-kalico`** (Kalico A/B) |
 | Optional later split | `magneto-x-config` | Only if configs outgrow the umbrella |
 | Optional later split | `magneto-x-host` | Only if image/build automation gets large |
 
@@ -63,8 +63,12 @@ type: git_repo
 path: ~/klipper
 origin: https://github.com/lmambr2/magneto-x-klipper.git
 primary_branch: magneto-x
+# For Kalico A/B track instead:
+# primary_branch: magneto-x-kalico
 managed_services: klipper
 ```
+
+See [TRACKS.md](TRACKS.md) for switching and dual-tree A/B.
 
 ### Rename on GitHub (when ready)
 

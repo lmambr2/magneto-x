@@ -774,9 +774,12 @@ managed_services: klipper
 
 | Pros | Cons |
 |------|------|
-| Extra community features | Still need Magneto patches; second upstream |
+| Extra community features (`danger_options`, MPC, PID_v, native shell) | Still need Magneto patches; second upstream to track |
+| Community guides (e.g. Schmudus) already assume Kalico | MCU firmware must match the host track; A/B requires reflash |
 
-**Decision:** Stay on Klipper3d lineage + minimal Magneto delta.
+**Decision (updated):** **Default remains Klipper3d lineage** (`magneto-x`).  
+**Optional A/B track:** branch **`magneto-x-kalico`** on the same repo, same Magneto delta on Kalico `main`.  
+Owners choose via Moonraker `primary_branch` / clone branch. See `klipper/docs/TRACKS.md` and umbrella `docs/TRACKS.md`.
 
 ### A2. Full SBC swap (Raspberry Pi, etc.)
 
