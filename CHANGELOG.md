@@ -4,6 +4,44 @@ All notable changes to the **magneto-x** umbrella and companion **magneto-x-klip
 
 ## Unreleased / main (2026-07-11)
 
+### Config — KAMP as default
+
+- **KAMP** (community adaptive mesh/purge) is **default ON** in the config package:
+  - `Adaptive_Meshing.cfg` enabled in `KAMP_Settings.cfg` (was commented)
+  - `PRINT_START` uses `BED_MESH_CALIBRATE` + `LINE_PURGE` (no static default mesh / hard-coded purge)
+  - Removed conflicting `BED_MESH_CALIBRATE` wrapper from `macros.cfg` (KAMP owns the name)
+  - Magneto Z re-home kept inside `KAMP/Adaptive_Meshing.cfg`
+  - `mesh_margin: 5` default; slicer Label Objects recommended for true adaptive bounds
+
+### Config — parametric PRINT_START + FULL_CALIBRATE + Orca pack
+
+- **Parametric `PRINT_START`**: Orca-compatible `EXTRUDER`/`BED`/`CHAMBER`, optional `MESH=`/`PURGE=`; heat → QGL → KAMP mesh → purge.
+- **`FULL_CALIBRATE`**: one-button self-check (`SAVE=1` persists mesh; `SHAPER=1` optional). `FULL_CALIBRATE_BED` is an alias.
+- **`CANCEL_PRINT`**: turns off Jetstream if present and **`LM_DISABLE`** MagXY immediately.
+- **`slicer/orca/`**: machine start/end G-code snippets, process notes, Label Objects checklist (does not re-vendor full Orca JSON).
+
+### Moonraker update_manager (v0.8)
+
+- Do **not** add `[update_manager klipper]` on Moonraker v0.8 — conflicts with built-in updater (“Extension klipper already added” / unparsed options).
+- Track host via `~/klipper` git remote → `lmambr2/magneto-x-klipper`; snippet + postinstall updated; FAQ documents fix.
+
+### CI / lint / tests
+
+- `scripts/check_config_policy.py` — Magneto footguns (KAMP single owner, parametric PRINT_START / FULL_CALIBRATE, Moonraker snippet, Orca start G-code, SAVE_CONFIG format, manager hardening, defconfigs, core MD links).
+- `config/timelapse.cfg` stub so offline includes resolve; host still replaces with real moonraker-timelapse link.
+- `scripts/check_md_links.py`, `requirements-dev.txt`, `pyproject.toml` (ruff), `.pre-commit-config.yaml`.
+- `scripts/ci-magneto.sh` runs includes + policy + md links + bash -n + shellcheck + ruff + unittest.
+- Expanded manager HTTP/allowlist tests; `tests/test_macros_policy.py` for macros / SAVE_CONFIG / Orca.
+- GitHub Actions `.github/workflows/magneto-ci.yml` installs shellcheck + dev deps.
+
+### Lab deploy / S3 (2026-07-11 evening)
+
+- S3 **draft** report: `docs/validation/S3_HARDWARE_REPORT-20260711-mainsailos-draft.md` (bridge path; short print still open).
+- OriginMove Y endstop fixed to min (`position_endstop: 0`).
+- Moonraker `update_manager` → `lmambr2/magneto-x-klipper` (+ optional umbrella `magneto-x`); postinstall merges snippet.
+- Timelapse macros: `[include timelapse.cfg]` in package `printer.cfg`.
+- `os/can0-txqueuelen.service`; postinstall enables; FAQ/MIGRATION clarify clean OS (1B) vs bridge C1.
+
 ### Host / MagXY
 
 - **PR-K7:** `[magneto_linear_motor]` native ENABLE/DISABLE (http→hardened manager or serial); replaces shell curls for MagXY.

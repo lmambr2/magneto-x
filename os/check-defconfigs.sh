@@ -30,6 +30,15 @@ if [[ -f "$LAN" ]]; then
   fi
 fi
 
+# Optional cross-check: if klipper tree is present, ensure relax is not y in fragments
+# that claim magneto extras (already enforced above). Extra: warn if Kconfig missing.
+if [[ -f "${ROOT}/klipper/src/Kconfig" ]] || [[ -d "${ROOT}/klipper" ]]; then
+  if [[ -f "$LAN" ]] && ! grep -q 'CONFIG_CANBUS' "$LAN"; then
+    echo "Lancer: expected CANBUS-related config" >&2
+    fail=1
+  fi
+fi
+
 if [[ "$fail" -ne 0 ]]; then
   exit 1
 fi

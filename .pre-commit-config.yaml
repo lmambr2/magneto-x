@@ -1,0 +1,26 @@
+# Optional local hooks — install with: pre-commit install
+repos:
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.8.4
+    hooks:
+      - id: ruff
+        args: [--fix]
+        files: '^(os/magneto-manager|scripts|tests)/.*\.py$'
+      - id: ruff-format
+        files: '^(os/magneto-manager|scripts|tests)/.*\.py$'
+
+  - repo: https://github.com/shellcheck-py/shellcheck-py
+    rev: v0.10.0.1
+    hooks:
+      - id: shellcheck
+        args: [-x]
+        files: '\.sh$'
+
+  - repo: local
+    hooks:
+      - id: ci-magneto
+        name: ci-magneto.sh
+        entry: bash scripts/ci-magneto.sh
+        language: system
+        pass_filenames: false
+        stages: [pre-push]

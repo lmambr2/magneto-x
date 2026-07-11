@@ -135,7 +135,7 @@ def backup_config(path=None):
 
 
 def set_can_uuid_in_file(path, uuid):
-    with open(path, "r", encoding="utf-8") as f:
+    with open(path, encoding="utf-8") as f:
         lines = f.readlines()
     found = False
     for i, line in enumerate(lines):
@@ -152,7 +152,7 @@ def set_can_uuid_in_file(path, uuid):
 
 
 def set_mcu_serial_in_file(path, device):
-    with open(path, "r", encoding="utf-8") as f:
+    with open(path, encoding="utf-8") as f:
         content = f.readlines()
     mcu_section = False
     for index, line in enumerate(content):
@@ -327,8 +327,8 @@ def main():
     global serial_connection
     if BIND_HOST in ("0.0.0.0", "::", "[::]"):
         print(
-            "WARNING: MAGNETO_MANAGER_HOST=%s exposes MagXY API on all "
-            "interfaces — prefer 127.0.0.1" % BIND_HOST,
+            f"WARNING: MAGNETO_MANAGER_HOST={BIND_HOST} exposes MagXY API on all "
+            "interfaces — prefer 127.0.0.1",
             file=sys.stderr,
         )
     serial_connection = connect_to_serial()

@@ -1,0 +1,2 @@
+; Magneto X — machine end G-code
+PRINT_END

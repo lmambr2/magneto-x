@@ -56,6 +56,7 @@ If you own a Magneto X that never quite worked because of the stock Klipper tree
 |------|---------|
 | `klipper/` | Clone of **magneto-x-klipper** (branch `magneto-x`) |
 | `config/` | Clean printer configs (fill in UUIDs) |
+| `slicer/orca/` | Orca machine G-code + process notes (use with system Peopoly profiles) |
 | `os/` | Host service install helpers |
 | `docs/` | Project documentation |
 | `peopoly-klipper/`, `community/`, … | Local reference clones (not published) |

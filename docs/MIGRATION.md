@@ -6,11 +6,15 @@
 
 | Path | When | Security |
 |------|------|----------|
-| **A — Clean MainsailOS** (preferred) | New SD/eMMC; long-term | Hardened manager only |
+| **A — Clean MainsailOS** (preferred long-term / 1B) | New SD/eMMC | Hardened manager only |
 | **C1 — Bridge + hardened manager** | Keep Peopoly image short-term | Replace stock manager |
 | **C2 — Bridge + firewall only** | Air-gapped LAN, temporary | Stock manager + port 8880 → localhost; residual risk |
 
+**Lab unit (2026-07):** Path **C1** — Peopoly `magneto-x-mainsailOS-…-v1.1.3` still on disk; modern host+MCUs + hardened manager. **Clean OS reimage was not performed.**
+
 Do **not** cherry-pick macros while leaving OS-update `LINER_*` trees active — deploy the full `config/` package.
+
+`./os/postinstall-magneto.sh` is the one-shot for **Path A** (also usable on a cleaned host). It installs CAN 250k + txqueuelen service, manager, config, moonraker update_manager, and wires timelapse macros when the component is present.
 
 ---
 

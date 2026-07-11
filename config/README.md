@@ -31,13 +31,13 @@ Parse-ready Klipper configs for [magneto-x](https://github.com/lmambr2/magneto-x
 |------|------|
 | `printer.cfg` | Top-level includes + bed/Z/fans/homing |
 | `mainsail.cfg` | Virtual SD, pause_resume, CANCEL — **no PAUSE/RESUME** |
-| `macros.cfg` | PAUSE/RESUME, LM_*, print start/end |
+| `macros.cfg` | Parametric `PRINT_START` / `PRINT_END`, `FULL_CALIBRATE`, PAUSE/RESUME |
 | `shell_command.cfg` | Optional shell fallback (MagXY uses `[magneto_linear_motor]` PR-K7) |
 | `magneto_device.cfg` | MCU serial + CAN UUID placeholders |
 | `magneto_toolhead.cfg` | Lancer extruder, load cell, ADXL, fans |
 | `motion_xy_stock.cfg` | Default XY + probe/QGL/mesh |
 | `optional/origin_move.cfg` | Alternate XY orientation |
-| `KAMP_Settings.cfg` + `KAMP/` | Adaptive purge / smart park |
+| `KAMP_Settings.cfg` + `KAMP/` | **KAMP default ON** — adaptive mesh, line purge, smart park |
 | `macros.cfg.stock-v1.1.3` | **Reference only** — not included |
 
 ## Defaults worth knowing
@@ -46,6 +46,14 @@ Parse-ready Klipper configs for [magneto-x](https://github.com/lmambr2/magneto-x
 - MagXY: **`[magneto_linear_motor]`** (not shell); shell MagXY curls optional/commented
 - `LINER_MOTOR` gcode macro is a thin alias to `LINEAR_MOTOR` for old panels
 - Stock CAN hub is typically **250 kbit** (not 1M)
+- **KAMP** (kyleisah adaptive mesh/purge) is **default ON**:
+  - `PRINT_START` → (optional heat) → QGL → `BED_MESH_CALIBRATE` (adaptive) → (optional heat) → `LINE_PURGE`
+  - Accepts Orca params: `EXTRUDER=` `BED=` `CHAMBER=` `MESH=` `PURGE=`
+  - `FULL_CALIBRATE` / `FULL_CALIBRATE SAVE=1` for one-button self-check
+  - `[exclude_object]` is required (already in `printer.cfg`)
+  - Enable **Label objects / Exclude Object** in the slicer for true adaptive bounds; without labels, mesh is full-bed and purge uses front-of-bed defaults
+  - Do not add a second `BED_MESH_CALIBRATE` macro in `macros.cfg`
+  - Orca overlay notes: [`slicer/orca/`](../slicer/orca/)
 
 ## Validate package
 

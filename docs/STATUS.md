@@ -30,14 +30,19 @@ Living checklist vs DESIGN PR plan. Update when PRs land.
 | CHANGELOG / CONTRIBUTING | Release + contrib guide | root |
 | A8 lite | Moonraker MagXY proxy | `os/moonraker/` |
 | Optional configs | runout, temps, client vars, beacon notes, fw retract | `config/optional/` |
+| KAMP default | Adaptive mesh + LINE_PURGE + Smart_Park ON; PRINT_START wired | `config/KAMP*`, `macros.cfg` |
+| Parametric start / self-check | `PRINT_START` Orca params; `FULL_CALIBRATE`; cancel→`LM_DISABLE` | `macros.cfg`, `mainsail.cfg` |
+| Orca overlay | Start G-code + process notes (use system Peopoly profiles) | `slicer/orca/` |
+| CI / policy lint | includes, config policy, ruff, shellcheck, macro/SAVE_CONFIG/Orca tests | `scripts/ci-magneto.sh`, `check_config_policy.py` |
 
 ## Blocked on hardware (not “software done”)
 
 | ID | Title | Notes |
 |----|--------|--------|
-| **PR-V1** | S3 hardware validation | Template: `docs/validation/S3_HARDWARE_REPORT.template.md` — fill on machine |
-| MCU flash | Modern Octopus + Lancer | After host path works (2A); recipe in MCU_BUILD |
-| v1 git tag | D20 release | Requires PR-V1 green |
+| **PR-V1** | S3 hardware validation | **Draft:** `docs/validation/S3_HARDWARE_REPORT-20260711-mainsailos-draft.md` — short print + sign-off still open |
+| MCU flash | Modern Octopus + Lancer | **Done on lab unit** (same HEAD as host) |
+| v1 git tag | D20 release | Requires PR-V1 green (short print) |
+| Clean OS (1B) | Reimage MainsailOS | **Not done** — lab is Path C1 bridge on Peopoly image |
 
 ## Deferred (not done offline)
 
@@ -64,7 +69,7 @@ bash scripts/ci-magneto.sh
 | S1 fork gap-close | **done** (K2/K3/K5) |
 | S2 config | **done** |
 | S2b manager | **done** |
-| S3 hardware | **open** (template ready) |
+| S3 hardware | **in progress** (draft report; print pending) |
 | S4 clean OS docs | **done** (M5 + postinstall) |
 | S5 moonraker snippet | **done** |
 | S6 defconfigs | **done** |

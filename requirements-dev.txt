@@ -1,0 +1,4 @@
+# Dev / CI test dependencies for magneto-x umbrella (not runtime on the printer).
+flask>=2.0
+jinja2>=3.0
+ruff>=0.4.0

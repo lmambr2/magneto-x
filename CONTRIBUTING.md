@@ -17,7 +17,13 @@ Read **[AGENTS.md](AGENTS.md)** and **[docs/STATUS.md](docs/STATUS.md)** first.
 2. **No Magmotor / proprietary binaries**, secrets, or printer models in git.
 3. Keep Magneto delta **minimal** and marked (`MAGNETO-X-BEGIN/END`, `magneto/MANIFEST.json`).
 4. After Klipper tree changes: `python3 scripts/magneto_guard.py` and magneto unit tests.
-5. After config changes: `python3 scripts/check_includes.py config`.
+5. After config or macro changes, run the full gate:
+
+```bash
+bash scripts/ci-magneto.sh
+```
+
+Pieces: `scripts/check_includes.py`, `scripts/check_config_policy.py` (PRINT_START / KAMP / Orca / Moonraker / SAVE_CONFIG), `scripts/check_md_links.py`, shellcheck, ruff, unittest. Optional: `pre-commit install` (see `.pre-commit-config.yaml`). Dev deps: `pip install -r requirements-dev.txt`.
 
 ## Local CI
 

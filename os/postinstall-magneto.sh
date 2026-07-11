@@ -129,10 +129,126 @@ else
   echo "NOTE: ${CFG_DEST} missing — create printer_data first (MainsailOS default)."
 fi
 
-# --- moonraker snippet hint ---
+# --- can0 txqueuelen persist ---
+if [[ -f "${ROOT}/os/can0-txqueuelen.service" ]]; then
+  if [[ "${DRY_RUN}" -eq 1 ]]; then
+    echo "DRY: install can0-txqueuelen.service"
+  else
+    sudo cp "${ROOT}/os/can0-txqueuelen.service" /etc/systemd/system/can0-txqueuelen.service
+    sudo systemctl daemon-reload
+    sudo systemctl enable --now can0-txqueuelen.service 2>/dev/null || true
+    sudo ip link set can0 txqueuelen 512 2>/dev/null || true
+  fi
+fi
+
+# --- moonraker notes + timelapse ---
+# Moonraker v0.8.x (Peopoly image) already owns built-in "klipper" updater.
+# Do NOT append [update_manager klipper] — causes "Extension klipper already added"
+# + Unparsed config option warnings. Track is the git remote on ~/klipper (above).
+MR_CONF="${HOME}/printer_data/config/moonraker.conf"
 SNIP="${ROOT}/config/moonraker-update-manager.conf.snippet"
-if [[ -f "${SNIP}" ]]; then
-  echo "Moonraker: merge ${SNIP} into moonraker.conf (primary_branch=${TRACK})"
+if [[ -f "${MR_CONF}" ]]; then
+  if grep -qE '^\[update_manager klipper\]' "${MR_CONF}" 2>/dev/null; then
+    if [[ "${DRY_RUN}" -eq 1 ]]; then
+      echo "DRY: strip conflicting [update_manager klipper] from moonraker.conf (v0.8 built-in)"
+    else
+      # Comment out conflicting section (keep a backup once)
+      cp -a "${MR_CONF}" "${MR_CONF}.bak-pre-strip-um" 2>/dev/null || true
+      python3 - <<'PY' "${MR_CONF}"
+import sys
+from pathlib import Path
+p = Path(sys.argv[1])
+lines = p.read_text().splitlines(True)
+out = []
+skip = False
+for line in lines:
+    if line.strip().lower() == "[update_manager klipper]":
+        skip = True
+        out.append("# REMOVED by postinstall-magneto.sh — conflicts with Moonraker v0.8 built-in klipper updater\n")
+        out.append("# " + line if not line.startswith("#") else line)
+        continue
+    if skip:
+        if line.startswith("[") and not line.strip().lower().startswith("[update_manager klipper]"):
+            skip = False
+            out.append(line)
+        else:
+            out.append("# " + line if line.strip() and not line.startswith("#") else line)
+        continue
+    out.append(line)
+p.write_text("".join(out))
+print("Stripped [update_manager klipper] from", p)
+PY
+    fi
+  fi
+  # Drop invalid magneto-x updater if path is not a git repo
+  if grep -qE '^\[update_manager magneto-x\]' "${MR_CONF}" 2>/dev/null; then
+    if [[ ! -d "${HOME}/magneto-x/.git" ]]; then
+      if [[ "${DRY_RUN}" -eq 1 ]]; then
+        echo "DRY: comment [update_manager magneto-x] (no .git under ~/magneto-x)"
+      else
+        python3 - <<'PY' "${MR_CONF}"
+import sys
+from pathlib import Path
+p = Path(sys.argv[1])
+lines = p.read_text().splitlines(True)
+out, skip = [], False
+for line in lines:
+    if line.strip().lower() == "[update_manager magneto-x]":
+        skip = True
+        out.append("# REMOVED by postinstall — ~/magneto-x is not a git clone\n")
+        out.append("# " + line)
+        continue
+    if skip:
+        if line.startswith("["):
+            skip = False
+            out.append(line)
+        else:
+            out.append("# " + line if line.strip() and not line.startswith("#") else line)
+        continue
+    out.append(line)
+p.write_text("".join(out))
+print("Stripped [update_manager magneto-x] from", p)
+PY
+      fi
+    fi
+  fi
+  if [[ "${DRY_RUN}" -eq 1 ]]; then
+    echo "DRY: moonraker note — see ${SNIP} (do not merge [update_manager klipper] on v0.8)"
+  else
+    echo "Moonraker: klipper track is git remote on ~/klipper (branch ${TRACK}); see ${SNIP}"
+  fi
+elif [[ -f "${SNIP}" ]]; then
+  echo "Moonraker: no moonraker.conf yet — later, do NOT paste [update_manager klipper] on v0.8; see ${SNIP}"
+fi
+
+# Timelapse: if component present, ensure printer.cfg includes macros
+TL_MACRO="${HOME}/printer_data/config/timelapse.cfg"
+if [[ ! -f "${TL_MACRO}" && -f "${HOME}/moonraker-timelapse/klipper_macro/timelapse.cfg" ]]; then
+  if [[ "${DRY_RUN}" -eq 1 ]]; then
+    echo "DRY: link moonraker-timelapse macros → printer_data/config/timelapse.cfg"
+  else
+    ln -sfn "${HOME}/moonraker-timelapse/klipper_macro/timelapse.cfg" "${TL_MACRO}"
+    echo "Linked timelapse.cfg macros"
+  fi
+fi
+if [[ -f "${CFG_DEST:-}/printer.cfg" ]] && [[ -f "${TL_MACRO}" ]]; then
+  if ! grep -q 'include timelapse.cfg' "${CFG_DEST}/printer.cfg" 2>/dev/null; then
+    if [[ "${DRY_RUN}" -eq 1 ]]; then
+      echo "DRY: add [include timelapse.cfg] to printer.cfg"
+    else
+      {
+        echo ""
+        echo "# Moonraker timelapse component macros"
+        echo "[include timelapse.cfg]"
+      } >> "${CFG_DEST}/printer.cfg"
+      echo "Added [include timelapse.cfg] to printer.cfg"
+    fi
+  fi
+fi
+
+# nginx large-upload hint
+if [[ -f "${ROOT}/config/optional/nginx-timeouts.conf.snippet" ]]; then
+  echo "Nginx (optional): merge config/optional/nginx-timeouts.conf.snippet under http{} — see FAQ.md"
 fi
 
 # --- services ---
@@ -144,9 +260,10 @@ fi
 
 echo
 echo "=== postinstall finished ==="
+echo "Path note: this is for CLEAN MainsailOS (1B). Bridge on Peopoly image is Path C1 — see docs/MIGRATION.md"
 echo "Next:"
-echo "  1) Fill magneto_device.cfg UUIDs"
-echo "  2) curl -s http://127.0.0.1:8880/health"
+echo "  1) Fill magneto_device.cfg UUIDs (serial + canbus_uuid)"
+echo "  2) curl -s http://127.0.0.1:8880/health  and  RTU should be 400"
 echo "  3) FIRMWARE_RESTART in Mainsail; LM_ENABLE; home carefully"
 echo "  4) MCU flash later from same HEAD — docs/MCU_BUILD.md"
 echo "  5) Fill docs/validation/S3_HARDWARE_REPORT.template.md when testing"

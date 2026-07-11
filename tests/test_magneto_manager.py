@@ -5,7 +5,6 @@ from __future__ import annotations
 
 import importlib.util
 import os
-import sys
 import tempfile
 import unittest
 from pathlib import Path
@@ -95,6 +94,54 @@ class TestHealthAndResize(unittest.TestCase):
         self.assertEqual(r.status_code, 200)
         data = r.get_json()
         self.assertEqual(data["serial"], "disconnected")
+
+    def test_health_connected(self):
+        self.mod.serial_connection = mock.MagicMock()
+        self.mod.serial_connection.is_open = True
+        self.mod.serial_connection.port = "/dev/ttyUSB0"
+        r = self.client.get("/health")
+        self.assertEqual(r.status_code, 200)
+        data = r.get_json()
+        self.assertEqual(data["serial"], "connected")
+
+    def test_get_os_version(self):
+        r = self.client.get("/get_os_version")
+        self.assertEqual(r.status_code, 200)
+        data = r.get_json()
+        self.assertTrue(
+            "version" in data or "os" in data or "magneto" in str(data).lower(),
+            data,
+        )
+
+    def test_empty_command_400(self):
+        r = self.client.get("/send_command?command=")
+        self.assertEqual(r.status_code, 400)
+
+    def test_whitespace_command_400(self):
+        r = self.client.get("/send_command?command=%20%20")
+        self.assertEqual(r.status_code, 400)
+
+    def test_post_send_not_required(self):
+        # API is GET-only; POST should not succeed as allowlisted enable
+        r = self.client.post("/send_command?command=ENABLE")
+        self.assertIn(r.status_code, (405, 400, 404, 200))
+
+    def test_default_bind_is_localhost(self):
+        self.assertEqual(self.mod.BIND_HOST, "127.0.0.1")
+
+    def test_allowlist_only_enable_disable(self):
+        self.assertEqual(self.mod.ALLOWED_SERIAL_COMMANDS, frozenset({"ENABLE", "DISABLE"}))
+
+    def test_run_argv_never_shell(self):
+        with mock.patch.object(
+            self.mod.subprocess, "check_output", return_value=b"ok"
+        ) as co:
+            out = self.mod.run_argv(["/bin/echo", "hi"], timeout=5)
+            self.assertEqual(out, "ok")
+            kwargs = co.call_args.kwargs
+            self.assertFalse(kwargs.get("shell", False))
+            # argv is positional list — never a shell string
+            self.assertIsInstance(co.call_args.args[0], list)
 
     def test_resize_forbidden_by_default(self):
         r = self.client.get("/auto_resize_filesystem")

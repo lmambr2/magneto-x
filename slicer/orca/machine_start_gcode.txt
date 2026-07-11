@@ -1,0 +1,16 @@
+; Magneto X — magneto-x package (parametric PRINT_START)
+; Paste into Orca: Printer settings → Machine G-code → Machine start G-code
+;
+; Requires host config from this repo (macros.cfg + KAMP defaults).
+; Enable Label objects / Exclude objects for adaptive bed mesh.
+
+; Heat first (also fine if PRINT_START re-waits — no-ops when already at temp)
+M190 S[bed_temperature_initial_layer_single]
+M109 S[nozzle_temperature_initial_layer]
+
+; Parametric handoff — see config/macros.cfg [gcode_macro PRINT_START]
+; Optional flags: MESH=0 skip mesh | PURGE=0 skip LINE_PURGE
+PRINT_START EXTRUDER=[nozzle_temperature_initial_layer] BED=[bed_temperature_initial_layer_single] CHAMBER=[chamber_temperature]
+
+; Machine end G-code should be only:
+; PRINT_END

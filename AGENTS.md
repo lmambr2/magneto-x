@@ -11,7 +11,7 @@ This file guides AI coding assistants working in the **Magneto X modernization**
 | [lmambr2/magneto-x](https://github.com/lmambr2/magneto-x) | `master` (docs may say `main`) | Umbrella: configs, host tooling, design docs, vendor archive |
 | [lmambr2/magneto-x-klipper](https://github.com/lmambr2/magneto-x-klipper) | **`magneto-x`** | Klipper/Kalico host + MCU tree + Magneto extras |
 
-**Local workspace:** `/home/lane/Projects/magneto-x/` — umbrella git root. Nested `klipper/` is a **separate git clone** of `magneto-x-klipper` (gitignored by the umbrella). Edit/commit/push each repo independently.
+**Local workspace:** `` — umbrella git root. Nested `klipper/` is a **separate git clone** of `magneto-x-klipper` (gitignored by the umbrella). Edit/commit/push each repo independently.
 
 **Language / docs:** English for code, comments, user-facing gcode help, and project docs.
 
@@ -266,7 +266,9 @@ When touching `gcode_shell_command`, magneto-manager, install scripts, or anythi
 ```bash
 # Umbrella (magneto-x)
 python3 scripts/check_includes.py config
-python3 -m unittest discover -s tests -v   # if present
+python3 scripts/check_config_policy.py
+bash scripts/ci-magneto.sh                 # full gate (includes lint + tests)
+python3 -m unittest discover -s tests -v
 
 # Host tree (magneto-x-klipper clone)
 cd klipper

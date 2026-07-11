@@ -1,20 +1,40 @@
-# Drop into moonraker.conf (or include from printer_data/config).
-# Dual track: set primary_branch to magneto-x OR magneto-x-kalico.
-# See docs/TRACKS.md.
-
-[update_manager klipper]
-type: git_repo
-path: ~/klipper
-origin: https://github.com/lmambr2/magneto-x-klipper.git
-primary_branch: magneto-x
-# primary_branch: magneto-x-kalico
-managed_services: klipper
-# channel: dev
-
-# Optional: track umbrella configs (manual deploy still recommended)
-# [update_manager magneto-x-config]
+# Moonraker update_manager notes for Magneto X
+# ============================================
+# postinstall-magneto.sh may append guidance; read before pasting blindly.
+#
+# Peopoly / older MainsailOS ships Moonraker ~v0.8.x. That build ALWAYS
+# registers built-in updaters for "klipper" and "moonraker" (see
+# update_manager/base_config.py). A second section:
+#
+#   [update_manager klipper]
+#   type: git_repo
+#   ...
+#
+# is REJECTED with:
+#   [update_manager]: Extension klipper already added
+#   Unparsed config option 'type: git_repo' detected in section [update_manager klipper]
+#   ... (path, origin, primary_branch, managed_services)
+#
+# Correct approach on Moonraker v0.8.x
+# ------------------------------------
+# 1. Point the real git remote (postinstall / manual):
+#      cd ~/klipper
+#      git remote set-url origin https://github.com/lmambr2/magneto-x-klipper.git
+#      git fetch origin && git checkout magneto-x   # or magneto-x-kalico
+# 2. Do NOT add [update_manager klipper] to moonraker.conf on these versions.
+# 3. Optional: upgrade Moonraker later; newer releases document overriding
+#    the built-in klipper app — then a [update_manager klipper] section may work.
+#
+# Optional umbrella tracker (only if ~/magneto-x is a real git clone with .git)
+# ----------------------------------------------------------------------------
+# rsync/deploy trees WITHOUT .git will show as invalid zip deploy and spam logs.
+#
+# [update_manager magneto-x]
 # type: git_repo
 # path: ~/magneto-x
 # origin: https://github.com/lmambr2/magneto-x.git
 # primary_branch: master
 # managed_services:
+#
+# Do NOT leave origin pointing at Klipper3d/klipper or mypeopoly/Klipper for
+# the host tree — change the git remote, not a conflicting moonraker section.

@@ -1,0 +1,12 @@
+[Unit]
+Description=Set can0 txqueuelen 512 (Magneto X Linux Hub)
+After=network-online.target sys-subsystem-net-devices-can0.device
+Wants=sys-subsystem-net-devices-can0.device
+
+[Service]
+Type=oneshot
+ExecStart=/sbin/ip link set can0 txqueuelen 512
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target
