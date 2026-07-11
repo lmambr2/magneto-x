@@ -1,0 +1,17 @@
+$ ip -br addr; echo; ip -br link; echo; ip route
+# exit=0
+lo               UNKNOWN        127.0.0.1/8 ::1/128 
+eth0             DOWN           
+wlan0            UP             192.168.1.214/24 fe80::2468:9003:a9f9:d347/64 
+can0             UP             
+
+lo               UNKNOWN        00:00:00:00:00:00 <LOOPBACK,UP,LOWER_UP> 
+eth0             DOWN           02:00:a5:9d:c8:69 <NO-CARRIER,BROADCAST,MULTICAST,UP> 
+wlan0            UP             b4:9a:d4:e7:f8:82 <BROADCAST,MULTICAST,UP,LOWER_UP> 
+can0             UP             <NOARP,UP,LOWER_UP,ECHO> 
+
+default via 192.168.1.1 dev wlan0 proto dhcp metric 600 
+169.254.0.0/16 dev wlan0 scope link metric 1000 
+192.168.1.0/24 dev wlan0 proto kernel scope link src 192.168.1.214 metric 600 
+
+# stderr:

@@ -1,0 +1,4 @@
+/home/pi/auto-uuid/Magmotor
+/home/pi/auto-uuid/MagnetoWifiHelper
+/home/pi/magnetox-os-update/auto-uuid/Magmotor
+/home/pi/magnetox-os-update/auto-uuid/MagnetoWifiHelper

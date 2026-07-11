@@ -1,0 +1,11 @@
+$ ls -la /dev/serial/by-id/ 2>/dev/null; ls -la /dev/ttyUSB* /dev/ttyACM* 2>/dev/null
+# exit=0
+total 0
+drwxr-xr-x 2 root root 80 Aug 25  2025 .
+drwxr-xr-x 4 root root 80 Aug 25  2025 ..
+lrwxrwxrwx 1 root root 13 Aug 25  2025 usb-1a86_USB_Serial-if00-port0 -> ../../ttyUSB0
+lrwxrwxrwx 1 root root 13 Aug 25  2025 usb-Klipper_stm32h723xx_250030001751313434373135-if00 -> ../../ttyACM0
+crw-rw---- 1 root dialout 166, 0 Jul 11 16:49 /dev/ttyACM0
+crw-rw---- 1 root dialout 188, 0 Aug 25  2025 /dev/ttyUSB0
+
+# stderr:

@@ -1,0 +1,7 @@
+[mcu MAG_TOOL]
+canbus_uuid: fda1874e0ce6
+
+
+[mcu]
+serial: /dev/serial/by-id/usb-Klipper_stm32h723xx_250030001751313434373135-if00
+

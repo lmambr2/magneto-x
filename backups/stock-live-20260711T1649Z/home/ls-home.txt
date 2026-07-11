@@ -1,0 +1,41 @@
+$ ls -la ~
+# exit=0
+total 1460
+drwxr-xr-x 25 pi   pi      4096 Jul 11 16:49 .
+drwxr-xr-x  3 root root    4096 May 26  2023 ..
+drwxr-xr-x  2 pi   pi      4096 Jul  7  2024 auto-uuid
+-rw-------  1 pi   pi      4454 Jul 11 16:49 .bash_history
+-rw-r--r--  1 pi   pi       220 Mar 27  2022 .bash_logout
+-rw-r--r--  1 pi   pi      3523 Mar 13  2023 .bashrc
+drwxr-xr-x  4 pi   pi      4096 Aug 18  2023 .cache
+drwxr-xr-x  3 pi   pi      4096 Mar 13  2023 .config
+drwxr-xr-x 10 pi   pi      4096 May 26  2023 crowsnest
+drwxr-xr-x  6 pi   pi      4096 Apr 16  2023 kiauh
+drwxr-xr-x  2 pi   pi      4096 Aug 18  2023 kiauh-backups
+-rw-r--r--  1 pi   pi       564 Jan 16  2024 .kiauh.ini
+drwxr-xr-x 11 pi   pi      4096 May 26  2023 klipper
+drwxr-xr-x  8 pi   pi      4096 May 18  2023 KlipperScreen
+drwxr-xr-x  5 pi   pi      4096 Aug 18  2023 .KlipperScreen-env
+drwxr-xr-x  8 pi   pi      4096 May 18  2023 KlipperScreen-master
+-rw-r--r--  1 pi   pi   1337669 Aug 18  2023 KlipperScreen-master.zip
+drwxr-xr-x  5 pi   pi      4096 May 26  2023 klippy-env
+drwxr-xr-x  3 pi   pi      4096 May 26  2023 .local
+drwxr-xr-x  6 pi   pi      4096 Apr  5  2025 magnetox-os-update
+drwxr-xr-x  5 pi   pi      4096 May 26  2023 mainsail
+drwxr-xr-x  3 pi   pi      4096 May 26  2023 mainsail-config
+drwxr-xr-x  8 pi   pi      4096 May 26  2023 moonraker
+drwxr-xr-x  4 pi   pi      4096 May 26  2023 moonraker-env
+drwxr-xr-x  8 pi   pi      4096 May 26  2023 moonraker-timelapse
+drwxrwxr-x  3 pi   pi      4096 Mar 13  2023 .oh-my-zsh
+drwxr-xr-x 10 pi   pi      4096 Mar 13  2023 printer_data
+-rw-r--r--  1 pi   pi       807 Mar 27  2022 .profile
+-rwxr-xr-x  1 pi   pi       123 Aug 30  2023 rotate-touch.sh
+drwxr-xr-x  8 pi   pi      4096 May 26  2023 sonar
+drwx------  2 pi   pi      4096 Jul 11 16:49 .ssh
+drwxr-xr-x  2 pi   pi      4096 Jul  7  2024 timelapse
+-rw-------  1 pi   pi     11321 Oct 22  2023 .viminfo
+-rw-r--r--  1 pi   pi       165 May 26  2023 .wget-hsts
+-rw-r--r--  1 pi   pi       100 Aug 30  2023 .xsessionrc
+-rw-rw-r--  1 pi   pi      3979 Mar 13  2023 .zshrc
+
+# stderr:

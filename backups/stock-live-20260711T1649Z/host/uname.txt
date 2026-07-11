@@ -1,0 +1,9 @@
+$ uname -a; echo; hostname; echo; date -u
+# exit=0
+Linux mainsailos 5.16.17-sun50iw9 #3.0.8 SMP Mon Mar 13 04:58:37 UTC 2023 aarch64 GNU/Linux
+
+mainsailos
+
+Sat 11 Jul 2026 04:49:48 PM UTC
+
+# stderr:

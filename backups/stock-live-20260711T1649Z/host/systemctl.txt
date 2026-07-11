@@ -1,0 +1,97 @@
+$ systemctl list-units --type=service --state=running --no-pager; echo; systemctl list-unit-files --state=enabled --no-pager | head -80
+# exit=0
+  UNIT                        LOAD   ACTIVE SUB     DESCRIPTION
+  avahi-daemon.service        loaded active running Avahi mDNS/DNS-SD Stack
+  chrony.service              loaded active running chrony, an NTP client/server
+  cron.service                loaded active running Regular background program processing daemon
+  crowsnest.service           loaded active running crowsnest - Multi Webcam/Streamer Control Deamon
+  dbus.service                loaded active running D-Bus System Message Bus
+  getty@tty1.service          loaded active running Getty on tty1
+  haveged.service             loaded active running Entropy Daemon based on the HAVEGE algorithm
+  klipper.service             loaded active running Klipper 3D Printer Firmware SV1
+  KlipperScreen.service       loaded active running KlipperScreen
+  magneto.service             loaded active running magneto.service
+  moonraker.service           loaded active running API Server for Klipper SV1
+  networkd-dispatcher.service loaded active running Dispatcher daemon for systemd-networkd
+  NetworkManager.service      loaded active running Network Manager
+  nginx.service               loaded active running A high performance web server and a reverse proxy server
+  polkit.service              loaded active running Authorization Manager
+  rpcbind.service             loaded active running RPC bind portmap service
+  rsyslog.service             loaded active running System Logging Service
+  serial-getty@ttyS0.service  loaded active running Serial Getty on ttyS0
+  smartmontools.service       loaded active running Self Monitoring and Reporting Technology (SMART) Daemon
+  ssh.service                 loaded active running OpenBSD Secure Shell server
+  systemd-journald.service    loaded active running Journal Service
+  systemd-logind.service      loaded active running User Login Management
+  systemd-udevd.service       loaded active running Rule-based Manager for Device Events and Files
+  unattended-upgrades.service loaded active running Unattended Upgrades Shutdown
+  user@1001.service           loaded active running User Manager for UID 1001
+  vnstat.service              loaded active running vnStat network traffic monitor
+  wpa_supplicant.service      loaded active running WPA supplicant
+
+LOAD   = Reflects whether the unit definition was properly loaded.
+ACTIVE = The high-level unit activation state, i.e. generalization of SUB.
+SUB    = The low-level unit activation state, values depend on unit type.
+27 loaded units listed.
+
+UNIT FILE                            STATE   VENDOR PRESET
+bootsplash-ask-password-console.path enabled enabled
+resolvconf-pull-resolved.path        enabled enabled
+avahi-daemon.service                 enabled enabled
+bluetooth.service                    enabled enabled
+bootsplash-hide-when-booted.service  enabled enabled
+bootsplash-show-on-shutdown.service  enabled enabled
+chrony.service                       enabled enabled
+console-setup.service                enabled enabled
+cron.service                         enabled enabled
+crowsnest.service                    enabled enabled
+e2scrub_reap.service                 enabled enabled
+fake-hwclock.service                 enabled enabled
+getty@.service                       enabled enabled
+haveged.service                      enabled enabled
+keyboard-setup.service               enabled enabled
+klipper.service                      enabled enabled
+KlipperScreen.service                enabled enabled
+magneto.service                      enabled enabled
+moonraker.service                    enabled enabled
+network-configurator.service         enabled enabled
+networkd-dispatcher.service          enabled enabled
+networking.service                   enabled enabled
+NetworkManager-dispatcher.service    enabled enabled
+NetworkManager.service               enabled enabled
+nginx.service                        enabled enabled
+openvpn.service                      enabled enabled
+orangepi-hardware-monitor.service    enabled enabled
+orangepi-hardware-optimize.service   enabled enabled
+orangepi-ramlog.service              enabled enabled
+orangepi-zram-config.service         enabled enabled
+resolvconf-pull-resolved.service     enabled enabled
+resolvconf.service                   enabled enabled
+rotate-touch.service                 enabled enabled
+rpcbind.service                      enabled enabled
+rsync.service                        enabled enabled
+rsyslog.service                      enabled enabled
+smartmontools.service                enabled enabled
+sonar.service                        enabled enabled
+ssh.service                          enabled enabled
+sysstat.service                      enabled enabled
+systemd-pstore.service               enabled enabled
+unattended-upgrades.service          enabled enabled
+vnstat.service                       enabled enabled
+wpa_supplicant.service               enabled enabled
+avahi-daemon.socket                  enabled enabled
+rpcbind.socket                       enabled enabled
+nfs-client.target                    enabled enabled
+remote-fs.target                     enabled enabled
+apt-daily-upgrade.timer              enabled enabled
+apt-daily.timer                      enabled enabled
+e2scrub_all.timer                    enabled enabled
+fstrim.timer                         enabled enabled
+logrotate.timer                      enabled enabled
+man-db.timer                         enabled enabled
+sysstat-collect.timer                enabled enabled
+sysstat-summary.timer                enabled enabled
+
+56 unit files listed.
+
+# stderr:

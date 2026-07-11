@@ -1,0 +1,14 @@
+$ df -h
+# exit=0
+Filesystem      Size  Used Avail Use% Mounted on
+udev            422M     0  422M   0% /dev
+tmpfs            99M  980K   98M   1% /run
+/dev/mmcblk1p2   28G  4.3G   24G  16% /
+tmpfs           493M     0  493M   0% /dev/shm
+tmpfs           5.0M     0  5.0M   0% /run/lock
+tmpfs           493M  4.0K  493M   1% /tmp
+/dev/mmcblk1p1 1022M   71M  952M   7% /boot
+/dev/zram1       49M   25M   21M  55% /var/log
+tmpfs            99M     0   99M   0% /run/user/1001
+
+# stderr:

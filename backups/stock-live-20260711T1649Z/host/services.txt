@@ -1,0 +1,79 @@
+# /etc/systemd/system/klipper.service
+[Unit]
+Description=Klipper 3D Printer Firmware SV1
+Documentation=https://www.klipper3d.org/
+After=network-online.target
+Before=moonraker.service
+Wants=udev.target
+
+[Install]
+Alias=klippy
+WantedBy=multi-user.target
+
+[Service]
+Type=simple
+User=pi
+RemainAfterExit=yes
+WorkingDirectory=/home/pi/klipper
+EnvironmentFile=/home/pi/printer_data/systemd/klipper.env
+ExecStart=/home/pi/klippy-env/bin/python $KLIPPER_ARGS
+Restart=always
+RestartSec=10
+
+# /etc/systemd/system/moonraker.service
+# systemd service file for moonraker
+[Unit]
+Description=API Server for Klipper SV1
+Requires=network-online.target
+After=network-online.target
+
+[Install]
+WantedBy=multi-user.target
+
+[Service]
+Type=simple
+User=pi
+SupplementaryGroups=moonraker-admin
+RemainAfterExit=yes
+EnvironmentFile=/home/pi/printer_data/systemd/moonraker.env
+ExecStart=/home/pi/moonraker-env/bin/python $MOONRAKER_ARGS
+Restart=always
+RestartSec=10
+
+# /etc/systemd/system/magneto.service
+[Uint]
+Description=Magneto Manager Service
+After=network.target
+
+[Service]
+Type=simple
+User=root
+ExecStart=/bin/bash /home/pi/auto-uuid/magneto-run.sh
+
+[Install]
+WantedBy=multi-user.target
+/etc/systemd/system/klipper.service
+/etc/systemd/system/magneto.service
+[Uint]
+Description=Magneto Manager Service
+After=network.target
+
+[Service]
+Type=simple
+User=root
+ExecStart=/bin/bash /home/pi/auto-uuid/magneto-run.sh
+
+[Install]
+WantedBy=multi-user.target
+#!/bin/sh
+cd /home/pi/auto-uuid
+export DISPLAY=:0
+./Magmotor
+#/bin/bash
+cd /home/pi/auto-uuid
+python3 magneto-manager.py 
+#!/bin/sh
+cd ~
+cd auto-uuid
+export DISPLAY=:0
+./MagnetoWifiHelper

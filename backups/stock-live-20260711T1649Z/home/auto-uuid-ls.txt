@@ -1,0 +1,26 @@
+$ ls -la ~/auto-uuid 2>/dev/null; ls -la ~/magnetox-os-update 2>/dev/null
+# exit=0
+total 456
+drwxr-xr-x  2 pi pi   4096 Jul  7  2024 .
+drwxr-xr-x 25 pi pi   4096 Jul 11 16:49 ..
+-rw-r--r--  1 pi pi   1713 Apr  5  2025 can-uuid.py
+-rw-r--r--  1 pi pi   1082 Apr  5  2025 connect.py
+-rwxr-xr-x  1 pi pi  93656 Apr  5  2025 Magmotor
+-rwxr-xr-x  1 pi pi     61 Apr  5  2025 mag_motor_control.sh
+-rw-r--r--  1 pi pi   8647 Apr  5  2025 magneto-manager.py
+-rwxr-xr-x  1 pi pi     61 Apr  5  2025 magneto-run.sh
+-rwxr-xr-x  1 pi pi 327560 Apr  5  2025 MagnetoWifiHelper
+-rwxr-xr-x  1 pi pi     66 Apr  5  2025 mag_wifi.sh
+-rw-r--r--  1 pi pi   1524 Apr  5  2025 mcu-uuid.py
+total 36
+drwxr-xr-x  6 pi pi 4096 Apr  5  2025 .
+drwxr-xr-x 25 pi pi 4096 Jul 11 16:49 ..
+drwxr-xr-x  2 pi pi 4096 Apr  5  2025 auto-uuid
+drwxr-xr-x  2 pi pi 4096 Apr  5  2025 config
+drwxr-xr-x  8 pi pi 4096 Apr  5  2025 .git
+drwxr-xr-x  2 pi pi 4096 Apr  5  2025 KlipperScreen
+-rw-r--r--  1 pi pi   20 Apr  5  2025 README.md
+-rwxr-xr-x  1 pi pi 1735 Apr  5  2025 update.sh
+-rw-r--r--  1 pi pi   37 Apr  5  2025 version.txt
+
+# stderr:

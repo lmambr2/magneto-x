@@ -1,0 +1,7 @@
+$ free -h
+# exit=0
+               total        used        free      shared  buff/cache   available
+Mem:           984Mi       295Mi       305Mi       6.0Mi       383Mi       605Mi
+Swap:          492Mi          0B       492Mi
+
+# stderr:

@@ -10,3 +10,10 @@ klipper/
 # Keep our fork changes only via klipper remote; workspace tracks configs/docs
 *.pyc
 __pycache__/
+
+# Large Peopoly OS images (store as GitHub Release, not git blobs)
+backups/peopoly-os-images/*.img.xz
+backups/peopoly-os-images/*.img
+backups/**/*.img.gz
+backups/**/rootfs.img*
+backups/**/disk/*.img.gz
