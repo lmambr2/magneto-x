@@ -34,6 +34,7 @@ Living checklist vs DESIGN PR plan. Update when PRs land.
 | Parametric start / self-check | `PRINT_START` Orca params; `FULL_CALIBRATE`; cancel→`LM_DISABLE` | `macros.cfg`, `mainsail.cfg` |
 | Orca overlay | Start G-code + process notes (use system Peopoly profiles) | `slicer/orca/` |
 | CI / policy lint | includes, config policy, ruff, shellcheck, macro/SAVE_CONFIG/Orca tests | `scripts/ci-magneto.sh`, `check_config_policy.py` |
+| Package audit | Bugs, Peopoly legacy keep/fix/remove, refactors (2026-07-11) | `docs/AUDIT_PACKAGE_2026-07-11.md` |
 
 ## Blocked on hardware (not “software done”)
 
