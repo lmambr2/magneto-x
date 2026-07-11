@@ -1,16 +1,13 @@
-# Full disk image (live unit)
+# Live disk image attempt (partial)
 
 - **File:** `mmcblk1.img.gz` (~957 MiB compressed)
-- **Source:** `/dev/mmcblk1` on mainsailos (29.1 GiB TF), crash-consistent live `dd | gzip -1`
-- **Captured:** 2026-07-11
-- **Not in git** (too large). Keep local or attach to a GitHub Release.
+- **Captured:** 2026-07-11 from `mainsailos` `/dev/mmcblk1` via `sudo dd | gzip -1`
+- **Result:** **INCOMPLETE** — `dd` aborted with **Input/output error** after ~3.96 GiB of ~29.1 GiB disk (`944+1` records). `gzip -t` still passes on the partial stream.
+- **SHA256:** see `SHA256SUMS`
 
-## Restore (destructive)
+This is **not** a reliable full-card restore image. Prefer:
 
-```bash
-# WARNING: wipes target card
-gunzip -c mmcblk1.img.gz | sudo dd of=/dev/sdX bs=4M status=progress
-sync
-```
+1. Peopoly factory OS: https://github.com/lmambr2/magneto-x/releases/tag/peopoly-os-images-archive  
+2. File-level live backup: parent directory (`config/`, `auto-uuid/`, host inventory)
 
-Prefer Peopoly factory OS images + `../config/` overlay unless you need bit-identical recovery of this exact card.
+If a full `dd` is needed later, use a different card reader/host, check `dmesg` for TF errors, or image offline with the card removed from the OPi.
