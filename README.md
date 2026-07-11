@@ -27,6 +27,10 @@ If you own a Magneto X that never quite worked because of the stock Klipper tree
 | MagXY in Klipper? | **No** — ESP32 + MotionG closed-loop; Klipper only emits step/dir |
 | Working host tree | `klipper/` → **`magneto-x`** (default) or **`magneto-x-kalico`** |
 
+## Agent / contributor steering
+
+- **[AGENTS.md](AGENTS.md)** — system map, ownership seams, policies, known-bad patterns, and pre-merge checks for AI assistants and humans
+
 ## Docs
 
 - **[docs/DESIGN.md](docs/DESIGN.md)** — full design (architecture, key decisions, PR plan)  
