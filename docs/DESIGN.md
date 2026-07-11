@@ -462,7 +462,7 @@ Provisional procedure:
 lsusb
 ip link
 # If gs_usb-style adapter appears as can0:
-sudo ip link set can0 up type can bitrate 1000000
+sudo ip link set can0 up type can bitrate 250000  # stock Linux Hub; 1000000 only if hub replaced
 # Persist: os/can0.network (systemd-networkd) — Name= must match
 # If slcan: follow adapter-specific slcand setup (document when VID:PID known)
 ```
@@ -547,7 +547,7 @@ make clean && make
 make menuconfig
   Micro-controller Architecture = Raspberry Pi RP2040/RP235x
   Communication interface = CAN bus
-  CAN bus speed = 1000000
+  CAN bus speed = 250000  # stock Magneto Linux Hub (gs_usb)
   # Board-specific CAN pins: use Peopoly/Lancer known-good settings from
   # last working build / board docs. If using Katapult, match application
   # start offset to the bootloader already on the toolhead.
