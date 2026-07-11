@@ -37,7 +37,7 @@ Full switch guide: [TRACKS.md](TRACKS.md) and in-tree `docs/TRACKS.md`.
 |--------|------|-------|
 | Load-cell latch | `klippy/extras/magneto_load_cell.py` | Cleaned; `CLEAR_LOAD_CELL`/`LC28`; auto-clear on probe home |
 | Shell command | `klippy/extras/gcode_shell_command.py` | Vendored on mainline; **native on Kalico** |
-| Homing soft-fail | `klippy/extras/homing.py` | Soft message if `magneto_load_cell` present |
+| Homing sticky (D7) | `klippy/extras/homing.py` | Clear + one retry + hard fail |
 | Stepper past | `src/stepper.c` + `src/Kconfig` | Optional `MAGNETO_RELAX_STEPPER_PAST` |
 
 ### Build Octopus (main MCU)

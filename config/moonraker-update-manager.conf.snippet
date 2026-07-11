@@ -1,0 +1,20 @@
+# Drop into moonraker.conf (or include from printer_data/config).
+# Dual track: set primary_branch to magneto-x OR magneto-x-kalico.
+# See docs/TRACKS.md.
+
+[update_manager klipper]
+type: git_repo
+path: ~/klipper
+origin: https://github.com/lmambr2/magneto-x-klipper.git
+primary_branch: magneto-x
+# primary_branch: magneto-x-kalico
+managed_services: klipper
+# channel: dev
+
+# Optional: track umbrella configs (manual deploy still recommended)
+# [update_manager magneto-x-config]
+# type: git_repo
+# path: ~/magneto-x
+# origin: https://github.com/lmambr2/magneto-x.git
+# primary_branch: master
+# managed_services:

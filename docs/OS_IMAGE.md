@@ -34,7 +34,7 @@ Steps:
    ```
 
 5. Point Klipper at **`lmambr2/magneto-x-klipper`** (branch `magneto-x`) — not `Klipper3d/klipper`, and not `mypeopoly/Klipper`.
-6. Install magneto-manager + Magmotor deps from `os/install-magneto-services.sh`.
+6. Install **hardened** magneto-manager from `os/install-magneto-services.sh` (required for clean OS).
 7. Deploy `config/` from this workspace.
 8. Flash MCUs with firmware built from the same host tree.
 
@@ -60,7 +60,7 @@ Use this only as a **bridge** while validating MagXY + load-cell behavior.
 | Need | Detail |
 |------|--------|
 | USB to Octopus | Type-C data — `/dev/serial/by-id/usb-Klipper_stm32h723xx_*` |
-| USB-CAN to toolhead | Linux Hub PCB — `can0` @ 1 Mbit |
+| USB-CAN to toolhead | Linux Hub PCB — `can0` @ **250 kbit** (`gs_usb` `1d50:606f`) |
 | USB-serial to ESP32 | CH340 — magneto-manager opens “USB Serial” @ 115200 |
 | Display | Micro-HDMI + USB touch (stock panel) |
 | WiFi | Onboard H616 or USB antenna as shipped |

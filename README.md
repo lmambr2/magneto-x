@@ -34,6 +34,8 @@ If you own a Magneto X that never quite worked because of the stock Klipper tree
 ## Docs
 
 - **[docs/DECISIONS_LOCKED.md](docs/DECISIONS_LOCKED.md)** — operator locks (clean OS, OriginMove default, equal Kalico, …)  
+- **[docs/MIGRATION.md](docs/MIGRATION.md)** — bridge + clean OS install  
+- **[docs/SECURITY.md](docs/SECURITY.md)** · **[docs/FAQ.md](docs/FAQ.md)** · **[docs/MCU_BUILD.md](docs/MCU_BUILD.md)**  
 - **[docs/FIELD_FACTS.md](docs/FIELD_FACTS.md)** — measured CAN `1d50:606f` @ 250k, H723, SSH user  
 - **[docs/DESIGN.md](docs/DESIGN.md)** — full design (architecture, key decisions, PR plan)  
 - **[docs/TRACKS.md](docs/TRACKS.md)** — mainline vs Kalico A/B options  

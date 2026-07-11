@@ -1,0 +1,15 @@
+# Magneto X — BTT Octopus Pro (STM32H723) fragment
+# Apply: cp to ~/klipper/.config then make olddefconfig
+# Or use as reference for make menuconfig.
+#
+# Crystal 25 MHz, 128KiB bootloader, USB — see docs/MCU_BUILD.md
+# MAGNETO_RELAX_STEPPER_PAST remains n (D15) until S3 A/B.
+
+CONFIG_LOW_LEVEL_OPTIONS=y
+CONFIG_MACH_STM32=y
+CONFIG_MACH_STM32H723=y
+CONFIG_STM32_FLASH_START_20000=y
+CONFIG_STM32_CLOCK_REF_25M=y
+CONFIG_USBSERIAL=y
+CONFIG_STM32_USB_PA11_PA12=y
+# CONFIG_MAGNETO_RELAX_STEPPER_PAST is not set
