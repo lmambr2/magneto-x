@@ -21,21 +21,16 @@ Do **not** cherry-pick macros while leaving OS-update `LINER_*` trees active —
 
 ## Path A — Clean MainsailOS (Option A)
 
-1. **Backup** stock config, note serial + CAN UUID, MagXY still works on stock if possible.
+**Full lab runbook (image URL, flash, restore):** [CLEAN_OS_REFRESH.md](CLEAN_OS_REFRESH.md).
+
+1. **Backup** stock config, note serial + CAN UUID, MagXY still works on stock if possible  
+   (lab: `backups/pre-clean-os-*`).
 2. Flash **current MainsailOS Armbian for Orange Pi Zero 2**  
+   (e.g. release **3.0.0** `orangepi_zero2-trixie` — see CLEAN_OS_REFRESH).  
    https://docs.mainsail.xyz/mainsailos/getting-started/armbian/  
    SSH: **`pi` / `armbian`** (change password immediately).
 3. `sudo apt update && sudo apt full-upgrade` (reboot if kernel updates).
-4. **CAN** for stock Linux Hub (`gs_usb` **`1d50:606f`** @ **250000**):
-
-   ```bash
-   lsusb | grep -i 1d50
-   sudo ip link set can0 up type can bitrate 250000
-   # Persist: copy os/can0.network → /etc/systemd/network/80-can0.network
-   sudo networkctl reload || true
-   ```
-
-5. Clone umbrella + run **postinstall** (preferred one-shot):
+4. Clone umbrella + run **postinstall** (preferred one-shot):
 
    ```bash
    git clone https://github.com/lmambr2/magneto-x.git ~/magneto-x
@@ -46,15 +41,14 @@ Do **not** cherry-pick macros while leaving OS-update `LINER_*` trees active —
    curl -s http://127.0.0.1:8880/health
    ```
 
-   Manual equivalent: stop klipper → clone `magneto-x-klipper` @ track →
-   `os/install-magneto-services.sh` → rsync `config/` → moonraker snippet.
+   Postinstall installs CAN **250k** + txqueuelen, hardened manager, config, moonraker notes.
 
-6. Edit `~/printer_data/config/magneto_device.cfg` (serial + canbus_uuid).
-7. `~/magneto-x/scripts/preflight-magneto.sh`
-8. nginx large uploads: see [FAQ.md](FAQ.md).
-9. **MCU flash** — deferred until host talks to stock bins (2A). When ready: [MCU_BUILD.md](MCU_BUILD.md).
-10. `FIRMWARE_RESTART` → `LM_ENABLE` → home carefully.
-11. Fill [validation/S3_HARDWARE_REPORT.template.md](validation/S3_HARDWARE_REPORT.template.md) for PR-V1.
+5. Restore device IDs / last config: `./os/restore-after-clean-os.sh /path/to/pre-clean-os-backup`
+6. `~/magneto-x/scripts/preflight-magneto.sh`
+7. nginx large uploads: see [FAQ.md](FAQ.md).
+8. **MCU flash** — deferred until host talks to existing bins (2A). When ready: [MCU_BUILD.md](MCU_BUILD.md).
+9. `FIRMWARE_RESTART` → `LM_ENABLE` → home carefully.
+10. Fill [validation/S3_HARDWARE_REPORT.template.md](validation/S3_HARDWARE_REPORT.template.md) for PR-V1.
 
 ### Rollback (clean OS)
 
