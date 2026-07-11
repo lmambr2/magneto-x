@@ -31,7 +31,7 @@ Parse-ready Klipper configs for [magneto-x](https://github.com/lmambr2/magneto-x
 | `printer.cfg` | Top-level includes + bed/Z/fans/homing |
 | `mainsail.cfg` | Virtual SD, pause_resume, CANCEL — **no PAUSE/RESUME** |
 | `macros.cfg` | PAUSE/RESUME, LM_*, print start/end |
-| `shell_command.cfg` | `LINEAR_MOTOR_ENABLE` / `DISABLE` / version curl only |
+| `shell_command.cfg` | Optional shell fallback (MagXY uses `[magneto_linear_motor]` PR-K7) |
 | `magneto_device.cfg` | MCU serial + CAN UUID placeholders |
 | `magneto_toolhead.cfg` | Lancer extruder, load cell, ADXL, fans |
 | `motion_xy_stock.cfg` | Default XY + probe/QGL/mesh |
