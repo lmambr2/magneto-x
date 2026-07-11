@@ -34,10 +34,12 @@ If you own a Magneto X that never quite worked because of the stock Klipper tree
 ## Docs
 
 - **[docs/DECISIONS_LOCKED.md](docs/DECISIONS_LOCKED.md)** — operator locks (clean OS, OriginMove default, equal Kalico, …)  
+- **[docs/STATUS.md](docs/STATUS.md)** — what is landed vs hardware-gated  
 - **[docs/MIGRATION.md](docs/MIGRATION.md)** — bridge + clean OS install  
 - **[docs/SECURITY.md](docs/SECURITY.md)** · **[docs/FAQ.md](docs/FAQ.md)** · **[docs/MCU_BUILD.md](docs/MCU_BUILD.md)**  
 - **[docs/FIELD_FACTS.md](docs/FIELD_FACTS.md)** — measured CAN `1d50:606f` @ 250k, H723, SSH user  
 - **[docs/DESIGN.md](docs/DESIGN.md)** — full design (architecture, key decisions, PR plan)  
+- **[docs/validation/](docs/validation/)** — S3 / PR-V1 hardware report template
 - **[docs/TRACKS.md](docs/TRACKS.md)** — mainline vs Kalico A/B options  
 - **[docs/SOURCE_ANALYSIS.md](docs/SOURCE_ANALYSIS.md)** — every upstream/community link: include/skip + wiki dump rationale  
 - [docs/NAMING.md](docs/NAMING.md) — repo names, GitHub descriptions, topics  
@@ -57,11 +59,16 @@ If you own a Magneto X that never quite worked because of the stock Klipper tree
 | `docs/` | Project documentation |
 | `peopoly-klipper/`, `community/`, … | Local reference clones (not published) |
 
-## Next steps
+## Install (clean OS)
 
-1. Rename GitHub fork `klipper` → **`magneto-x-klipper`** and push branch `magneto-x`.  
-2. Publish this workspace as **`magneto-x`**.  
-3. Flash a modern Orange Pi image; install fork + magneto-manager; deploy `config/`.  
-4. Build/flash Octopus + Lancer; `LM_ENABLE` → home → QGL → print.  
+```bash
+# On the Orange Pi (MainsailOS), after cloning this repo:
+./os/postinstall-magneto.sh              # track magneto-x
+# TRACK=magneto-x-kalico ./os/postinstall-magneto.sh
+# ./os/postinstall-magneto.sh --dry-run
+```
 
-Details: [docs/MODERNIZATION.md](docs/MODERNIZATION.md).
+Then edit `magneto_device.cfg`, `LM_ENABLE`, home. MCU flash later: [docs/MCU_BUILD.md](docs/MCU_BUILD.md).  
+Hardware sign-off: [docs/validation/S3_HARDWARE_REPORT.template.md](docs/validation/S3_HARDWARE_REPORT.template.md).
+
+Details: [docs/MIGRATION.md](docs/MIGRATION.md) · [docs/STATUS.md](docs/STATUS.md).

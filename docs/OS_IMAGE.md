@@ -33,10 +33,10 @@ Steps:
    # Persist via systemd-networkd or a udev + oneshot service (see os/can0.network)
    ```
 
-5. Point Klipper at **`lmambr2/magneto-x-klipper`** (branch `magneto-x`) — not `Klipper3d/klipper`, and not `mypeopoly/Klipper`.
-6. Install **hardened** magneto-manager from `os/install-magneto-services.sh` (required for clean OS).
-7. Deploy `config/` from this workspace.
-8. Flash MCUs with firmware built from the same host tree.
+5. Clone **`lmambr2/magneto-x`** and run **`./os/postinstall-magneto.sh`**
+   (fork + hardened manager + config + can0). Track: `magneto-x` or `TRACK=magneto-x-kalico`.
+6. Edit `magneto_device.cfg` UUIDs; verify `curl http://127.0.0.1:8880/health`.
+7. Flash MCUs later from the same host tree ([MCU_BUILD.md](MCU_BUILD.md)).
 
 ### Option B — Fresh Armbian + KIAUH
 

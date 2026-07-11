@@ -350,12 +350,12 @@ Hardware gates (LM_ENABLE → home → QGL → print) require the real machine; 
 
 ## Phase priority (hardware-gated)
 
-1. **S0–S1** — Docs + Magneto extras gap-close (dwell, D7 sticky policy, shell PARAMS) + guard green  
-2. **S2** — Parse-ready `config/` on a real host (`check_includes` + Klippy start far enough to demand MCU serial)  
-3. **S2b** — Hardened magneto-manager before any public clean-OS install script  
-4. **S3 / PR-V1** — Live machine: manager, CAN 250k, `LM_ENABLE`, home, QGL, short print; stepper-past A/B only if needed  
-5. **S4+** — Clean MainsailOS path, Moonraker update_manager, defconfigs CI  
-6. **Optional** — Kalico A/B, OriginMove default flip, EmperorArthur ESP32, native MagXY module (S7)
+Software through S2b / S4–S6 is **landed** (see `docs/STATUS.md`). Remaining:
+
+1. **S3 / PR-V1** — Live machine: postinstall or manual path, `LM_ENABLE`, home, QGL, short print; fill `docs/validation/S3_HARDWARE_REPORT.template.md`  
+2. **MCU flash** — same HEAD, 25 MHz Octopus; stepper-past A/B only if needed (2A)  
+3. **v1 tag** — only after PR-V1 green  
+4. **Optional S7** — full image, EmperorArthur ESP32, native MagXY module  
 
 Do not treat scaffolds or doc-only work as “printer fixed” until S3 is explicitly run on hardware.
 

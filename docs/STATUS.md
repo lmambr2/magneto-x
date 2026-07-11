@@ -1,0 +1,67 @@
+# Implementation status (2026-07-11)
+
+Living checklist vs DESIGN PR plan. Update when PRs land.
+
+## Complete (software)
+
+| ID | Title | Where |
+|----|--------|--------|
+| PR-M1 | Design + research docs | `docs/DESIGN.md`, RESEARCH, … |
+| PR-M2 | Parse-ready config | `config/` + `check_includes` |
+| PR-M3 | Moonraker snippet | `config/moonraker-update-manager.conf.snippet` |
+| PR-M4 | Hardened magneto-manager | `os/magneto-manager/`, install script, tests |
+| PR-M5 | Migration guide | `docs/MIGRATION.md` |
+| PR-M6 | MCU defconfigs + build doc | `os/defconfig-*`, `docs/MCU_BUILD.md` |
+| PR-M7 | Security guide | `docs/SECURITY.md` |
+| PR-M8 | FAQ | `docs/FAQ.md` |
+| PR-M9 lite | Postinstall skeleton | `os/postinstall-magneto.sh` |
+| PR-K1 | Crystal / MCU docs | magneto-x-klipper `docs/Magneto_X.md` |
+| PR-K2 | CLEAR_LOAD_CELL dwell | both tracks |
+| PR-K3 | Sticky probe D7 retry | both tracks |
+| PR-K4 | Relax default n + defconfig assert | Kconfig + `os/check-defconfigs.sh` |
+| PR-K5 | Shell PARAMS reject | both tracks |
+| PR-K6 lite | CI gate script | `scripts/ci-magneto.sh` (+ example workflow under `docs/ci/`) |
+| Tracks | Mainline + Kalico A/B | `docs/TRACKS.md`, branches |
+| Decisions | Operator locks §1–7, §6 | `docs/DECISIONS_LOCKED.md` |
+| Field | CAN/H723/SSH | `docs/FIELD_FACTS.md` |
+
+## Blocked on hardware (not “software done”)
+
+| ID | Title | Notes |
+|----|--------|--------|
+| **PR-V1** | S3 hardware validation | Template: `docs/validation/S3_HARDWARE_REPORT.template.md` — fill on machine |
+| MCU flash | Modern Octopus + Lancer | After host path works (2A); recipe in MCU_BUILD |
+| v1 git tag | D20 release | Requires PR-V1 green |
+
+## Deferred / optional (explicit non-goals for now)
+
+| ID | Title | Notes |
+|----|--------|--------|
+| PR-K7 | Native MagXY Klippy module | S7+ |
+| PR-M9 full | Custom MainsailOS image build | postinstall script is enough for now |
+| PR-M10 | EmperorArthur ESP32 | Vendor FW first |
+| A8 | Moonraker MagXY proxy | If shell risk dominates |
+| GitHub Actions live | `.github/workflows` | Needs `workflow` OAuth scope; use `docs/ci/*.example` |
+| HX717 / Beacon | Hardware redesign | Alt only |
+
+## Local verify
+
+```bash
+bash scripts/ci-magneto.sh
+# dry-run postinstall:
+./os/postinstall-magneto.sh --dry-run
+```
+
+## Rollout stages
+
+| Stage | Status |
+|-------|--------|
+| S0 docs | **done** |
+| S1 fork gap-close | **done** (K2/K3/K5) |
+| S2 config | **done** |
+| S2b manager | **done** |
+| S3 hardware | **open** (template ready) |
+| S4 clean OS docs | **done** (M5 + postinstall) |
+| S5 moonraker snippet | **done** |
+| S6 defconfigs | **done** |
+| S7 optional | deferred |

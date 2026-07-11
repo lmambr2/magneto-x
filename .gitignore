@@ -50,7 +50,12 @@ secrets.ini
 backups/**/disk/*.img.gz
 backups/peopoly-os-images/*.img.xz
 backups/peopoly-os-images/*.img
-docs/validation/
+# Live validation captures (may contain UUIDs / LAN info)
+docs/validation/live-*
+docs/validation/**/*.json
+docs/validation/**/*filled*
+docs/validation/S3_HARDWARE_REPORT-20*
+# Keep templates + README tracked
 backups/peopoly-os-images/*.log
 backups/**/disk/dd.log
 .venv-test/

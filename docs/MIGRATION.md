@@ -30,38 +30,25 @@ Do **not** cherry-pick macros while leaving OS-update `LINER_*` trees active —
    sudo networkctl reload || true
    ```
 
-5. Install Klipper stack if not already (MainsailOS image usually has it), then:
-
-   ```bash
-   sudo systemctl stop klipper
-   mv ~/klipper ~/klipper-mainsail-backup
-   git clone -b magneto-x https://github.com/lmambr2/magneto-x-klipper.git ~/klipper
-   # Kalico A/B: -b magneto-x-kalico
-   ~/klippy-env/bin/pip install -r ~/klipper/scripts/klippy-requirements.txt
-   ```
-
-6. **Hardened manager** (from this umbrella repo):
+5. Clone umbrella + run **postinstall** (preferred one-shot):
 
    ```bash
    git clone https://github.com/lmambr2/magneto-x.git ~/magneto-x
-   ~/magneto-x/os/install-magneto-services.sh
-   # Magmotor GUI binary (optional, not in git):
-   # ~/magneto-x/os/install-magneto-services.sh --with-magmotor
+   cd ~/magneto-x
+   ./os/postinstall-magneto.sh
+   # Kalico: TRACK=magneto-x-kalico ./os/postinstall-magneto.sh
+   # Magmotor GUI: ./os/postinstall-magneto.sh --with-magmotor
    curl -s http://127.0.0.1:8880/health
    ```
 
-7. Deploy configs:
+   Manual equivalent: stop klipper → clone `magneto-x-klipper` @ track →
+   `os/install-magneto-services.sh` → rsync `config/` → moonraker snippet.
 
-   ```bash
-   cp -a ~/printer_data/config ~/printer_data/config.bak.$(date +%Y%m%d)
-   rsync -a --exclude='macros.cfg.stock*' ~/magneto-x/config/ ~/printer_data/config/
-   # Edit magneto_device.cfg: serial + canbus_uuid
-   ```
-
-8. Moonraker: merge `config/moonraker-update-manager.conf.snippet`.
-9. nginx large uploads: see [FAQ.md](FAQ.md).
-10. **MCU flash** — deferred until host talks to stock bins and motion is proven (2A). When ready: [MCU_BUILD.md](MCU_BUILD.md) from the **same** `~/klipper` HEAD.
-11. `FIRMWARE_RESTART` → `LM_ENABLE` → home carefully.
+6. Edit `~/printer_data/config/magneto_device.cfg` (serial + canbus_uuid).
+7. nginx large uploads: see [FAQ.md](FAQ.md).
+8. **MCU flash** — deferred until host talks to stock bins (2A). When ready: [MCU_BUILD.md](MCU_BUILD.md).
+9. `FIRMWARE_RESTART` → `LM_ENABLE` → home carefully.
+10. Fill [validation/S3_HARDWARE_REPORT.template.md](validation/S3_HARDWARE_REPORT.template.md) for PR-V1.
 
 ### Rollback (clean OS)
 

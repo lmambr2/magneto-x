@@ -5,7 +5,7 @@
 | **Document** | Magneto X stack modernization (magneto-x / magneto-x-klipper) |
 | **Author** | lmambr2 (community magneto-x project) |
 | **Date** | 2026-07-11 |
-| **Status** | Draft (rev 2 — post design review) |
+| **Status** | Rev 3 — software PRs M1–M9lite / K1–K6 landed; **PR-V1 hardware open** |
 | **Repos** | [lmambr2/magneto-x](https://github.com/lmambr2/magneto-x), [lmambr2/magneto-x-klipper](https://github.com/lmambr2/magneto-x-klipper) |
 | **Local workspace** | `/home/lane/Projects/magneto-x/` |
 | **Audience** | Senior engineers / advanced Magneto X owners contributing to the community fork |
@@ -440,7 +440,7 @@ verbose: True
 Current **MainsailOS Armbian for Orange Pi Zero 2**:
 
 1. Flash image; first-boot SSH; change default password; `apt full-upgrade`.
-2. Bring up **can0 @ 1 Mbit** (see CAN bring-up below).
+2. Bring up **can0 @ 250 kbit** (stock hub) (see CAN bring-up below).
 3. Install Klipper from `lmambr2/magneto-x-klipper` branch `magneto-x`.
 4. Install **hardened** magneto-manager via `os/install-magneto-services.sh` (refuses stock unhardened copy).
 5. Deploy full `config/` package; set UUIDs.
@@ -708,15 +708,15 @@ LM_ENABLE fails or motors dead
 
 | Stage | Content | Exit criteria |
 |-------|---------|---------------|
-| **S0** | Docs & identity | Repos discoverable; policy clear |
-| **S1** | Fork extras gap-close (PR-K2/K3/K5) | D7 algorithm + dwell + PARAMS policy landed |
-| **S2** | Config package parse-ready (PR-M2) | Include graph green; no LINER/hello_world |
-| **S2b** | Hardened manager (PR-M4) | Acceptance criteria §6 green |
-| **S3** | **Hardware validation (PR-V1)** — hard gate before v1 tag | Checklist + stepper A/B documented |
-| **S4** | Clean OS install path (PR-M5) | Uses hardened manager only |
-| **S5** | Moonraker update_manager | In-app updates |
-| **S6** | Defconfigs CI (PR-M6) | Octopus crystal + Lancer no-relax |
-| **S7** | Optional image / ESP32 / native MagXY / Moonraker proxy | Separate |
+| **S0** | Docs & identity | **Done** |
+| **S1** | Fork extras gap-close (PR-K2/K3/K5) | **Done** |
+| **S2** | Config package parse-ready (PR-M2) | **Done** |
+| **S2b** | Hardened manager (PR-M4) | **Done** |
+| **S3** | **Hardware validation (PR-V1)** | **Open** — template in `docs/validation/` |
+| **S4** | Clean OS install path (PR-M5 + postinstall) | **Done** (docs + `os/postinstall-magneto.sh`) |
+| **S5** | Moonraker update_manager | **Done** (snippet) |
+| **S6** | Defconfigs CI (PR-M6) | **Done** |
+| **S7** | Optional image / ESP32 / native MagXY / Moonraker proxy | Deferred |
 
 **Feature flags:** Kconfig relax (default n); `auto_clear_on_home`; manager bind env; install `--with-magmotor`.
 
@@ -732,7 +732,7 @@ LM_ENABLE fails or motors dead
 | Magmotor Qt on headless | Low | High | `--with-magmotor` optional |
 | Upstream homing rebase | Medium | High | Minimal patch; CI |
 | ESP32 community FW brick | High | Low | Vendor first; UART recovery docs |
-| Install script ships stock manager | Critical | High today | PR-M4 refuses |
+| Install script ships stock manager | Critical | Low after M4 | PR-M4 refuses unhardened |
 
 ---
 
@@ -1066,29 +1066,29 @@ Each PR lists **type** (new work vs amend/verify already-landed), **acceptance c
 ### Suggested merge order (first release)
 
 ```text
-Already landed: extras skeleton (449d8583), branding (7887d9a0)
+SOFTWARE LANDED (2026-07-11):
+  K1–K5, M1–M8, M9-lite postinstall, K6-lite ci-magneto.sh
+  Dual tracks magneto-x + magneto-x-kalico
 
-PR-K1 (docs amend), PR-K4 (verify), PR-K5 (PARAMS)  ─┐
-PR-K2 (dwell) → PR-K3 (retry algorithm)              ─┤
-PR-M1 (docs), PR-M2 (parse-ready config)             ─┼→ PR-M4 (HARDENED MANAGER)
-PR-M3 (moonraker snippet)                            ─┤         ↓
-                                                      └→ PR-M5 (migration) → PR-M6 → PR-M7 → PR-M8
-                                                                ↓
-                                                         PR-V1 hardware gate
-                                                                ↓
-                                                         v1 tag (D20)
-Optional later: PR-K6, PR-K7, PR-M9, PR-M10, A8 Moonraker proxy
+REMAINING FOR v1 TAG:
+  PR-V1 hardware validation (template ready)
+  → MCU flash from same HEAD when 2A allows
+  → v1 tag (D20)
+
+DEFERRED: K7 native MagXY, full image build, M10 ESP32, A8 proxy
 ```
+
+See **[STATUS.md](STATUS.md)** for the living checklist.
 
 **v1 “works for owners” definition:**
 
-1. Gap-close PRs K2/K3/K5 merged (D7 + PARAMS + dwell).
-2. Parse-ready config (M2) with mainsail.cfg.
-3. Hardened manager installed (M4); stock manager not recommended on networked hosts.
-4. Both MCUs from same HEAD with **25 MHz** Octopus recipe; relax only per A/B notes.
-5. **PR-V1** checklist green on at least one real Magneto X.
-6. Bridge and clean-OS docs include security minimums.
+1. ~~Gap-close PRs K2/K3/K5~~ **done**
+2. ~~Parse-ready config (M2)~~ **done**
+3. ~~Hardened manager (M4)~~ **done**
+4. Both MCUs from same HEAD with **25 MHz** Octopus recipe — **after** host path (2A)
+5. **PR-V1** checklist green on at least one real Magneto X — **open**
+6. ~~Bridge and clean-OS docs~~ **done** (M5 + postinstall + SECURITY)
 
 ---
 
-*End of design document (rev 2).*
+*End of design document (rev 3).*

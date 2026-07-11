@@ -31,6 +31,10 @@ Section **6** items (D7 dwell/retry, PARAMS, stepper-past default, Moonraker pac
 
 See [FIELD_FACTS.md](FIELD_FACTS.md).
 
+## Software complete / hardware open
+
+See **[STATUS.md](STATUS.md)**. Remaining for v1 tag: **PR-V1** on a real printer (template under `docs/validation/`).
+
 ## Scope freeze §6 (2026-07-11) — all recommended
 
 | Item | Lock | PR |
