@@ -13,3 +13,11 @@
 ## Privacy
 
 Live backups may include WiFi credentials in moonraker/sonar configs — review before making the repo public if needed.
+
+## Safety policy
+
+- **No** STL/3MF/gcode print files.
+- **No** WiFi passwords, API keys, private keys, or moonraker secrets.
+- **No** Magmotor / MagnetoWifiHelper in the public repo (see DESIGN D13).
+- Live backup MCU UUIDs / serials / LAN addresses are **redacted**.
+- Large OS/disk images are gitignored; use Releases for factory OS mirrors.

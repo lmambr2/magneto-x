@@ -45,4 +45,4 @@ git clone docs/vendor-archive/peopoly-github/repos/magnetox-os-update.bundle mag
 
 ## License / provenance
 
-Artifacts originated from Peopoly public GitHub and wiki. Archived for interoperability and preservation of purchased hardware support files. Magmotor/MagnetoWifiHelper are vendor binaries as published in `mypeopoly/magnetox-os-update`.
+Artifacts originated from Peopoly public GitHub and wiki. Archived for interoperability and preservation of purchased hardware support files. Magmotor/MagnetoWifiHelper are **omitted** from public tree tarballs (proprietary). Git bundles may still historically reference them; do not re-add binaries.

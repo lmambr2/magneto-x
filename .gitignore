@@ -17,3 +17,36 @@ backups/peopoly-os-images/*.img
 backups/**/*.img.gz
 backups/**/rootfs.img*
 backups/**/disk/*.img.gz
+
+# 3D models / print files (never commit)
+*.stl
+*.3mf
+*.obj
+*.amf
+*.step
+*.stp
+*.gcode
+*.gco
+*.bgcode
+*.ufp
+
+# Secrets / credentials
+*.pem
+*.key
+id_rsa
+id_ed25519
+*.env
+*credentials*
+*secrets*
+moonraker.secrets
+secrets.ini
+
+# Vendor proprietary binaries (obtain privately)
+**/Magmotor
+**/MagnetoWifiHelper
+**/Magmotor.exe
+
+# Large disk/OS images
+backups/**/disk/*.img.gz
+backups/peopoly-os-images/*.img.xz
+backups/peopoly-os-images/*.img

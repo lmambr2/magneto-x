@@ -1,4 +1,4 @@
-# Live stock backup — mainsailos @ 192.168.1.214
+# Live stock backup — mainsailos @ x.x.x.x
 
 **Captured:** 2026-07-11 UTC  
 **Method:** Paramiko SFTP/SSH (password); agent host key is passphrase-locked so pubkey auth was not used from the automation host.
@@ -13,7 +13,7 @@
 | Kernel | 5.16.17-sun50iw9 aarch64 |
 | Disk | mmcblk1 ~29 GB, ~24 GB free |
 | CAN | can0 gs_usb **250000** bit/s |
-| Octopus serial | `usb-Klipper_stm32h723xx_250030001751313434373135-if00` |
+| Octopus serial | `usb-Klipper_stm32h723xx_REDACTED` |
 | ESP32 | `/dev/ttyUSB0` (CH340) |
 | Host Klipper | `8ef0f7d7e-dirty` (Klipper3d origin, dirty Peopoly tree) |
 
@@ -22,7 +22,7 @@
 | Path | Description |
 |------|-------------|
 | `config/` | Full `printer_data/config` including history backups |
-| `auto-uuid/` | Magmotor, MagnetoWifiHelper, manager scripts |
+| `auto-uuid/` | Manager scripts only (Magmotor/WifiHelper **not** stored) |
 | `magnetox-os-update/` | On-device OS update package tree |
 | `klipper/` | Magneto extras + git status snapshot (not full git history) |
 | `host/` | dpkg, pip, services, CAN, Moonraker/MCU JSON |
@@ -40,3 +40,12 @@
 2. Overlay `config/` into `~/printer_data/config/`.
 3. Restore `auto-uuid/` and manager service.
 4. Rebuild MCU firmware from matching Klipper tree if needed.
+
+
+## Redaction / safety
+
+- Proprietary `Magmotor` / `MagnetoWifiHelper` binaries **removed** from this public tree.
+- MCU serial paths and CAN UUIDs **redacted**.
+- LAN IPs / MACs **redacted**.
+- No gcode/STL/3MF files included.
+- Full disk image (if present under `disk/`) is **gitignored**.
