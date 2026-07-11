@@ -109,6 +109,74 @@ def walk_includes(
     return seen, errors
 
 
+def _active_section_present(text: str, section: str) -> bool:
+    """True if an uncommented [section] or [section …] line exists."""
+    pat = re.compile(
+        rf"^\s*\[{re.escape(section)}(?:\s+[^\]]*)?\]\s*(?:#.*)?$",
+        re.IGNORECASE,
+    )
+    for line in text.splitlines():
+        if line.lstrip().startswith("#"):
+            continue
+        bare = line.split("#", 1)[0].rstrip()
+        if pat.match(bare):
+            return True
+    return False
+
+
+def magxy_path_check(package_root: Path, resolved_files: set[Path] | None = None) -> list[str]:
+    """MagXY must be reachable via native module and/or *active* shell fallbacks.
+
+    Commented-out [gcode_shell_command LINEAR_MOTOR_*] stubs must not satisfy CI
+    (that was a false green when only PR-K7 native MagXY is enabled).
+    """
+    errors: list[str] = []
+    package_root = package_root.resolve()
+    has_module = False
+    active_shells: set[str] = set()
+
+    # Prefer files in the include graph; fall back to whole package scan
+    paths: list[Path]
+    if resolved_files:
+        paths = sorted(resolved_files)
+    else:
+        paths = sorted(package_root.rglob("*.cfg"))
+
+    for path in paths:
+        if is_stock_reference(path):
+            continue
+        if not path.is_file():
+            continue
+        text = path.read_text(encoding="utf-8", errors="replace")
+        if _active_section_present(text, "magneto_linear_motor"):
+            has_module = True
+        for line in text.splitlines():
+            if line.lstrip().startswith("#"):
+                continue
+            bare = line.split("#", 1)[0].strip()
+            m = re.match(
+                r"\[gcode_shell_command\s+(LINEAR_MOTOR_ENABLE|LINEAR_MOTOR_DISABLE)\s*\]",
+                bare,
+                re.IGNORECASE,
+            )
+            if m:
+                active_shells.add(m.group(1).upper())
+
+    need = {"LINEAR_MOTOR_ENABLE", "LINEAR_MOTOR_DISABLE"}
+    if has_module:
+        return errors  # native MagXY is sufficient; shells optional
+    if active_shells >= need:
+        return errors
+    missing = sorted(need - active_shells)
+    errors.append(
+        "MagXY path: need active [magneto_linear_motor] OR uncommented "
+        f"[gcode_shell_command LINEAR_MOTOR_ENABLE/DISABLE] "
+        f"(missing active shells: {', '.join(missing)}; "
+        "commented stubs do not count)"
+    )
+    return errors
+
+
 def policy_check(package_root: Path) -> list[str]:
     """Policy for deployable configs (excludes stock reference files)."""
     errors: list[str] = []
@@ -210,21 +278,7 @@ def run_checks(package_root: Path) -> int:
         print(f"  OK  {f.relative_to(package_root)}")
 
     errors = list(missing) + list(opt_missing) + policy_check(package_root)
-
-    # Verify LINEAR shell commands exist in shell_command.cfg
-    sc = package_root / "shell_command.cfg"
-    if sc.is_file():
-        st = sc.read_text(encoding="utf-8", errors="replace")
-        for name in ("LINEAR_MOTOR_ENABLE", "LINEAR_MOTOR_DISABLE"):
-            if f"[gcode_shell_command {name}]" not in st and \
-               f"[gcode_shell_command  {name}]" not in st:
-                # allow flexible whitespace
-                if not re.search(
-                    rf"\[gcode_shell_command\s+{name}\]",
-                    st,
-                    re.IGNORECASE,
-                ):
-                    errors.append(f"shell_command.cfg: missing {name}")
+    errors.extend(magxy_path_check(package_root, files))
 
     if errors:
         print("\nFAILURES:")

@@ -139,6 +139,107 @@ class TestCheckIncludesRealPackage(unittest.TestCase):
             r"(?m)^\s*\[gcode_macro\s+PAUSE\s*\]",
         )
 
+    def test_magxy_commented_shells_without_module_fail(self):
+        """Commented LINEAR_MOTOR_* stubs must not satisfy MagXY path check."""
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            (root / "printer.cfg").write_text(
+                "[include shell_command.cfg]\n"
+                "[include macros.cfg]\n"
+                "[include mainsail.cfg]\n"
+                "[include magneto_device.cfg]\n"
+                "[include magneto_toolhead.cfg]\n"
+                "[include motion_xy_stock.cfg]\n",
+                encoding="utf-8",
+            )
+            (root / "shell_command.cfg").write_text(
+                "# [gcode_shell_command LINEAR_MOTOR_ENABLE]\n"
+                "# command: curl ...\n"
+                "# [gcode_shell_command LINEAR_MOTOR_DISABLE]\n"
+                "# command: curl ...\n",
+                encoding="utf-8",
+            )
+            for name in (
+                "mainsail.cfg",
+                "macros.cfg",
+                "magneto_device.cfg",
+                "magneto_toolhead.cfg",
+                "README.md",
+            ):
+                (root / name).write_text("# stub\n", encoding="utf-8")
+            (root / "motion_xy_stock.cfg").write_text(
+                "[probe]\nspeed: 0.5\nz_offset: -0.15\n", encoding="utf-8"
+            )
+            (root / "optional").mkdir()
+            (root / "optional" / "origin_move.cfg").write_text(
+                "[probe]\nspeed: 0.5\nz_offset: -0.15\n"
+                "[stepper_x]\nstep_pin: PF13\n"
+                "[stepper_y]\nstep_pin: PG0\n",
+                encoding="utf-8",
+            )
+            proc = subprocess.run(
+                [sys.executable, str(SCRIPT), str(root)],
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+            self.assertNotEqual(proc.returncode, 0, proc.stdout)
+            combined = proc.stdout + proc.stderr
+            self.assertIn("MagXY path", combined)
+            self.assertIn("commented stubs do not count", combined)
+
+    def test_magxy_native_module_passes_without_shells(self):
+        """PR-K7 [magneto_linear_motor] is sufficient without shell MagXY."""
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            (root / "printer.cfg").write_text(
+                "[include shell_command.cfg]\n"
+                "[include macros.cfg]\n"
+                "[include mainsail.cfg]\n"
+                "[include magneto_device.cfg]\n"
+                "[include magneto_toolhead.cfg]\n"
+                "[include motion_xy_stock.cfg]\n"
+                "[magneto_linear_motor]\nbackend: http\n",
+                encoding="utf-8",
+            )
+            (root / "shell_command.cfg").write_text(
+                "# optional shells only\n"
+                "# [gcode_shell_command LINEAR_MOTOR_ENABLE]\n"
+                "# command: true\n"
+                "# [gcode_shell_command LINEAR_MOTOR_DISABLE]\n"
+                "# command: true\n",
+                encoding="utf-8",
+            )
+            for name in (
+                "mainsail.cfg",
+                "macros.cfg",
+                "magneto_device.cfg",
+                "magneto_toolhead.cfg",
+                "README.md",
+            ):
+                (root / name).write_text("# stub\n", encoding="utf-8")
+            (root / "motion_xy_stock.cfg").write_text(
+                "[probe]\nspeed: 0.5\nz_offset: -0.15\n", encoding="utf-8"
+            )
+            (root / "optional").mkdir()
+            (root / "optional" / "origin_move.cfg").write_text(
+                "[probe]\nspeed: 0.5\nz_offset: -0.15\n"
+                "[stepper_x]\nstep_pin: PF13\n"
+                "[stepper_y]\nstep_pin: PG0\n",
+                encoding="utf-8",
+            )
+            proc = subprocess.run(
+                [sys.executable, str(SCRIPT), str(root)],
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+            self.assertEqual(
+                proc.returncode,
+                0,
+                f"expected pass with native MagXY:\n{proc.stdout}\n{proc.stderr}",
+            )
+
     def test_probe_speed_band(self):
         for rel in ("motion_xy_stock.cfg", "optional/origin_move.cfg"):
             text = (CONFIG / rel).read_text(encoding="utf-8")

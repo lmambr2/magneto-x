@@ -46,9 +46,9 @@ Resolved by `python3 scripts/check_includes.py config` (must match any “does i
 
 | ID | Sev | Finding | Path / symbol | Notes |
 |----|-----|---------|--------------|-------|
-| B1 | **medium** | `LEVEL_BED` / bare `QUAD_GANTRY_LEVEL` do **not** `LM_ENABLE` | `macros.cfg` `LEVEL_BED`, `QUAD_GANTRY_LEVEL` | MagXY motion can fail if called cold from UI. `PRINT_START` / `FULL_CALIBRATE` / Z `homing_override` do enable. **Uncovered by CI.** |
+| B1 | **medium** | ~~`LEVEL_BED` / bare `QUAD_GANTRY_LEVEL` do **not** `LM_ENABLE`~~ **Fixed** | `macros.cfg` | Both wrappers now `LM_ENABLE` first; policy tests assert it. |
 | B2 | **medium** | `CREATE_BED_MESH` / manual mesh never heats bed | `macros.cfg` `CREATE_BED_MESH` | Stock heated bed to 70 °C before mesh. Cold mesh ≠ print shape (lab already saw this). PRINT_START relies on slicer heat. |
-| B3 | **medium** | CI “requires” shell MagXY names but they are **only in comments** | `scripts/check_includes.py` L214–227; `shell_command.cfg` | Regex matches `# [gcode_shell_command LINEAR_MOTOR_…]`. **False green** for “shell fallback present.” Primary path is PR-K7 (correct); check is stale. **Uncovered / wrong coverage.** |
+| B3 | **medium** | ~~CI “requires” shell MagXY names but they are **only in comments**~~ **Fixed** | `scripts/check_includes.py` `magxy_path_check` | Requires active `[magneto_linear_motor]` **or** uncommented shell ENABLE/DISABLE; comments no longer count. |
 | B4 | **low** | `timelapse.cfg` stub defines **no** macros | `config/timelapse.cfg` | Include always succeeds offline; `TIMELAPSE_TAKE_FRAME` still fails until host links real component. Documented; easy to misread as “timelapse installed.” |
 | B5 | **low** | `MAGNETO_OS_VERSION` name is Peopoly-era | `macros.cfg` | Maps to `MAGNETO_LINEAR_VERSION` (manager version), not OS image version. Misleading for operators. |
 | B6 | **low** | `heater_bed` `min_temp: -200` | `printer.cfg` | Stock Peopoly quirk; masks sensor faults. |
@@ -76,7 +76,7 @@ No **critical** “will brick parse” issues found in the active graph under cu
 | `delay_disable_motor` | macros.cfg | **keep** | MagXY disarm after print. |
 | `FULL_CALIBRATE` | macros.cfg | **keep** | Product self-check; stock had weaker `CALIBRATE_BED`. |
 | `FULL_CALIBRATE_BED` | macros.cfg | **keep** | Thin alias → `FULL_CALIBRATE {rawparams}`. |
-| `LEVEL_BED` | macros.cfg | **fix** | Should `LM_ENABLE` before QGL (B1). |
+| `LEVEL_BED` | macros.cfg | **keep** | `LM_ENABLE` then QGL (P1/B1 fixed). |
 | `CREATE_BED_MESH` | macros.cfg | **fix** | Optional bed heat / document “hot mesh preferred” (B2). |
 | `MESH_LOAD` | macros.cfg | **keep** | Safe load if profile exists; prints should not rely on it. |
 | `BED_MESH_CALIBRATE` | KAMP Adaptive | **keep** | Sole owner; Magneto Z re-home patch. |
@@ -84,7 +84,7 @@ No **critical** “will brick parse” issues found in the active graph under cu
 | `SMART_PARK` | KAMP | **keep** (optional use) | Included; not wired into PRINT_START — call manually or from slicer if desired. |
 | `_KAMP_Settings` | KAMP_Settings | **keep** | Variable store. |
 | `VORON_PURGE` | KAMP file | **remove from deploy** (already) | File present, include commented — leave off unless user wants logo purge. |
-| `QUAD_GANTRY_LEVEL` wrapper | macros.cfg | **keep** (+ optional fix LM) | Stock heated bed during QGL; package does not — acceptable if operator pre-heats / PRINT_START heats. |
+| `QUAD_GANTRY_LEVEL` wrapper | macros.cfg | **keep** | `LM_ENABLE` + home + QGL base + G28 Z (P1 fixed). |
 | `PAUSE` / `RESUME` | macros.cfg only | **keep** | Sole owners; mainsail correctly omits. Safer Jetstream checks than stock. |
 | `cool_hot_end` | macros.cfg | **keep** | Pause timeout cool. |
 | `CANCEL_PRINT` | mainsail.cfg | **keep** | `LM_DISABLE` + Jetstream off. |
@@ -129,8 +129,8 @@ No **critical** “will brick parse” issues found in the active graph under cu
 
 | Pri | Opportunity | Why |
 |-----|-------------|-----|
-| P1 | `LEVEL_BED` / `QUAD_GANTRY_LEVEL`: prepend `LM_ENABLE` | Closes B1 without changing print path |
-| P1 | Fix `check_includes` shell requirement: require either active shells **or** `[magneto_linear_motor]` + no uncommented MagXY shells | Removes false green B3 |
+| P1 | ~~`LEVEL_BED` / `QUAD_GANTRY_LEVEL`: prepend `LM_ENABLE`~~ **done** | Closes B1 |
+| P1 | ~~Fix `check_includes` MagXY path (active module or active shells)~~ **done** | Closes B3 |
 | P2 | `CREATE_BED_MESH` / optional `MESH_BED_HOT` heat helper | Aligns with hot-mesh practice |
 | P2 | Call `SMART_PARK` from PRINT_START when extruder still heating | Product polish; optional flag |
 | P2 | Split `macros.cfg` into `macros_print.cfg` / `macros_magxy.cfg` / `macros_ui.cfg` | Readability only |

@@ -209,6 +209,13 @@ def check_macros(macros_path: Path) -> list[str]:
         if token not in ps:
             errors.append(f"PRINT_START: missing parametric {token}")
 
+    qgl = bodies.get("QUAD_GANTRY_LEVEL", "")
+    if "LM_ENABLE" not in qgl:
+        errors.append("QUAD_GANTRY_LEVEL: missing LM_ENABLE (bare LEVEL_BED/panel QGL needs MagXY)")
+    lb = bodies.get("LEVEL_BED", "")
+    if "LM_ENABLE" not in lb and "QUAD_GANTRY_LEVEL" not in lb:
+        errors.append("LEVEL_BED: must LM_ENABLE or call QUAD_GANTRY_LEVEL (which enables MagXY)")
+
     fc = bodies.get("FULL_CALIBRATE", "")
     for token in ("LM_ENABLE", "G28", "QUAD_GANTRY_LEVEL", "BED_MESH_CALIBRATE"):
         if token not in fc:

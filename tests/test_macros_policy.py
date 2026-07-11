@@ -61,6 +61,16 @@ class TestMacroDefinitions(unittest.TestCase):
         ):
             self.assertIn(tok, fc, f"FULL_CALIBRATE missing {tok}")
 
+    def test_qgl_and_level_bed_enable_magxy(self):
+        qgl = self.bodies["QUAD_GANTRY_LEVEL"]
+        self.assertIn("LM_ENABLE", qgl)
+        self.assertIn("QUAD_GANTRY_LEVEL_BASE", qgl)
+        lb = self.bodies["LEVEL_BED"]
+        self.assertTrue(
+            "LM_ENABLE" in lb or "QUAD_GANTRY_LEVEL" in lb,
+            "LEVEL_BED must arm MagXY",
+        )
+
     def test_full_calibrate_bed_aliases(self):
         body = self.bodies["FULL_CALIBRATE_BED"]
         self.assertIn("FULL_CALIBRATE", body)

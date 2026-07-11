@@ -25,6 +25,11 @@ All notable changes to the **magneto-x** umbrella and companion **magneto-x-klip
 - Do **not** add `[update_manager klipper]` on Moonraker v0.8 — conflicts with built-in updater (“Extension klipper already added” / unparsed options).
 - Track host via `~/klipper` git remote → `lmambr2/magneto-x-klipper`; snippet + postinstall updated; FAQ documents fix.
 
+### Config / CI P1 (audit follow-ups)
+
+- `QUAD_GANTRY_LEVEL` and `LEVEL_BED` call `LM_ENABLE` before motion (bare panel QGL safe).
+- `check_includes` MagXY path: require active `[magneto_linear_motor]` **or** uncommented `LINEAR_MOTOR_*` shells (commented stubs no longer pass CI).
+
 ### CI / lint / tests
 
 - `scripts/check_config_policy.py` — Magneto footguns (KAMP single owner, parametric PRINT_START / FULL_CALIBRATE, Moonraker snippet, Orca start G-code, SAVE_CONFIG format, manager hardening, defconfigs, core MD links).
