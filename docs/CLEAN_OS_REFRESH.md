@@ -114,12 +114,15 @@ sha256sum -c 2026-05-06-MainsailOS-armbian-orangepi_zero2-trixie-3.0.0.img.xz.sh
 
 | Area | Status for clean OS |
 |------|---------------------|
-| `postinstall-magneto.sh` | Ready — CAN 250k, manager, config, dialout, gs_usb |
-| Package `config/` | Ready — OriginMove default, KAMP, MagXY module |
+| `postinstall-magneto.sh` | Ready — CAN 250k, manager, config, dialout, gs_usb, **KlipperScreen default** |
+| Package `config/` | Ready — OriginMove default, KAMP, MagXY module, `KlipperScreen.conf` |
+| `install-klipperscreen.sh` | Ready — X11 + NetworkManager Wi‑Fi panel; `--skip-klipperscreen` to opt out |
 | `restore-after-clean-os.sh` | Ready — **selective** restore (never clobbers Trixie `moonraker.conf` with Peopoly dump) |
 | MCU flash | **Not required** for first boot (2A) if current bins already modern |
 | Magmotor Qt GUI | Optional `--with-magmotor` only; needs local `magnetox-os-update` tree |
 | Moonraker update UI | Prefer git remote on `~/klipper`; v0.8 strip logic only if old Moonraker detected |
+
+**Local panel vs first Wi‑Fi:** stock MainsailOS still boots to a text login until postinstall runs. First network join still needs a one-time path (USB keyboard + `nmtui`, Ethernet, or preconfigured Wi‑Fi on the SD). After `postinstall-magneto.sh`, **KlipperScreen** owns the HDMI panel and its **Network** menu can manage Wi‑Fi (NetworkManager).
 
 No further **blocking** code changes are required to boot Path A. Remaining work is **on-device** (flash already done → boot → postinstall → restore).
 

@@ -37,6 +37,13 @@ All notable changes to the **magneto-x** umbrella and companion **magneto-x-klip
 - Runbook: `docs/CLEAN_OS_REFRESH.md`; restore helper: `os/restore-after-clean-os.sh`.
 - Physical flash still requires boot media offline — cannot complete over SSH alone.
 
+### KlipperScreen by default (clean OS)
+
+- `os/install-klipperscreen.sh` — noninteractive X11 + NetworkManager + upstream KS installer.
+- `postinstall-magneto.sh` installs KlipperScreen **by default** (opt out: `--skip-klipperscreen`).
+- Package `config/KlipperScreen.conf` with localhost Moonraker defaults.
+- Restores local panel UX (printer + Wi‑Fi Network menu); first network join still needs keyboard/Ethernet once before apt.
+
 ### Audit findings sweep (remaining B2–B11)
 
 - Hot mesh defaults: `CREATE_BED_MESH` / `FULL_CALIBRATE` use `BED=60` (BED=0 cold).

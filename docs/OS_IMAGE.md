@@ -34,15 +34,18 @@ Steps:
    ```
 
 5. Clone **`lmambr2/magneto-x`** and run **`./os/postinstall-magneto.sh`**
-   (fork + hardened manager + config + can0). Track: `magneto-x` or `TRACK=magneto-x-kalico`.
+   (fork + hardened manager + config + can0 + **KlipperScreen**). Track: `magneto-x` or `TRACK=magneto-x-kalico`.
+   - Headless / no panel: `./os/postinstall-magneto.sh --skip-klipperscreen`
+   - Panel only later: `./os/install-klipperscreen.sh`
 6. Edit `magneto_device.cfg` UUIDs; verify `curl http://127.0.0.1:8880/health`.
-7. Flash MCUs later from the same host tree ([MCU_BUILD.md](MCU_BUILD.md)).
+7. On the stock HDMI/touch panel: KlipperScreen should start; use **Network** for Wi‑Fi after install.
+8. Flash MCUs later from the same host tree ([MCU_BUILD.md](MCU_BUILD.md)).
 
 ### Option B — Fresh Armbian + KIAUH
 
 1. Armbian CLI for Orange Pi Zero 2 from https://www.armbian.com/orange-pi-zero-2/
-2. Install KIAUH → Klipper / Moonraker / Mainsail / Crowsnest / optional KlipperScreen.
-3. Same fork remote + services as Option A.
+2. Install KIAUH → Klipper / Moonraker / Mainsail / Crowsnest (KlipperScreen comes from magneto postinstall by default).
+3. Same fork remote + services as Option A (`./os/postinstall-magneto.sh`).
 
 ### Option C — Keep Peopoly image, only upgrade Klipper
 
