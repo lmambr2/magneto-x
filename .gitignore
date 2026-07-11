@@ -53,3 +53,4 @@ backups/peopoly-os-images/*.img
 docs/validation/
 backups/peopoly-os-images/*.log
 backups/**/disk/dd.log
+.venv-test/

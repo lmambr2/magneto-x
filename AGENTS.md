@@ -74,7 +74,7 @@ python3 scripts/check_includes.py config
 |-------|------|
 | MotionG DN1-G60xxN ×2 | Closed-loop drivers; RS485 / 48 V |
 | ESP32 bridge | Peopoly firmware; serial “USB Serial” to host |
-| `magneto-manager` HTTP `:8880` | ENABLE/DISABLE (and more); stock binds `0.0.0.0` + `shell=True` — **harden before clean-OS install** |
+| `magneto-manager` HTTP `:8880` | ENABLE/DISABLE; **hardened** tree is `os/magneto-manager/` (localhost, allowlist). Install via `os/install-magneto-services.sh` |
 | Magmotor / MagnetoWifiHelper | **Proprietary** — never commit binaries; user copies from Peopoly packages |
 
 Klipper only emits **step/dir**. Do **not** implement MagXY closed-loop inside Klipper for v1.
