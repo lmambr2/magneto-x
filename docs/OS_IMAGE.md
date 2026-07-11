@@ -29,7 +29,7 @@ Steps:
 
    ```bash
    # Example for gs_usb style adapters — verify with lsusb
-   sudo ip link set can0 up type can bitrate 1000000
+   sudo ip link set can0 up type can bitrate 250000  # stock Magneto Linux Hub; use 1000000 only without that hub
    # Persist via systemd-networkd or a udev + oneshot service (see os/can0.network)
    ```
 

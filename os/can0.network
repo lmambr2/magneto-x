@@ -1,7 +1,9 @@
-# Example systemd-networkd unit for 1 Mbit CAN (gs_usb / similar).
-# Install as /etc/systemd/network/80-can0.network and adjust Name= to match `ip link`.
+# Stock Magneto X Linux Hub USB-CAN (gs_usb): Peopoly + field reports use 250 kbit.
+# Live machine 192.168.1.214: bitrate 250000. Schmudus guide: 250000 + txqueuelen 512.
+# Use 1M only if you replace the hub / run a pure toolhead CAN path without that bridge.
+# Install as /etc/systemd/network/80-can0.network (adjust Name= to match `ip link`).
 [Match]
 Name=can0
 
 [CAN]
-BitRate=1M
+BitRate=250000
