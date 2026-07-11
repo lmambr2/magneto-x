@@ -30,6 +30,16 @@ All notable changes to the **magneto-x** umbrella and companion **magneto-x-klip
 - `QUAD_GANTRY_LEVEL` and `LEVEL_BED` call `LM_ENABLE` before motion (bare panel QGL safe).
 - `check_includes` MagXY path: require active `[magneto_linear_motor]` **or** uncommented `LINEAR_MOTOR_*` shells (commented stubs no longer pass CI).
 
+### Audit findings sweep (remaining B2–B11)
+
+- Hot mesh defaults: `CREATE_BED_MESH` / `FULL_CALIBRATE` use `BED=60` (BED=0 cold).
+- `PRINT_START` calls `SMART_PARK` after mesh; `PARK=0` to skip.
+- QGL skips full re-home when already XYZ-homed.
+- Startup `delayed_gcode` loads bed_mesh profile `default` if present.
+- Timelapse stub soft no-ops for TIMELAPSE_*/HYPERLAPSE; FAQ updated.
+- `MAGNETO_MANAGER_VERSION` macro; OS name kept as alias with clear description.
+- `heater_bed` `min_temp: 0` (was −200); input_shaper comments as seed-only; SET_XYZ expert warn.
+
 ### CI / lint / tests
 
 - `scripts/check_config_policy.py` — Magneto footguns (KAMP single owner, parametric PRINT_START / FULL_CALIBRATE, Moonraker snippet, Orca start G-code, SAVE_CONFIG format, manager hardening, defconfigs, core MD links).

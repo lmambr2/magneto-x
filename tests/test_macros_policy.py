@@ -42,12 +42,24 @@ class TestMacroDefinitions(unittest.TestCase):
             "QUAD_GANTRY_LEVEL",
             "BED_MESH_CALIBRATE",
             "LINE_PURGE",
+            "SMART_PARK",
             "params.EXTRUDER",
             "params.BED",
             "params.MESH",
             "params.PURGE",
         ):
             self.assertIn(tok, ps, f"PRINT_START missing {tok}")
+
+    def test_create_bed_mesh_heats(self):
+        cbm = self.bodies["CREATE_BED_MESH"]
+        self.assertIn("LM_ENABLE", cbm)
+        self.assertIn("params.BED", cbm)
+        self.assertIn("M190", cbm)
+        self.assertIn("BED_MESH_CALIBRATE", cbm)
+
+    def test_manager_version_macro(self):
+        self.assertIn("MAGNETO_MANAGER_VERSION", self.bodies)
+        self.assertIn("MAGNETO_LINEAR_VERSION", self.bodies["MAGNETO_MANAGER_VERSION"])
 
     def test_full_calibrate_path(self):
         fc = self.bodies["FULL_CALIBRATE"]

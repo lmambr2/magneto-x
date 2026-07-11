@@ -208,6 +208,8 @@ def check_macros(macros_path: Path) -> list[str]:
     for token in ("params.EXTRUDER", "params.BED", "params.MESH", "params.PURGE"):
         if token not in ps:
             errors.append(f"PRINT_START: missing parametric {token}")
+    if "SMART_PARK" not in ps:
+        errors.append("PRINT_START: missing SMART_PARK (park near print while nozzle heats)")
 
     qgl = bodies.get("QUAD_GANTRY_LEVEL", "")
     if "LM_ENABLE" not in qgl:
@@ -215,6 +217,12 @@ def check_macros(macros_path: Path) -> list[str]:
     lb = bodies.get("LEVEL_BED", "")
     if "LM_ENABLE" not in lb and "QUAD_GANTRY_LEVEL" not in lb:
         errors.append("LEVEL_BED: must LM_ENABLE or call QUAD_GANTRY_LEVEL (which enables MagXY)")
+
+    cbm = bodies.get("CREATE_BED_MESH", "")
+    if "M190" not in cbm and "params.BED" not in cbm:
+        errors.append("CREATE_BED_MESH: should support bed heat (params.BED / M190)")
+    if "LM_ENABLE" not in cbm:
+        errors.append("CREATE_BED_MESH: missing LM_ENABLE")
 
     fc = bodies.get("FULL_CALIBRATE", "")
     for token in ("LM_ENABLE", "G28", "QUAD_GANTRY_LEVEL", "BED_MESH_CALIBRATE"):
@@ -224,6 +232,11 @@ def check_macros(macros_path: Path) -> list[str]:
         errors.append("FULL_CALIBRATE: missing params.SAVE")
     if "SAVE_CONFIG" not in fc:
         errors.append("FULL_CALIBRATE: missing SAVE_CONFIG path")
+    if "M190" not in fc and "params.BED" not in fc:
+        errors.append("FULL_CALIBRATE: should support bed heat (params.BED / M190)")
+
+    if "MAGNETO_MANAGER_VERSION" not in bodies:
+        errors.append("macros.cfg: missing MAGNETO_MANAGER_VERSION (clear MagXY version macro)")
 
     pe = bodies.get("PRINT_END", "")
     if "delay_disable_motor" not in pe and "LM_DISABLE" not in pe:
@@ -342,12 +355,39 @@ def check_printer_cfg(config: Path) -> list[str]:
             if not zo:
                 errors.append(f"{motion.name}: [probe] missing z_offset")
 
+    # heater_bed min_temp must not be Peopoly -200 (masks open sensor)
+    pc_text = read(pc)
+    hm = re.search(
+        r"\[heater_bed\](.*?)(?:\n\[|\Z)", pc_text, re.IGNORECASE | re.DOTALL
+    )
+    if hm:
+        mt = re.search(r"^\s*min_temp\s*[:=]\s*(-?[0-9.]+)", hm.group(1), re.MULTILINE)
+        if mt and float(mt.group(1)) < 0:
+            errors.append(
+                f"printer.cfg: heater_bed min_temp {mt.group(1)} < 0 "
+                "(use >= 0; Peopoly -200 masks sensor faults)"
+            )
+
     # CANCEL LM_DISABLE in mainsail
     ms = config / "mainsail.cfg"
     if ms.is_file():
         mt = read(ms)
         if "LM_DISABLE" not in mt:
             errors.append("mainsail.cfg: CANCEL_PRINT path should LM_DISABLE MagXY")
+
+    # Timelapse stub or real must define TIMELAPSE_TAKE_FRAME (soft or real)
+    tl = config / "timelapse.cfg"
+    if tl.is_file():
+        tt = read(tl)
+        if not re.search(
+            r"^\s*\[gcode_macro\s+TIMELAPSE_TAKE_FRAME\s*\]",
+            tt,
+            re.IGNORECASE | re.MULTILINE,
+        ):
+            errors.append(
+                "timelapse.cfg: must define TIMELAPSE_TAKE_FRAME "
+                "(stub no-op or real moonraker-timelapse macros)"
+            )
 
     return errors
 

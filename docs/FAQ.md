@@ -34,15 +34,17 @@ Only enable that section if `~/magneto-x` is a real `git clone` (has `.git`). An
 
 ### Unknown command `HYPERLAPSE` / `_SET_TIMELAPSE_SETUP`
 
-Moonraker has `[timelapse]` but Klipper never loaded the macros. Ensure:
+Moonraker has `[timelapse]` but Klipper never loaded the **real** macros.
 
-```ini
-# printer.cfg
-[include timelapse.cfg]
+1. Ensure `[include timelapse.cfg]` in `printer.cfg` (package does).
+2. **Replace the package stub** with the real component macros:
+
+```bash
+ln -sfn ~/moonraker-timelapse/klipper_macro/timelapse.cfg \
+       ~/printer_data/config/timelapse.cfg
 ```
 
-and that `~/printer_data/config/timelapse.cfg` exists (stock link is often  
-`~/moonraker-timelapse/klipper_macro/timelapse.cfg`). Then `RESTART`.
+Then `RESTART`. The package ships a **soft stub** (no-op `TIMELAPSE_TAKE_FRAME`) so a slicer frame command will not hard-abort prints — but it will **not** record until the real file is linked.
 
 To disable timelapse entirely: comment out `[timelapse]` in `moonraker.conf` and remove the include; restart moonraker + klipper.
 

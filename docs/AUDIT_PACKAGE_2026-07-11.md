@@ -47,16 +47,16 @@ Resolved by `python3 scripts/check_includes.py config` (must match any “does i
 | ID | Sev | Finding | Path / symbol | Notes |
 |----|-----|---------|--------------|-------|
 | B1 | **medium** | ~~`LEVEL_BED` / bare `QUAD_GANTRY_LEVEL` do **not** `LM_ENABLE`~~ **Fixed** | `macros.cfg` | Both wrappers now `LM_ENABLE` first; policy tests assert it. |
-| B2 | **medium** | `CREATE_BED_MESH` / manual mesh never heats bed | `macros.cfg` `CREATE_BED_MESH` | Stock heated bed to 70 °C before mesh. Cold mesh ≠ print shape (lab already saw this). PRINT_START relies on slicer heat. |
-| B3 | **medium** | ~~CI “requires” shell MagXY names but they are **only in comments**~~ **Fixed** | `scripts/check_includes.py` `magxy_path_check` | Requires active `[magneto_linear_motor]` **or** uncommented shell ENABLE/DISABLE; comments no longer count. |
-| B4 | **low** | `timelapse.cfg` stub defines **no** macros | `config/timelapse.cfg` | Include always succeeds offline; `TIMELAPSE_TAKE_FRAME` still fails until host links real component. Documented; easy to misread as “timelapse installed.” |
-| B5 | **low** | `MAGNETO_OS_VERSION` name is Peopoly-era | `macros.cfg` | Maps to `MAGNETO_LINEAR_VERSION` (manager version), not OS image version. Misleading for operators. |
-| B6 | **low** | `heater_bed` `min_temp: -200` | `printer.cfg` | Stock Peopoly quirk; masks sensor faults. |
-| B7 | **low** | Fixed `input_shaper` freqs in package | `printer.cfg` | MagXY already smooths; values may be stale vs lab machine. Not wrong, but easy to over-trust. |
-| B8 | **low** | `force_move: True` default | `printer.cfg` | Intentional recovery culture; still crash risk if armed. Comment warns. |
-| B9 | **info** | `SMART_PARK` included but never called by `PRINT_START` | `KAMP/Smart_Park.cfg` | Dead path unless user/slicer calls it. Harmless. |
-| B10 | **info** | `QUAD_GANTRY_LEVEL` always re-homes XYZ | `macros.cfg` | Safe; double-home when nested under `FULL_CALIBRATE` (which already G28). Slight time cost. |
-| B11 | **info** | Saved mesh not auto-applied on restart | Klipper semantics | `profile_name` empty until `LOAD=default`; `PRINT_START` remeshes anyway. Operators confused earlier. |
+| B2 | **medium** | ~~`CREATE_BED_MESH` never heats bed~~ **Fixed** | `macros.cfg` | Default `BED=60` + `M190`; `BED=0` skips. `FULL_CALIBRATE` same. |
+| B3 | **medium** | ~~CI shell MagXY comment false green~~ **Fixed** | `scripts/check_includes.py` | Active module or active shells only. |
+| B4 | **low** | ~~Timelapse stub hard-fails slicer frames~~ **Fixed** | `timelapse.cfg` | Soft no-op `TIMELAPSE_TAKE_FRAME` / `HYPERLAPSE`; still replace for real capture. |
+| B5 | **low** | ~~`MAGNETO_OS_VERSION` misnamed~~ **Fixed** | `macros.cfg` | Clear description + `MAGNETO_MANAGER_VERSION` alias. |
+| B6 | **low** | ~~`heater_bed` `min_temp: -200`~~ **Fixed** | `printer.cfg` | Now `min_temp: 0`; policy rejects &lt; 0. |
+| B7 | **low** | ~~Shaper freqs look factory-true~~ **Fixed** | `printer.cfg` | Comments: seed only; recalibrate with SHAPER_CALIBRATE. |
+| B8 | **low** | ~~`force_move` / SET_XYZ casual~~ **Mitigated** | `printer.cfg` / macros | Stronger expert-only wording on force_move + SET_XYZ_POSITION. |
+| B9 | **info** | ~~`SMART_PARK` never in PRINT_START~~ **Fixed** | `macros.cfg` | Park after mesh before nozzle heat; `PARK=0` to skip. |
+| B10 | **info** | ~~QGL always full G28~~ **Fixed** | `macros.cfg` | Skip full re-home when XYZ already homed. |
+| B11 | **info** | ~~Mesh not auto-loaded on restart~~ **Fixed** | `macros.cfg` | `delayed_gcode _MAGNETO_LOAD_DEFAULT_MESH` loads `default` if present. |
 | B12 | **high** (host, fixed earlier) | Moonraker v0.8 rejects second `[update_manager klipper]` | `moonraker-update-manager.conf.snippet` | Documented + postinstall strips; **CI covers** “no active section in snippet.” |
 | B13 | **high** (macro, fixed earlier) | Dual `BED_MESH_CALIBRATE` breaks KAMP params | historical | **CI covers** single owner Adaptive_Meshing. |
 | B14 | **medium** (ops) | Stock Peopoly `PRINT_START` used `MESH_LOAD` only (no QGL) | stock macros | Package correctly improved; do not reintroduce stock start. |
@@ -77,11 +77,11 @@ No **critical** “will brick parse” issues found in the active graph under cu
 | `FULL_CALIBRATE` | macros.cfg | **keep** | Product self-check; stock had weaker `CALIBRATE_BED`. |
 | `FULL_CALIBRATE_BED` | macros.cfg | **keep** | Thin alias → `FULL_CALIBRATE {rawparams}`. |
 | `LEVEL_BED` | macros.cfg | **keep** | `LM_ENABLE` then QGL (P1/B1 fixed). |
-| `CREATE_BED_MESH` | macros.cfg | **fix** | Optional bed heat / document “hot mesh preferred” (B2). |
+| `CREATE_BED_MESH` | macros.cfg | **keep** | Hot mesh default BED=60 (B2 fixed). |
 | `MESH_LOAD` | macros.cfg | **keep** | Safe load if profile exists; prints should not rely on it. |
 | `BED_MESH_CALIBRATE` | KAMP Adaptive | **keep** | Sole owner; Magneto Z re-home patch. |
 | `LINE_PURGE` | KAMP | **keep** | Default purge path. |
-| `SMART_PARK` | KAMP | **keep** (optional use) | Included; not wired into PRINT_START — call manually or from slicer if desired. |
+| `SMART_PARK` | KAMP | **keep** | Called from PRINT_START after mesh (PARK=0 to skip). |
 | `_KAMP_Settings` | KAMP_Settings | **keep** | Variable store. |
 | `VORON_PURGE` | KAMP file | **remove from deploy** (already) | File present, include commented — leave off unless user wants logo purge. |
 | `QUAD_GANTRY_LEVEL` wrapper | macros.cfg | **keep** | `LM_ENABLE` + home + QGL base + G28 Z (P1 fixed). |
@@ -97,7 +97,7 @@ No **critical** “will brick parse” issues found in the active graph under cu
 | `LM_ENABLE` / `LM_DISABLE` | module aliases | **keep** | PR-K7 `register_lm_aliases: True` — **not** shell. |
 | Shell `LINEAR_MOTOR_ENABLE/DISABLE` | shell_command.cfg | **remove/replace** (inactive) | Fully commented; correct for PR-K7. Do not re-enable unless module off. |
 | Stock `LINER_MOTOR_*` shells + curls | stock | **remove** (already) | Superseded by hardened manager + native module. |
-| `MAGNETO_OS_VERSION` | macros.cfg | **fix** | Rename or document as MagXY manager version (B5). |
+| `MAGNETO_OS_VERSION` / `MAGNETO_MANAGER_VERSION` | macros.cfg | **keep** | OS name is alias; prefer MAGNETO_MANAGER_VERSION (B5 fixed). |
 | `M106` / `M107` | macros.cfg | **keep** | Jetstream `P2` routing — Peopoly hardware. |
 | `TOGGLE_LIGHTS` | macros.cfg | **keep** | Chamber LED. |
 | `SET_XYZ_POSITION` | macros.cfg | **keep** (expert) | Dangerous; force_move culture. |
@@ -129,16 +129,10 @@ No **critical** “will brick parse” issues found in the active graph under cu
 
 | Pri | Opportunity | Why |
 |-----|-------------|-----|
-| P1 | ~~`LEVEL_BED` / `QUAD_GANTRY_LEVEL`: prepend `LM_ENABLE`~~ **done** | Closes B1 |
-| P1 | ~~Fix `check_includes` MagXY path (active module or active shells)~~ **done** | Closes B3 |
-| P2 | `CREATE_BED_MESH` / optional `MESH_BED_HOT` heat helper | Aligns with hot-mesh practice |
-| P2 | Call `SMART_PARK` from PRINT_START when extruder still heating | Product polish; optional flag |
-| P2 | Split `macros.cfg` into `macros_print.cfg` / `macros_magxy.cfg` / `macros_ui.cfg` | Readability only |
-| P3 | Rename `MAGNETO_OS_VERSION` → document or alias `MAGNETO_LINEAR_VERSION` only | Clarity |
-| P3 | Tighten `heater_bed` `min_temp` to something sane (e.g. 0 or 5) | Sensor fault detection |
-| P3 | Move input_shaper values to SAVE_CONFIG / lab notes | Avoid shipping stale freqs as “truth” |
-| P3 | Drop empty `shell_command.cfg` include if forever PR-K7-only | Smaller graph; keep file as optional comment doc |
-| P4 | Promote common “hot FULL_CALIBRATE” doc into KlipperScreen button | UX |
+| P1–P3 audit fixes | **done** (2026-07-11) | B1–B11 addressed in package; residual P4 UX only |
+| P2 | Split `macros.cfg` into print / MagXY / UI includes | Optional readability; not required for correctness |
+| P3 | Drop empty `shell_command.cfg` include if forever PR-K7-only | Optional; file remains as documented fallback stubs |
+| P4 | Promote “hot FULL_CALIBRATE” into KlipperScreen button | UX only |
 
 ---
 
