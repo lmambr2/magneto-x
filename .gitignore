@@ -50,3 +50,6 @@ secrets.ini
 backups/**/disk/*.img.gz
 backups/peopoly-os-images/*.img.xz
 backups/peopoly-os-images/*.img
+docs/validation/
+backups/peopoly-os-images/*.log
+backups/**/disk/dd.log
