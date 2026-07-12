@@ -12,7 +12,9 @@
 | Stock USB webcam | UVC (lab: `0c45:6366`) | **Crowsnest** + Mainsail `/webcam/` |
 | Bed / heaters / fans / load cell | Octopus + toolhead pins | `printer.cfg`, `magneto_toolhead.cfg`, `magneto_load_cell` |
 | ADXL (if present) | Toolhead SPI | toolhead config |
-| Filament runout | Toolhead GPIO | optional `runout_double_check` |
+| Filament runout | Toolhead GPIO gpio29 | **default ON** `optional/runout_double_check.cfg` |
+| MCU temps | temperature_mcu | **default ON** `optional/mcu_temps.cfg` |
+| Timelapse | crowsnest + moonraker-timelapse | **enabled** when component present |
 
 ## Install path
 
