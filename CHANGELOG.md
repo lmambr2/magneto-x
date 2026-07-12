@@ -53,6 +53,14 @@ All notable changes to the **magneto-x** umbrella and companion **magneto-x-klip
 - `docs/HARDWARE.md` — every factory interface and how postinstall covers it.
 - Zero 2 default stream **1280×720 @ 15 fps** (raise to 1080p30 in conf if RAM allows).
 
+### Stock features default ON (lab bring-up)
+
+- Filament runout: `[include optional/runout_double_check.cfg]` (gpio29 double-check).
+- MCU temps: `[include optional/mcu_temps.cfg]` (Octopus + Lancer).
+- moonraker-timelapse: postinstall enables `[timelapse]` when component present.
+- Magmotor Qt **skipped** (proprietary); MagXY via hardened manager only.
+- nginx large-upload timeouts installed when passwordless sudo available.
+
 ### Audit findings sweep (remaining B2–B11)
 
 - Hot mesh defaults: `CREATE_BED_MESH` / `FULL_CALIBRATE` use `BED=60` (BED=0 cold).

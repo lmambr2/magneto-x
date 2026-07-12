@@ -255,17 +255,40 @@ elif [[ -f "${SNIP}" ]]; then
   echo "Moonraker: no moonraker.conf yet — after first Mainsail start, see ${SNIP}"
 fi
 
-# Timelapse: if component present, ensure printer.cfg includes macros
+# Timelapse: enable moonraker [timelapse] when component is present
 TL_MACRO="${HOME}/printer_data/config/timelapse.cfg"
-if [[ ! -f "${TL_MACRO}" && -f "${HOME}/moonraker-timelapse/klipper_macro/timelapse.cfg" ]]; then
+TL_SRC="${HOME}/moonraker-timelapse/klipper_macro/timelapse.cfg"
+if [[ -f "${TL_SRC}" ]]; then
   if [[ "${DRY_RUN}" -eq 1 ]]; then
-    echo "DRY: link moonraker-timelapse macros → printer_data/config/timelapse.cfg"
+    echo "DRY: enable moonraker-timelapse (macros + moonraker.conf [timelapse])"
   else
-    ln -sfn "${HOME}/moonraker-timelapse/klipper_macro/timelapse.cfg" "${TL_MACRO}"
-    echo "Linked timelapse.cfg macros"
+    # Prefer real macros over package stubs
+    if [[ ! -f "${TL_MACRO}" ]] || grep -q 'Stub — install moonraker-timelapse' "${TL_MACRO}" 2>/dev/null; then
+      ln -sfn "${TL_SRC}" "${TL_MACRO}"
+      echo "Linked real timelapse.cfg macros"
+    fi
+    MR_CONF="${HOME}/printer_data/config/moonraker.conf"
+    if [[ -f "${MR_CONF}" ]] && ! grep -qE '^\[timelapse\]' "${MR_CONF}"; then
+      mkdir -p "${HOME}/timelapse"
+      {
+        echo ""
+        echo "# Enabled by postinstall-magneto.sh (stock camera → timelapse)"
+        echo "[update_manager timelapse]"
+        echo "type: git_repo"
+        echo "primary_branch: main"
+        echo "path: ~/moonraker-timelapse"
+        echo "origin: https://github.com/mainsail-crew/moonraker-timelapse.git"
+        echo "managed_services: klipper moonraker"
+        echo ""
+        echo "[timelapse]"
+        echo "output_path: ~/timelapse/"
+        echo "ffmpeg_binary_path: /usr/bin/ffmpeg"
+      } >> "${MR_CONF}"
+      echo "Enabled [timelapse] in moonraker.conf"
+    fi
   fi
 fi
-if [[ -f "${CFG_DEST:-}/printer.cfg" ]] && [[ -f "${TL_MACRO}" ]]; then
+if [[ -f "${CFG_DEST:-}/printer.cfg" ]] && [[ -f "${TL_MACRO}" || -f "${TL_SRC}" ]]; then
   if ! grep -q 'include timelapse.cfg' "${CFG_DEST}/printer.cfg" 2>/dev/null; then
     if [[ "${DRY_RUN}" -eq 1 ]]; then
       echo "DRY: add [include timelapse.cfg] to printer.cfg"
@@ -280,9 +303,37 @@ if [[ -f "${CFG_DEST:-}/printer.cfg" ]] && [[ -f "${TL_MACRO}" ]]; then
   fi
 fi
 
-# nginx large-upload hint
+# nginx large-upload timeouts (needs passwordless sudo or root)
 if [[ -f "${ROOT}/config/optional/nginx-timeouts.conf.snippet" ]]; then
-  echo "Nginx (optional): merge config/optional/nginx-timeouts.conf.snippet under http{} — see FAQ.md"
+  if [[ "${DRY_RUN}" -eq 1 ]]; then
+    echo "DRY: install nginx large-upload timeouts → /etc/nginx/conf.d/magneto-timeouts.conf"
+  elif sudo -n true 2>/dev/null; then
+    sudo cp "${ROOT}/config/optional/nginx-timeouts.conf.snippet" \
+      /etc/nginx/conf.d/magneto-timeouts.conf
+    # strip leading comments that are Klipper-doc style — keep timeout lines only
+    sudo tee /etc/nginx/conf.d/magneto-timeouts.conf >/dev/null <<'NGX'
+# Magneto X — large Orca/Mainsail uploads (postinstall)
+proxy_send_timeout 500s;
+proxy_read_timeout 500s;
+fastcgi_send_timeout 500s;
+fastcgi_read_timeout 500s;
+NGX
+    if sudo nginx -t 2>/dev/null; then
+      sudo systemctl reload nginx 2>/dev/null || true
+      echo "Installed nginx large-upload timeouts"
+    else
+      echo "WARN: nginx -t failed after timeout snippet — check /etc/nginx/conf.d/"
+    fi
+  else
+    echo "Nginx timeouts: sudo required once:"
+    echo "  sudo tee /etc/nginx/conf.d/magneto-timeouts.conf <<'EOF'"
+    echo "proxy_send_timeout 500s;"
+    echo "proxy_read_timeout 500s;"
+    echo "fastcgi_send_timeout 500s;"
+    echo "fastcgi_read_timeout 500s;"
+    echo "EOF"
+    echo "  sudo nginx -t && sudo systemctl reload nginx"
+  fi
 fi
 
 # --- HelixScreen (local panel + first-run Wi‑Fi wizard) — default ON ---
