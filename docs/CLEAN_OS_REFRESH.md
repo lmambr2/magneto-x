@@ -114,9 +114,11 @@ sha256sum -c 2026-05-06-MainsailOS-armbian-orangepi_zero2-trixie-3.0.0.img.xz.sh
 
 | Area | Status for clean OS |
 |------|---------------------|
-| `postinstall-magneto.sh` | Ready — CAN 250k, manager, config, dialout, gs_usb, **HelixScreen default** |
-| Package `config/` | Ready — OriginMove default, KAMP, MagXY module |
-| `install-helixscreen.sh` | Ready — upstream HelixScreen + first-run wizard; `--skip-helixscreen` to opt out |
+| `postinstall-magneto.sh` | Ready — CAN 250k, manager, config, dialout, gs_usb, **HelixScreen + Crowsnest default** |
+| Package `config/` | Ready — OriginMove, KAMP, MagXY, `crowsnest.conf`, moonraker webcam snippet |
+| `install-helixscreen.sh` | Ready — panel UI + first-run wizard; `--skip-helixscreen` to opt out |
+| `install-crowsnest.sh` | Ready — stock Microdia UVC webcam; `--skip-crowsnest` to opt out |
+| Full HW matrix | [HARDWARE.md](HARDWARE.md) |
 | `restore-after-clean-os.sh` | Ready — **selective** restore (never clobbers Trixie `moonraker.conf` with Peopoly dump) |
 | MCU flash | **Not required** for first boot (2A) if current bins already modern |
 | Magmotor Qt GUI | Optional `--with-magmotor` only; needs local `magnetox-os-update` tree |

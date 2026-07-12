@@ -38,6 +38,8 @@ Parse-ready Klipper configs for [magneto-x](https://github.com/lmambr2/magneto-x
 | `motion_xy_stock.cfg` | Default XY + probe/QGL/mesh |
 | `optional/origin_move.cfg` | Alternate XY orientation |
 | `KAMP_Settings.cfg` + `KAMP/` | **KAMP default ON** — adaptive mesh, line purge, smart park |
+| `crowsnest.conf` | Stock USB webcam (Crowsnest / ustreamer) |
+| `moonraker-webcam.conf.snippet` | Moonraker `[webcam Magneto]` for Mainsail |
 | `macros.cfg.stock-v1.1.3` | **Reference only** — not included |
 
 ## Defaults worth knowing

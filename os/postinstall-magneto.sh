@@ -3,13 +3,15 @@
 #
 # Run as the klipper user (usually pi) AFTER first boot + password change.
 # Does NOT flash MCUs (decision 2A). Does NOT require Magmotor.
-# HelixScreen (local touch UI + first-run Wi‑Fi wizard) is ON by default.
+# Full stock hardware by default: MagXY manager, CAN, HelixScreen panel,
+# Crowsnest webcam (Microdia / UVC). See docs/HARDWARE.md.
 #
 # Usage:
 #   ./os/postinstall-magneto.sh
 #   TRACK=magneto-x-kalico ./os/postinstall-magneto.sh
 #   ./os/postinstall-magneto.sh --skip-klipper-clone   # if ~/klipper already correct
-#   ./os/postinstall-magneto.sh --skip-helixscreen     # headless / no panel
+#   ./os/postinstall-magneto.sh --skip-helixscreen     # no local panel
+#   ./os/postinstall-magneto.sh --skip-crowsnest       # no webcam stream
 #   ./os/postinstall-magneto.sh --dry-run
 #
 set -euo pipefail
@@ -20,6 +22,7 @@ REPO_KLIPPER="${REPO_KLIPPER:-https://github.com/lmambr2/magneto-x-klipper.git}"
 REPO_UMBRELLA="${REPO_UMBRELLA:-https://github.com/lmambr2/magneto-x.git}"
 SKIP_KLIPPER=0
 SKIP_HELIXSCREEN=0
+SKIP_CROWSNEST=0
 DRY_RUN=0
 WITH_MAGMOTOR=0
 
@@ -27,10 +30,11 @@ for arg in "$@"; do
   case "$arg" in
     --skip-klipper-clone) SKIP_KLIPPER=1 ;;
     --skip-helixscreen|--skip-klipperscreen) SKIP_HELIXSCREEN=1 ;; # --skip-klipperscreen = legacy alias
+    --skip-crowsnest|--skip-webcam) SKIP_CROWSNEST=1 ;;
     --with-magmotor) WITH_MAGMOTOR=1 ;;
     --dry-run) DRY_RUN=1 ;;
     -h|--help)
-      sed -n '1,22p' "$0"
+      sed -n '1,24p' "$0"
       exit 0
       ;;
     *)
@@ -292,6 +296,17 @@ else
   bash "${ROOT}/os/install-helixscreen.sh" ${HS_ARGS[@]+"${HS_ARGS[@]}"}
 fi
 
+# --- Crowsnest (stock USB webcam → Mainsail /webcam/) — default ON ---
+if [[ "${SKIP_CROWSNEST}" -eq 1 ]]; then
+  echo "Skipping Crowsnest (--skip-crowsnest)"
+else
+  CN_ARGS=()
+  if [[ "${DRY_RUN}" -eq 1 ]]; then
+    CN_ARGS+=(--dry-run)
+  fi
+  bash "${ROOT}/os/install-crowsnest.sh" ${CN_ARGS[@]+"${CN_ARGS[@]}"}
+fi
+
 # --- services ---
 if [[ "${DRY_RUN}" -eq 0 ]]; then
   sudo systemctl restart magneto-manager.service 2>/dev/null || true
@@ -299,6 +314,9 @@ if [[ "${DRY_RUN}" -eq 0 ]]; then
   sudo systemctl restart moonraker.service 2>/dev/null || true
   if [[ "${SKIP_HELIXSCREEN}" -eq 0 ]]; then
     sudo systemctl restart helixscreen.service 2>/dev/null || true
+  fi
+  if [[ "${SKIP_CROWSNEST}" -eq 0 ]]; then
+    sudo systemctl restart crowsnest.service 2>/dev/null || true
   fi
 fi
 
@@ -313,18 +331,21 @@ fi
 
 echo
 echo "=== postinstall finished ==="
-echo "Path note: this is for CLEAN MainsailOS (1B). Bridge on Peopoly image is Path C1 — see docs/MIGRATION.md"
+echo "Path note: this is for CLEAN MainsailOS (1B). Full stock HW: docs/HARDWARE.md"
 echo "Next:"
 echo "  1) Restore IDs if not done: ./os/restore-after-clean-os.sh /path/to/pre-clean-os-backup"
 echo "     (or PRE_CLEAN_BACKUP=/path ./os/postinstall-magneto.sh)"
 echo "  2) curl -s http://127.0.0.1:8880/health  and  RTU should be 400"
-echo "  3) re-login (dialout + video/input groups); reboot once if panel blank"
-echo "  4) HelixScreen wizard on panel (Wi‑Fi / Moonraker); then FIRMWARE_RESTART; LM_ENABLE; home"
-echo "  5) MCU flash later from same HEAD — docs/MCU_BUILD.md"
-echo "  6) Fill docs/validation/S3_HARDWARE_REPORT.template.md when testing"
+echo "  3) Webcam: http://\$(hostname -I | awk '{print \$1}')/webcam/?action=stream"
+echo "  4) re-login (dialout + video/input); reboot if panel/cam blank"
+echo "  5) HelixScreen wizard; FIRMWARE_RESTART; LM_ENABLE; home"
+echo "  6) MCU flash later — docs/MCU_BUILD.md"
 if [[ "${TRACK}" == "magneto-x-kalico" ]]; then
   echo "  (Kalico) optional: enable config/optional/danger_options.cfg"
 fi
 if [[ "${SKIP_HELIXSCREEN}" -eq 1 ]]; then
-  echo "  (HelixScreen skipped — run ./os/install-helixscreen.sh later for the panel)"
+  echo "  (HelixScreen skipped — ./os/install-helixscreen.sh later)"
+fi
+if [[ "${SKIP_CROWSNEST}" -eq 1 ]]; then
+  echo "  (Crowsnest skipped — ./os/install-crowsnest.sh later for stock webcam)"
 fi

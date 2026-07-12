@@ -1,0 +1,16 @@
+# Append to ~/printer_data/config/moonraker.conf if missing (install-crowsnest.sh).
+# Moonraker webcam API — Mainsail / Fluidd / Helix can list this camera.
+# Docs: https://moonraker.readthedocs.io/en/latest/configuration/#webcam
+
+[webcam Magneto]
+location: printer
+enabled: True
+service: mjpegstreamer
+target_fps: 15
+target_fps_idle: 5
+stream_url: /webcam/?action=stream
+snapshot_url: /webcam/?action=snapshot
+flip_horizontal: False
+flip_vertical: False
+rotation: 0
+aspect_ratio: 16:9

@@ -45,6 +45,14 @@ All notable changes to the **magneto-x** umbrella and companion **magneto-x-klip
 - Removed `install-klipperscreen.sh` (use HelixScreen instead).
 - First network join still needs one offline path (keyboard/Ethernet/boot-partition Wi‑Fi) before apt can fetch HelixScreen.
 
+### Stock webcam + full hardware matrix
+
+- `os/install-crowsnest.sh` — Crowsnest (ustreamer) for Microdia Vitade AF `0c45:6366` and other UVC cams.
+- Package `config/crowsnest.conf` + `moonraker-webcam.conf.snippet` (`[webcam Magneto]` → `/webcam/`).
+- Postinstall installs crowsnest **by default** (`--skip-crowsnest` to opt out).
+- `docs/HARDWARE.md` — every factory interface and how postinstall covers it.
+- Zero 2 default stream **1280×720 @ 15 fps** (raise to 1080p30 in conf if RAM allows).
+
 ### Audit findings sweep (remaining B2–B11)
 
 - Hot mesh defaults: `CREATE_BED_MESH` / `FULL_CALIBRATE` use `BED=60` (BED=0 cold).
