@@ -12,6 +12,7 @@
 #   ./os/postinstall-magneto.sh --skip-klipper-clone   # if ~/klipper already correct
 #   ./os/postinstall-magneto.sh --skip-helixscreen     # no local panel
 #   ./os/postinstall-magneto.sh --skip-crowsnest       # no webcam stream
+#   ./os/postinstall-magneto.sh --skip-shaketune       # no Klippain Shake&Tune
 #   ./os/postinstall-magneto.sh --dry-run
 #
 set -euo pipefail
@@ -23,6 +24,7 @@ REPO_UMBRELLA="${REPO_UMBRELLA:-https://github.com/lmambr2/magneto-x.git}"
 SKIP_KLIPPER=0
 SKIP_HELIXSCREEN=0
 SKIP_CROWSNEST=0
+SKIP_SHAKETUNE=0
 DRY_RUN=0
 WITH_MAGMOTOR=0
 
@@ -31,10 +33,11 @@ for arg in "$@"; do
     --skip-klipper-clone) SKIP_KLIPPER=1 ;;
     --skip-helixscreen|--skip-klipperscreen) SKIP_HELIXSCREEN=1 ;; # --skip-klipperscreen = legacy alias
     --skip-crowsnest|--skip-webcam) SKIP_CROWSNEST=1 ;;
+    --skip-shaketune) SKIP_SHAKETUNE=1 ;;
     --with-magmotor) WITH_MAGMOTOR=1 ;;
     --dry-run) DRY_RUN=1 ;;
     -h|--help)
-      sed -n '1,24p' "$0"
+      sed -n '1,26p' "$0"
       exit 0
       ;;
     *)
@@ -356,6 +359,17 @@ else
     CN_ARGS+=(--dry-run)
   fi
   bash "${ROOT}/os/install-crowsnest.sh" ${CN_ARGS[@]+"${CN_ARGS[@]}"}
+fi
+
+# --- Klippain Shake&Tune (resonance graphs / IS helpers) — default ON ---
+if [[ "${SKIP_SHAKETUNE}" -eq 1 ]]; then
+  echo "Skipping Shake&Tune (--skip-shaketune)"
+else
+  ST_ARGS=()
+  if [[ "${DRY_RUN}" -eq 1 ]]; then
+    ST_ARGS+=(--dry-run)
+  fi
+  bash "${ROOT}/os/install-shaketune.sh" ${ST_ARGS[@]+"${ST_ARGS[@]}"}
 fi
 
 # --- services ---

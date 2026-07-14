@@ -61,6 +61,13 @@ All notable changes to the **magneto-x** umbrella and companion **magneto-x-klip
 - Magmotor Qt **skipped** (proprietary); MagXY via hardened manager only.
 - nginx large-upload timeouts installed when passwordless sudo available.
 
+### Klippain Shake&Tune
+
+- `os/install-shaketune.sh` — clones [Frix-x/klippain-shaketune](https://github.com/Frix-x/klippain-shaketune),
+  pip-installs into `~/klippy-env`, links `klippy/extras/shaketune`.
+- Package `config/optional/shaketune.cfg` + moonraker update_manager snippet.
+- Postinstall installs by default (`--skip-shaketune` to opt out).
+
 ### Audit findings sweep (remaining B2–B11)
 
 - Hot mesh defaults: `CREATE_BED_MESH` / `FULL_CALIBRATE` use `BED=60` (BED=0 cold).

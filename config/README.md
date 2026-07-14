@@ -40,6 +40,7 @@ Parse-ready Klipper configs for [magneto-x](https://github.com/lmambr2/magneto-x
 | `KAMP_Settings.cfg` + `KAMP/` | **KAMP default ON** — adaptive mesh, line purge, smart park |
 | `crowsnest.conf` | Stock USB webcam (Crowsnest / ustreamer) |
 | `moonraker-webcam.conf.snippet` | Moonraker `[webcam Magneto]` for Mainsail |
+| `optional/shaketune.cfg` | [Klippain Shake&Tune](https://github.com/Frix-x/klippain-shaketune) (default ON after install) |
 | `macros.cfg.stock-v1.1.3` | **Reference only** — not included |
 
 ## Defaults worth knowing
