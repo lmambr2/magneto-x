@@ -92,14 +92,21 @@ sudo apt update && sudo apt full-upgrade -y
 # reboot if kernel updated
 
 git clone https://github.com/lmambr2/magneto-x.git ~/magneto-x
+cd ~/magneto-x
+
+# Magmotor (proprietary Qt) — local on the host only, never in public magneto-x git.
+# Auto-installed when this tree is present; else hardened manager alone is enough for MagXY.
+git clone https://github.com/mypeopoly/magnetox-os-update.git ~/magneto-x/magnetox-os-update
+# or from lab workstation: rsync -a …/magnetox-os-update/ pi@magneto:~/magneto-x/magnetox-os-update/
+
 # optional: scp pre-clean backup for serials/mesh
 # PRE_CLEAN_BACKUP=~/pre-clean-os-YYYYMMDD ./os/postinstall-magneto.sh
 
-cd ~/magneto-x
 ./os/postinstall-magneto.sh
+# force / skip Magmotor:  --with-magmotor  |  --skip-magmotor
 ```
 
-Postinstall installs (defaults): CAN 250k, hardened manager, config package, HelixScreen, Crowsnest, Shake&Tune, KlipperCortex tree (service waits for vision model).
+Postinstall installs (defaults): CAN 250k, hardened manager, config package, HelixScreen, Crowsnest, Shake&Tune, KlipperCortex tree (service waits for vision model). **Magmotor** installs when `magnetox-os-update/auto-uuid/Magmotor` is present under the umbrella (gitignored clone / rsync).
 
 ### Pi 5–friendly webcam
 

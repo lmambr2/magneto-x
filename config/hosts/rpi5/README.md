@@ -12,8 +12,10 @@ Preferred Magneto X host. Use with MainsailOS **raspberry_pi-arm64** image.
    - **microSD** with Imager, then migrate to NVMe on the Pi  
 3. Imager gear: Wi‑Fi + SSH keys (+ user)  
 4. Boot from NVMe → confirm `findmnt /` is on `nvme0n1…`  
-5. `./os/postinstall-magneto.sh`  
-6. Restore device IDs / mesh  
+5. Magmotor (local only):  
+   `git clone https://github.com/mypeopoly/magnetox-os-update.git ~/magneto-x/magnetox-os-update`  
+6. `./os/postinstall-magneto.sh` (auto-installs Magmotor if that tree is present)  
+7. Restore device IDs / mesh  
 
 Full detail: [docs/RPI5_BRINGUP.md](../../../docs/RPI5_BRINGUP.md)
 

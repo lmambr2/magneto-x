@@ -53,11 +53,11 @@ Moonraker `[webcam Magneto]` is appended so Mainsail/Helix list the camera.
 
 **Orange Pi Zero 2 RAM:** package default is **1280×720 @ 15 fps**. Stock marketing is 1080p30 — raise in `crowsnest.conf` only if `free -h` shows comfortable headroom.
 
-## Not redistributed (obtain privately)
+## Not in public git (fine on the printer host)
 
-| Item | Why |
-|------|-----|
-| Magmotor / MagnetoWifiHelper binaries | Proprietary (D13) — optional `--with-magmotor` from local Peopoly tree |
+| Item | Why / how |
+|------|-----------|
+| Magmotor / MagnetoWifiHelper | Proprietary (D13) — **do not commit** to magneto-x. Install on host from local Peopoly tree: `git clone https://github.com/mypeopoly/magnetox-os-update.git ~/magneto-x/magnetox-os-update` then postinstall auto-detects, or `./os/install-magneto-services.sh --with-magmotor`. MagXY motion still works via hardened manager without Magmotor. |
 | Peopoly MagXY touchscreen panels | Custom KlipperScreen — HelixScreen is the OSS panel path |
 
 ## Validation checklist

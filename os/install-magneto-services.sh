@@ -42,19 +42,26 @@ mkdir -p "${DEST_MGR}"
 cp -a "${HARDENED_SRC}" "${DEST_MGR}/magneto-manager.py"
 chmod 755 "${DEST_MGR}/magneto-manager.py"
 
-# Optional: Magmotor / helper scripts from local Peopoly tree (not in public git)
+# Optional: Magmotor / helper scripts from local Peopoly tree (not in public git).
+# Fine on the printer host; never commit Magmotor ELF into magneto-x (D13).
 if [[ "${WITH_MAGMOTOR}" -eq 1 ]]; then
-  SRC_UPDATE="${ROOT}/magnetox-os-update/auto-uuid"
+  SRC_UPDATE="${MAGMOTOR_SRC:-${ROOT}/magnetox-os-update/auto-uuid}"
   if [[ ! -d "${SRC_UPDATE}" ]]; then
     echo "ERROR: --with-magmotor requires ${SRC_UPDATE}" >&2
-    echo "Clone mypeopoly/magnetox-os-update locally (gitignored)." >&2
+    echo "  git clone https://github.com/mypeopoly/magnetox-os-update.git ${ROOT}/magnetox-os-update" >&2
+    echo "  # or: MAGMOTOR_SRC=/path/to/auto-uuid $0 --with-magmotor" >&2
     exit 1
   fi
-  echo "Copying auto-uuid helpers (including proprietary binaries if present)…"
+  if [[ ! -f "${SRC_UPDATE}/Magmotor" ]]; then
+    echo "ERROR: Magmotor binary missing in ${SRC_UPDATE}" >&2
+    exit 1
+  fi
+  echo "Copying auto-uuid helpers + Magmotor from ${SRC_UPDATE} (host-local only)…"
   mkdir -p "${DEST_AUTO}"
   cp -a "${SRC_UPDATE}/." "${DEST_AUTO}/"
   chmod +x "${DEST_AUTO}"/*.sh 2>/dev/null || true
   chmod +x "${DEST_AUTO}/Magmotor" "${DEST_AUTO}/MagnetoWifiHelper" 2>/dev/null || true
+  echo "  Magmotor → ${DEST_AUTO}/Magmotor"
 fi
 
 # Runtime deps (no Qt unless --with-magmotor)

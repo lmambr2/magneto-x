@@ -82,6 +82,13 @@ All notable changes to the **magneto-x** umbrella and companion **magneto-x-klip
 - Flash helper still refuses `/dev/nvme*` on the build PC; image via USB media or on-Pi clone
 - Host profile + OS_IMAGE / HARDWARE updated for HAT+
 
+### Magmotor local-on-host (still not in public git)
+
+- Policy clarified: Magmotor/WifiHelper **OK on the printer**, never committed to magneto-x (D13 / gitignored `magnetox-os-update/`)
+- Postinstall **auto-installs** Magmotor when `magnetox-os-update/auto-uuid/Magmotor` is present
+- Flags: `--with-magmotor` (require), `--skip-magmotor` (opt out); `MAGMOTOR_SRC=` override for install script
+- Docs: RPI5 bring-up, FAQ, HARDWARE, host profile
+
 ### KlipperCortex (edge spaghetti detection)
 
 - `os/install-klipper-cortex.sh` — clones [Vladush/KlipperCortex](https://github.com/Vladush/KlipperCortex),

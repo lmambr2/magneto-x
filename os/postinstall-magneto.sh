@@ -2,9 +2,16 @@
 # Magneto X post-install skeleton (PR-M9 lite) for a fresh MainsailOS/Armbian host.
 #
 # Run as the klipper user (usually pi) AFTER first boot + password change.
-# Does NOT flash MCUs (decision 2A). Does NOT require Magmotor.
+# Does NOT flash MCUs (decision 2A).
 # Full stock hardware by default: MagXY manager, CAN, HelixScreen panel,
 # Crowsnest webcam (Microdia / UVC). See docs/HARDWARE.md.
+#
+# Magmotor (proprietary Qt GUI): NOT in the public git tree (D13). Fine to
+# install on the printer host from a local Peopoly tree:
+#   git clone https://github.com/mypeopoly/magnetox-os-update.git ~/magneto-x/magnetox-os-update
+#   # or rsync from a lab workstation that already has magnetox-os-update/
+# Auto-enables when magnetox-os-update/auto-uuid/Magmotor is present;
+# --with-magmotor requires it; --skip-magmotor disables even if present.
 #
 # Usage:
 #   ./os/postinstall-magneto.sh
@@ -14,6 +21,8 @@
 #   ./os/postinstall-magneto.sh --skip-crowsnest       # no webcam stream
 #   ./os/postinstall-magneto.sh --skip-shaketune       # no Klippain Shake&Tune
 #   ./os/postinstall-magneto.sh --skip-klipper-cortex   # no KlipperCortex vision
+#   ./os/postinstall-magneto.sh --with-magmotor        # require local Magmotor tree
+#   ./os/postinstall-magneto.sh --skip-magmotor        # no Magmotor even if tree present
 #   ./os/postinstall-magneto.sh --dry-run
 #
 set -euo pipefail
@@ -28,6 +37,7 @@ SKIP_CROWSNEST=0
 SKIP_SHAKETUNE=0
 SKIP_KLIPPER_CORTEX=0
 DRY_RUN=0
+# Magmotor: 0=auto (on if local binary exists), 1=force, -1=skip
 WITH_MAGMOTOR=0
 
 for arg in "$@"; do
@@ -38,9 +48,10 @@ for arg in "$@"; do
     --skip-shaketune) SKIP_SHAKETUNE=1 ;;
     --skip-klipper-cortex) SKIP_KLIPPER_CORTEX=1 ;;
     --with-magmotor) WITH_MAGMOTOR=1 ;;
+    --skip-magmotor) WITH_MAGMOTOR=-1 ;;
     --dry-run) DRY_RUN=1 ;;
     -h|--help)
-      sed -n '1,28p' "$0"
+      sed -n '1,35p' "$0"
       exit 0
       ;;
     *)
@@ -49,6 +60,25 @@ for arg in "$@"; do
       ;;
   esac
 done
+
+MAGMOTOR_BIN="${ROOT}/magnetox-os-update/auto-uuid/Magmotor"
+if [[ "${WITH_MAGMOTOR}" -eq 0 && -f "${MAGMOTOR_BIN}" ]]; then
+  WITH_MAGMOTOR=1
+  echo "Magmotor: local binary found → will install (not in public git; fine on host)"
+elif [[ "${WITH_MAGMOTOR}" -eq 1 ]]; then
+  if [[ ! -f "${MAGMOTOR_BIN}" ]]; then
+    echo "ERROR: --with-magmotor but missing ${MAGMOTOR_BIN}" >&2
+    echo "  git clone https://github.com/mypeopoly/magnetox-os-update.git ${ROOT}/magnetox-os-update" >&2
+    echo "  # or rsync lab magnetox-os-update/ onto the Pi under the umbrella tree" >&2
+    exit 1
+  fi
+elif [[ "${WITH_MAGMOTOR}" -eq -1 ]]; then
+  WITH_MAGMOTOR=0
+  echo "Magmotor: skipped (--skip-magmotor)"
+else
+  echo "Magmotor: not present under magnetox-os-update/ — hardened manager only"
+  echo "  (optional later: clone Peopoly magnetox-os-update locally, re-run with --with-magmotor)"
+fi
 
 if [[ "${TRACK}" != "magneto-x" && "${TRACK}" != "magneto-x-kalico" ]]; then
   echo "TRACK must be magneto-x or magneto-x-kalico (got ${TRACK})" >&2
@@ -133,7 +163,7 @@ else
   echo "Skipping Klipper clone (--skip-klipper-clone)"
 fi
 
-# --- hardened manager ---
+# --- hardened manager (+ optional local Magmotor) ---
 INSTALL_ARGS=()
 if [[ "${WITH_MAGMOTOR}" -eq 1 ]]; then
   INSTALL_ARGS+=(--with-magmotor)
@@ -422,6 +452,11 @@ echo "  5) HelixScreen wizard; FIRMWARE_RESTART; LM_ENABLE; home"
 echo "  6) MCU flash later — docs/MCU_BUILD.md"
 if [[ "${TRACK}" == "magneto-x-kalico" ]]; then
   echo "  (Kalico) optional: enable config/optional/danger_options.cfg"
+fi
+if [[ "${WITH_MAGMOTOR}" -eq 1 ]]; then
+  echo "  Magmotor: ~/auto-uuid/Magmotor (local proprietary; panel/desktop as needed)"
+else
+  echo "  Magmotor: not installed — MagXY still via hardened manager @ :8880"
 fi
 if [[ "${SKIP_HELIXSCREEN}" -eq 1 ]]; then
   echo "  (HelixScreen skipped — ./os/install-helixscreen.sh later)"

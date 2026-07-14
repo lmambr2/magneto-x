@@ -195,7 +195,17 @@ See `config/optional/alt_hardware_notes.cfg` and community alt-stack guides.
 
 ## Where are Magmotor binaries?
 
-Not in this repo (proprietary). Copy from Peopoly `magnetox-os-update` / stock image; optional `./os/install-magneto-services.sh --with-magmotor` if the tree is present locally.
+**Not in the public magneto-x git tree** (proprietary — D13). Fully fine on the **printer host**.
+
+```bash
+# next to the umbrella (gitignored path):
+git clone https://github.com/mypeopoly/magnetox-os-update.git ~/magneto-x/magnetox-os-update
+./os/postinstall-magneto.sh          # auto-installs Magmotor when binary present
+# or: ./os/install-magneto-services.sh --with-magmotor
+# opt out: ./os/postinstall-magneto.sh --skip-magmotor
+```
+
+Also: rsync a lab `magnetox-os-update/` or extract from a Peopoly TF image. MagXY still runs through the hardened manager (`:8880`) without Magmotor; the Qt GUI is for driver params / vendor diagnostics.
 
 ## Preflight on the host
 
