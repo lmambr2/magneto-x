@@ -75,6 +75,13 @@ All notable changes to the **magneto-x** umbrella and companion **magneto-x-klip
 - Beacon alt probe: `config/optional/beacon.cfg`, `beacon_activate.md`, `os/install-beacon.sh`
   (opt-in hardware conversion; stock stays PE12 load-cell)
 
+### Pi 5 official M.2 HAT+ (NVMe)
+
+- Lab hardware: **official Raspberry Pi M.2 HAT+** + NVMe as preferred root disk
+- `docs/RPI5_BRINGUP.md`: Path A (USB-enclosure flash → HAT), Path B (SD migrate), boot-order notes, 27 W PSU
+- Flash helper still refuses `/dev/nvme*` on the build PC; image via USB media or on-Pi clone
+- Host profile + OS_IMAGE / HARDWARE updated for HAT+
+
 ### KlipperCortex (edge spaghetti detection)
 
 - `os/install-klipper-cortex.sh` — clones [Vladush/KlipperCortex](https://github.com/Vladush/KlipperCortex),

@@ -1,17 +1,18 @@
 # Modern host image for Magneto X
 
-## Preferred: Raspberry Pi 5 + MainsailOS arm64
+## Preferred: Raspberry Pi 5 + M.2 HAT+ (NVMe) + MainsailOS arm64
 
-Full checklist: **[RPI5_BRINGUP.md](RPI5_BRINGUP.md)**
+Full checklist: **[RPI5_BRINGUP.md](RPI5_BRINGUP.md)** (includes **official M.2 HAT+** boot paths).
 
 | Item | Value |
 |------|--------|
 | Image | `2026-05-06-MainsailOS-raspberry_pi-arm64-trixie-3.0.0.img.xz` |
 | Download | `./os/download-mainsailos.sh rpi5` |
-| Flash | `BOARD=rpi5 sudo ./os/flash-mainsailos-sd.sh /dev/sdX` |
+| Flash (SD or USB-NVMe enclosure) | `BOARD=rpi5 sudo ./os/flash-mainsailos-sd.sh /dev/sdX` |
+| Storage | Prefer **NVMe on official M.2 HAT+** over microSD for the live printer host |
 | Stack | `./os/postinstall-magneto.sh` |
 
-Pi Imager can preconfigure Wi‑Fi/SSH. Same USB cabling as OPi (Octopus, CAN hub, MagXY, cam, touch).
+Pi Imager can preconfigure Wi‑Fi/SSH. Same USB cabling as OPi (Octopus, CAN hub, MagXY, cam, touch). Image NVMe via USB enclosure or SD→NVMe migrate — see RPI5 bring-up; the flash helper never writes host `/dev/nvme*`.
 
 ## Stock Peopoly situation
 

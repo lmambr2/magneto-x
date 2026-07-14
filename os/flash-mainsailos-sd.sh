@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Flash a MainsailOS image to a USB SD reader.
+# Flash a MainsailOS image to removable USB media (SD reader or USB-NVMe enclosure).
 #
 # Usage:
 #   BOARD=rpi5     sudo ./os/flash-mainsailos-sd.sh [/dev/sdX]
@@ -7,6 +7,11 @@
 #   sudo ./os/flash-mainsailos-sd.sh /dev/sdX /path/to/image.img.xz
 #
 # Default BOARD=rpi5 (Raspberry Pi arm64 — Pi 3/4/5).
+#
+# Pi 5 + official M.2 HAT+: put the NVMe in a USB enclosure (shows as /dev/sdX),
+# flash here, then install the SSD in the HAT. This script REFUSES /dev/nvme*
+# so a workstation boot drive cannot be wiped by accident.
+# See docs/RPI5_BRINGUP.md.
 #
 set -euo pipefail
 
@@ -73,6 +78,8 @@ fi
 
 if [[ "$DEV" == *nvme* ]]; then
   echo "REFUSING nvme device $DEV" >&2
+  echo "  Flash the SSD in a USB enclosure (/dev/sdX), or use SD→NVMe migrate on the Pi." >&2
+  echo "  See docs/RPI5_BRINGUP.md (official M.2 HAT+ paths)." >&2
   exit 1
 fi
 if [[ "$DEV" =~ [0-9]$ ]] && [[ ! "$DEV" =~ mmcblk[0-9]+$ ]]; then

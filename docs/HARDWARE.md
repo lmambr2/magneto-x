@@ -4,6 +4,7 @@
 
 | Hardware | Interface | Package / postinstall |
 |----------|-----------|------------------------|
+| Raspberry Pi 5 host (preferred) | USB stack + **official M.2 HAT+ NVMe** root | [RPI5_BRINGUP.md](RPI5_BRINGUP.md); boot from NVMe |
 | BTT Octopus Pro (motion MCU) | USB serial `usb-Klipper_stm32h723xx_*` | `magneto_device.cfg` + klipper fork |
 | Lancer toolhead (RP2040) | CAN @ **250 kbit** via Linux Hub | `can0.network`, `canbus_uuid` |
 | Linux Hub (gs_usb) | USB `1d50:606f` | `modprobe gs_usb`, CAN unit |

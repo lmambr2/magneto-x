@@ -2,13 +2,18 @@
 
 Preferred Magneto X host. Use with MainsailOS **raspberry_pi-arm64** image.
 
+**Hardware assumption:** Raspberry Pi 5 + **official M.2 HAT+** + NVMe SSD. Boot from NVMe when possible (see [RPI5_BRINGUP.md](../../../docs/RPI5_BRINGUP.md) Paths A/B).
+
 ## Quick path
 
 1. `./os/download-mainsailos.sh rpi5`  
-2. `BOARD=rpi5 sudo ./os/flash-mainsailos-sd.sh /dev/sdX`  
-3. Imager: Wi‑Fi + SSH keys  
-4. Boot → `./os/postinstall-magneto.sh`  
-5. Restore device IDs / mesh  
+2. Image storage (pick one):  
+   - **NVMe via USB enclosure:** `BOARD=rpi5 sudo ./os/flash-mainsailos-sd.sh /dev/sdX` then seat SSD in HAT, or  
+   - **microSD** with Imager, then migrate to NVMe on the Pi  
+3. Imager gear: Wi‑Fi + SSH keys (+ user)  
+4. Boot from NVMe → confirm `findmnt /` is on `nvme0n1…`  
+5. `./os/postinstall-magneto.sh`  
+6. Restore device IDs / mesh  
 
 Full detail: [docs/RPI5_BRINGUP.md](../../../docs/RPI5_BRINGUP.md)
 
