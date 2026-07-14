@@ -1,0 +1,39 @@
+# KlipperCortex — edge spaghetti detection (Vladush/KlipperCortex)
+# Installed by os/install-klipper-cortex.sh
+#
+# Requires a compiled IREE model (*.vmfb) under ~/klipper_cortex/models/
+# Camera: defaults to Crowsnest snapshot on localhost.
+
+[Unit]
+Description=KlipperCortex spaghetti detection (edge vision)
+Documentation=https://github.com/Vladush/KlipperCortex
+After=network-online.target moonraker.service crowsnest.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=REPLACE_USER
+Group=REPLACE_USER
+WorkingDirectory=REPLACE_HOME/klipper_cortex
+ExecStart=REPLACE_HOME/klipper_cortex/.venv/bin/python3 src/inference_loop.py
+Restart=on-failure
+RestartSec=15
+
+Environment=PRINTER_HOST=127.0.0.1
+Environment=MOONRAKER_PORT=7125
+Environment=CAMERA_TYPE=http
+Environment=CAMERA_URL=http://127.0.0.1/webcam/?action=snapshot
+Environment=THRESHOLD=0.85
+Environment=DRY_RUN=false
+# Set after compile, e.g. models/spaghetti_v2_cortex-a76.vmfb
+Environment=MODEL_PATH=REPLACE_HOME/klipper_cortex/models/model.vmfb
+# Magneto chamber LED (optional flash for capture)
+Environment=LIGHTING_ENABLED=false
+Environment=LIGHTING_GCODE_ON=SET_LED LED=Chamber_Lights WHITE=0.5
+Environment=LIGHTING_GCODE_OFF=SET_LED LED=Chamber_Lights WHITE=0.0
+
+# Do not start if model missing (install script may override with real path)
+ExecStartPre=/bin/sh -c 'test -f "$MODEL_PATH" || { echo "KlipperCortex: MODEL_PATH missing — compile a .vmfb first"; exit 1; }'
+
+[Install]
+WantedBy=multi-user.target

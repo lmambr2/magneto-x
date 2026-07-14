@@ -68,6 +68,15 @@ All notable changes to the **magneto-x** umbrella and companion **magneto-x-klip
 - Package `config/optional/shaketune.cfg` + moonraker update_manager snippet.
 - Postinstall installs by default (`--skip-shaketune` to opt out).
 
+### KlipperCortex (edge spaghetti detection)
+
+- `os/install-klipper-cortex.sh` — clones [Vladush/KlipperCortex](https://github.com/Vladush/KlipperCortex),
+  venv + deps, downloads spaghetti TFLite, installs systemd unit.
+- Uses Crowsnest snapshot `http://127.0.0.1/webcam/?action=snapshot` and Moonraker pause.
+- **Requires IREE `.vmfb` compile** before the service can run (Docker compile on Pi 5 recommended).
+- Postinstall installs by default (`--skip-klipper-cortex` to opt out); service stays off until model exists.
+- Prefer **Pi 5** over Orange Pi Zero 2 for RAM/CPU.
+
 ### Audit findings sweep (remaining B2–B11)
 
 - Hot mesh defaults: `CREATE_BED_MESH` / `FULL_CALIBRATE` use `BED=60` (BED=0 cold).

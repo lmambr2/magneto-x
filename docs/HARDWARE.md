@@ -16,6 +16,7 @@
 | MCU temps | temperature_mcu | **default ON** `optional/mcu_temps.cfg` |
 | Timelapse | crowsnest + moonraker-timelapse | **enabled** when component present |
 | Shake&Tune | ADXL + [klippain-shaketune](https://github.com/Frix-x/klippain-shaketune) | **default ON** via `install-shaketune.sh` |
+| KlipperCortex | Webcam + [KlipperCortex](https://github.com/Vladush/KlipperCortex) vision | **install ON**; enable after `.vmfb` compile |
 
 ## Install path
 
