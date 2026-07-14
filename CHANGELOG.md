@@ -68,6 +68,13 @@ All notable changes to the **magneto-x** umbrella and companion **magneto-x-klip
 - Package `config/optional/shaketune.cfg` + moonraker update_manager snippet.
 - Postinstall installs by default (`--skip-shaketune` to opt out).
 
+### Raspberry Pi 5 image + Beacon configs
+
+- **Preferred host:** Pi 5 + MainsailOS `raspberry_pi-arm64` — `docs/RPI5_BRINGUP.md`
+- `os/download-mainsailos.sh rpi5` / `BOARD=rpi5 ./os/flash-mainsailos-sd.sh`
+- Beacon alt probe: `config/optional/beacon.cfg`, `beacon_activate.md`, `os/install-beacon.sh`
+  (opt-in hardware conversion; stock stays PE12 load-cell)
+
 ### KlipperCortex (edge spaghetti detection)
 
 - `os/install-klipper-cortex.sh` — clones [Vladush/KlipperCortex](https://github.com/Vladush/KlipperCortex),

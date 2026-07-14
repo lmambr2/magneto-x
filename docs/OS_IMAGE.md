@@ -1,6 +1,19 @@
-# Modern host image for Magneto X (Orange Pi Zero 2)
+# Modern host image for Magneto X
 
-## Stock situation
+## Preferred: Raspberry Pi 5 + MainsailOS arm64
+
+Full checklist: **[RPI5_BRINGUP.md](RPI5_BRINGUP.md)**
+
+| Item | Value |
+|------|--------|
+| Image | `2026-05-06-MainsailOS-raspberry_pi-arm64-trixie-3.0.0.img.xz` |
+| Download | `./os/download-mainsailos.sh rpi5` |
+| Flash | `BOARD=rpi5 sudo ./os/flash-mainsailos-sd.sh /dev/sdX` |
+| Stack | `./os/postinstall-magneto.sh` |
+
+Pi Imager can preconfigure Wi‑Fi/SSH. Same USB cabling as OPi (Octopus, CAN hub, MagXY, cam, touch).
+
+## Stock Peopoly situation
 
 Peopoly ships an **Armbian-based MainsailOS** image:
 
@@ -9,54 +22,27 @@ Peopoly ships an **Armbian-based MainsailOS** image:
 - Online update package version strings up to ~`v1.1.3` / `v1.1.4`
 - Bundles ancient Klipper tree, Moonraker, Mainsail, KlipperScreen, Qt5 Magmotor, magneto-manager
 
-The mirror repo (`mypeopoly/magneto-x-os-mirror`) often only holds **git tags / LFS pointers**, not a convenient local blob. Prefer downloading official Peopoly TF images from their wiki when you need a recovery baseline.
+Prefer official Peopoly TF images only as recovery baseline — not for long-term.
 
-## Recommended modern path
+## Alternate hosts
 
-### Option A — Official MainsailOS for Orange Pi Zero 2 (preferred)
-
-Mainsail documents Orange Pi Zero 2 as a supported Armbian-based target:
+### Option A — Orange Pi Zero 2 (lab bridge / legacy)
 
 - Docs: https://docs.mainsail.xyz/mainsailos/supported-sbcs/orange-pi-zero-2/
-- Flash guide: https://docs.mainsail.xyz/mainsailos/getting-started/armbian/
+- `./os/download-mainsailos.sh opi-zero2`
+- `BOARD=opi-zero2 sudo ./os/flash-mainsailos-sd.sh /dev/sdX`
+- Then same postinstall as Pi 5
+- Keep cam at **720p15** for 1 GB RAM
 
-Steps:
+### Option B — Fresh Armbian / Raspberry Pi OS + KIAUH
 
-1. Flash **current MainsailOS** for **Orange Pi Zero 2** (Armbian) to a quality SD card (32 GB+ A2 recommended).
-2. First boot, SSH as the image’s default user (check MainsailOS docs for current defaults — Peopoly used `pi`/`armbian`; stock MainsailOS may differ).
-3. `sudo apt update && sudo apt full-upgrade` (reboot if kernel updates).
-4. Install **CAN** for the Linux Hub USB-CAN adapter (often `slcan` or `gs_usb` depending on hub chip):
-
-   ```bash
-   # Example for gs_usb style adapters — verify with lsusb
-   sudo ip link set can0 up type can bitrate 250000  # stock Magneto Linux Hub; use 1000000 only without that hub
-   # Persist via systemd-networkd or a udev + oneshot service (see os/can0.network)
-   ```
-
-5. Clone **`lmambr2/magneto-x`** and run **`./os/postinstall-magneto.sh`**
-   (fork + hardened manager + config + can0 + **HelixScreen**). Track: `magneto-x` or `TRACK=magneto-x-kalico`.
-   - Headless / no panel: `./os/postinstall-magneto.sh --skip-helixscreen`
-   - Panel only later: `./os/install-helixscreen.sh`
-6. Edit `magneto_device.cfg` UUIDs; verify `curl http://127.0.0.1:8880/health`.
-7. On the stock HDMI/touch panel: **HelixScreen** first-run wizard (Wi‑Fi, Moonraker, heaters).
-8. Flash MCUs later from the same host tree ([MCU_BUILD.md](MCU_BUILD.md)).
-
-### Option B — Fresh Armbian + KIAUH
-
-1. Armbian CLI for Orange Pi Zero 2 from https://www.armbian.com/orange-pi-zero-2/
-2. Install KIAUH → Klipper / Moonraker / Mainsail / Crowsnest (HelixScreen comes from magneto postinstall by default).
-3. Same fork remote + services as Option A (`./os/postinstall-magneto.sh`).
+1. Install OS for your board  
+2. KIAUH → Klipper / Moonraker / Mainsail / Crowsnest  
+3. `./os/postinstall-magneto.sh`
 
 ### Option C — Keep Peopoly image, only upgrade Klipper
 
-Fastest to “get motion,” worst long-term:
-
-1. Boot stock image.
-2. Replace `~/klipper` with a clone of `lmambr2/magneto-x-klipper` (branch `magneto-x`).
-3. Rebuild both MCU firmwares.
-4. Keep magneto-manager / Magmotor as-is.
-
-Use this only as a **bridge** while validating MagXY + load-cell behavior.
+Fastest to “get motion,” worst long-term — bridge only.
 
 ## Hardware hooks the OS must provide
 
@@ -66,8 +52,11 @@ Use this only as a **bridge** while validating MagXY + load-cell behavior.
 | USB-CAN to toolhead | Linux Hub PCB — `can0` @ **250 kbit** (`gs_usb` `1d50:606f`) |
 | USB-serial to ESP32 | CH340 — magneto-manager opens “USB Serial” @ 115200 |
 | Display | Micro-HDMI + USB touch (stock panel) |
-| WiFi | Onboard H616 or USB antenna as shipped |
+| WiFi | Host onboard / USB antenna as shipped |
 | Qt5 libs | Required only if you run the `Magmotor` GUI binary |
+| Beacon (optional) | USB to host — [optional/beacon.cfg](../config/optional/beacon.cfg) |
+
+Preferred host: **Raspberry Pi 5** ([RPI5_BRINGUP.md](RPI5_BRINGUP.md)).
 
 ## nginx timeouts (large OrcaSlicer uploads)
 

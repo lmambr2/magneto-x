@@ -80,4 +80,6 @@ Exit code 0 means every `[include …]` from `printer.cfg` resolves inside the p
 | Firmware retraction | `[include optional/firmware_retraction.cfg]` |
 | Client park vars | `[include optional/client_variables.cfg]` (no second PAUSE) |
 | nginx large uploads | Host: `optional/nginx-timeouts.conf.snippet` |
+| Beacon probe (alt) | `optional/beacon.cfg` + `./os/install-beacon.sh` (not stock) |
 | Beacon/Eddy notes | `optional/beacon_eddy_notes.cfg` / `alt_hardware_notes.cfg` |
+| Pi 5 host notes | `hosts/rpi5/README.md` · `docs/RPI5_BRINGUP.md` |

@@ -50,7 +50,8 @@ If you own a Magneto X that never quite worked because of the stock Klipper tree
 - [docs/NAMING.md](docs/NAMING.md) — repo names, GitHub descriptions, topics  
 - [docs/RESEARCH.md](docs/RESEARCH.md) — fork analysis, hardware map, community inventory  
 - [docs/MODERNIZATION.md](docs/MODERNIZATION.md) — build / flash / install  
-- [docs/OS_IMAGE.md](docs/OS_IMAGE.md) — Orange Pi Zero 2 / MainsailOS  
+- [docs/OS_IMAGE.md](docs/OS_IMAGE.md) — host images (Pi 5 preferred / OPi Zero 2)  
+- [docs/RPI5_BRINGUP.md](docs/RPI5_BRINGUP.md) — Raspberry Pi 5 flash + postinstall  
 - [docs/vendor-archive/peopoly-wiki/](docs/vendor-archive/peopoly-wiki/) — **frozen Peopoly wiki** (69 pages, 2026-07-11)  
 - In-tree: [Magneto_X.md](https://github.com/lmambr2/magneto-x-klipper/blob/magneto-x/docs/Magneto_X.md) · [TRACKS.md](https://github.com/lmambr2/magneto-x-klipper/blob/magneto-x/docs/TRACKS.md)
 
