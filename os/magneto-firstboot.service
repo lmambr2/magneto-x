@@ -1,0 +1,23 @@
+[Unit]
+Description=Magneto X first-boot postinstall (HelixScreen + full stack)
+# After network is up enough for apt/git
+After=network-online.target NetworkManager-wait-online.service
+Wants=network-online.target
+ConditionPathExists=!/home/pi/.config/magneto-firstboot-done
+
+[Service]
+Type=oneshot
+User=pi
+Group=pi
+WorkingDirectory=/home/pi
+Environment=HOME=/home/pi
+Environment=USER=pi
+# Long apt/git/Helix install
+TimeoutStartSec=0
+RemainAfterExit=yes
+ExecStart=/home/pi/magneto-firstboot/firstboot-magneto.sh
+# Disable self after success so it never re-runs
+ExecStartPost=/bin/systemctl disable magneto-firstboot.service
+
+[Install]
+WantedBy=multi-user.target
