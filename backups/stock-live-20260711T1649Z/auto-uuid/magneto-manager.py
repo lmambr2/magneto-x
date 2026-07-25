@@ -136,8 +136,9 @@ def auto_resize_filesystem():
         output = run_command("systemctl start orangepi-resize-filesystem.service")
         print("resize filesystem")
         return jsonify({"success": output})
-    except subprocess.CalledProcessError as e:
-        return jsonify({"success": f"Error occurred while resize filesystem: {e}"})
+    except subprocess.CalledProcessError:
+        # Do not echo exception text to HTTP clients (CodeQL py/stack-trace-exposure).
+        return jsonify({"success": "Error occurred while resize filesystem"}), 500
 
 
 def run_command(command):

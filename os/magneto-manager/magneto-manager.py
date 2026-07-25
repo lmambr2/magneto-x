@@ -107,7 +107,11 @@ def ensure_serial():
 
 
 def run_argv(argv, timeout=30):
-    """Run fixed argv list — never invoke a shell."""
+    """Run fixed argv list — never invoke a shell.
+
+    Returns (ok: bool, text: str).  *text* is for local logging / UUID parse
+    only — never echo exception objects or full traces to HTTP clients.
+    """
     try:
         out = subprocess.check_output(
             argv,
@@ -115,13 +119,19 @@ def run_argv(argv, timeout=30):
             timeout=timeout,
             shell=False,
         )
-        return out.decode("utf-8", errors="replace")
-    except subprocess.CalledProcessError as e:
-        return e.output.decode("utf-8", errors="replace")
-    except FileNotFoundError as e:
-        return f"error: {e}"
+        return True, out.decode("utf-8", errors="replace")
+    except subprocess.CalledProcessError as exc:
+        # Decode for UUID scraping only; do not return exc/repr to clients.
+        body = b""
+        if getattr(exc, "output", None):
+            body = exc.output
+        return False, body.decode("utf-8", errors="replace")
+    except FileNotFoundError:
+        app.logger.warning("run_argv missing binary: %s", argv[:1])
+        return False, ""
     except subprocess.TimeoutExpired:
-        return "error: command timed out"
+        app.logger.warning("run_argv timeout: %s", argv[:2])
+        return False, ""
 
 
 def extract_uuids(output):
@@ -218,15 +228,17 @@ def send_command():
         conn.write((cmd + "\n").encode("ascii"))
         return jsonify({"suc": "Send success"})
     except Exception:
-        # one reconnect retry
+        # one reconnect retry — never return exception text to the client
+        app.logger.exception("send_command write failed; retrying")
         conn = ensure_serial()
         if conn is None:
             return jsonify({"error": "Serial port not connected"}), 503
         try:
             conn.write((cmd + "\n").encode("ascii"))
             return jsonify({"suc": "Send success"})
-        except Exception as e:
-            return jsonify({"error": f"Send failed: {e}"}), 503
+        except Exception:
+            app.logger.exception("send_command write failed after retry")
+            return jsonify({"error": "Send failed"}), 503
 
 
 @app.route("/auto_resize_filesystem", methods=["GET"])
@@ -240,11 +252,13 @@ def auto_resize_filesystem():
             ),
             403,
         )
-    # Fixed argv only — no user input
-    out = run_argv(
+    # Fixed argv only — no user input; do not echo subprocess output to HTTP
+    ok, _out = run_argv(
         ["systemctl", "start", "orangepi-resize-filesystem.service"]
     )
-    return jsonify({"success": out})
+    if not ok:
+        return jsonify({"error": "resize start failed"}), 500
+    return jsonify({"success": True})
 
 
 @app.route("/get-ip", methods=["GET"])
@@ -285,28 +299,29 @@ def set_mcu_uuid():
 @app.route("/get-can-uuid", methods=["GET"])
 def get_can_uuid():
     if not os.path.isfile(CANBUS_QUERY):
-        return jsonify({"error": f"canbus_query not found: {CANBUS_QUERY}"}), 500
+        return jsonify({"error": "canbus_query not found"}), 500
     if not os.path.isfile(KLIPPY_PYTHON):
         # fall back to system python3
         py = sys.executable
     else:
         py = KLIPPY_PYTHON
-    output = run_argv([py, CANBUS_QUERY, CAN_IFACE])
+    _ok, output = run_argv([py, CANBUS_QUERY, CAN_IFACE])
     uuids = extract_uuids(output)
-    return jsonify({"can-uuids": uuids, "raw": output[-500:]})
+    # Never return raw subprocess output (may include paths / tool noise).
+    return jsonify({"can-uuids": uuids})
 
 
 @app.route("/set-can-uuid", methods=["GET"])
 def set_can_uuid():
     if not os.path.exists(CONFIG_PATH):
-        return jsonify({"error": f"{CONFIG_PATH} not found!"}), 404
+        return jsonify({"error": "config file not found"}), 404
     if not os.path.isfile(CANBUS_QUERY):
-        return jsonify({"error": f"canbus_query not found: {CANBUS_QUERY}"}), 500
+        return jsonify({"error": "canbus_query not found"}), 500
     py = KLIPPY_PYTHON if os.path.isfile(KLIPPY_PYTHON) else sys.executable
-    output = run_argv([py, CANBUS_QUERY, CAN_IFACE])
+    _ok, output = run_argv([py, CANBUS_QUERY, CAN_IFACE])
     uuids = extract_uuids(output)
     if len(uuids) == 0:
-        return jsonify({"error": "no canbus uuid found", "raw": output[-300:]}), 404
+        return jsonify({"error": "no canbus uuid found"}), 404
     if len(uuids) > 1:
         return (
             jsonify(

@@ -89,6 +89,14 @@ All notable changes to the **magneto-x** umbrella and companion **magneto-x-klip
 - Flags: `--with-magmotor` (require), `--skip-magmotor` (opt out); `MAGMOTOR_SRC=` override for install script
 - Docs: RPI5 bring-up, FAQ, HARDWARE, host profile
 
+### Security scanner (CodeQL) fixes
+
+- Hardened manager: no exception/subprocess text in HTTP JSON; `run_argv` returns `(ok, text)` for local parse only
+- CI workflows: explicit `permissions:` on `GITHUB_TOKEN` (umbrella + klipper fork)
+- Stock backup manager: stop echoing `CalledProcessError` into JSON
+- Klipper `src/linux/gpio.c`: remove access()+open TOCTOU (open only)
+- CodeQL paths-ignore for `backups/`, `community/`, vendor-archive
+
 ### KlipperCortex (edge spaghetti detection)
 
 - `os/install-klipper-cortex.sh` — clones [Vladush/KlipperCortex](https://github.com/Vladush/KlipperCortex),

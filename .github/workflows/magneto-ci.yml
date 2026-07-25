@@ -7,6 +7,10 @@ on:
     branches: [master, main]
   workflow_dispatch:
 
+# Least privilege for GITHUB_TOKEN (CodeQL actions/missing-workflow-permissions)
+permissions:
+  contents: read
+
 jobs:
   umbrella:
     runs-on: ubuntu-latest

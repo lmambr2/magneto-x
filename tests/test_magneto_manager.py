@@ -136,12 +136,23 @@ class TestHealthAndResize(unittest.TestCase):
         with mock.patch.object(
             self.mod.subprocess, "check_output", return_value=b"ok"
         ) as co:
-            out = self.mod.run_argv(["/bin/echo", "hi"], timeout=5)
+            ok, out = self.mod.run_argv(["/bin/echo", "hi"], timeout=5)
+            self.assertTrue(ok)
             self.assertEqual(out, "ok")
             kwargs = co.call_args.kwargs
             self.assertFalse(kwargs.get("shell", False))
             # argv is positional list — never a shell string
             self.assertIsInstance(co.call_args.args[0], list)
+
+    def test_run_argv_errors_do_not_raise(self):
+        with mock.patch.object(
+            self.mod.subprocess,
+            "check_output",
+            side_effect=FileNotFoundError("missing"),
+        ):
+            ok, out = self.mod.run_argv(["/no/such"], timeout=5)
+            self.assertFalse(ok)
+            self.assertEqual(out, "")
 
     def test_resize_forbidden_by_default(self):
         r = self.client.get("/auto_resize_filesystem")
@@ -159,7 +170,9 @@ class TestSetCanUuid(unittest.TestCase):
             path = f.name
         try:
             self.mod.CONFIG_PATH = path
-            with mock.patch.object(self.mod, "run_argv", return_value="no uuids"):
+            with mock.patch.object(
+                self.mod, "run_argv", return_value=(True, "no uuids")
+            ):
                 with mock.patch.object(
                     self.mod.os.path, "isfile", return_value=True
                 ):
@@ -183,7 +196,7 @@ class TestSetCanUuid(unittest.TestCase):
             with mock.patch.object(
                 self.mod,
                 "run_argv",
-                return_value="Found canbus_uuid=abc123def456",
+                return_value=(True, "Found canbus_uuid=abc123def456"),
             ):
                 with mock.patch.object(
                     self.mod.os.path, "isfile", return_value=True
@@ -208,7 +221,7 @@ class TestSetCanUuid(unittest.TestCase):
             with mock.patch.object(
                 self.mod,
                 "run_argv",
-                return_value="canbus_uuid=aaa canbus_uuid=bbb",
+                return_value=(True, "canbus_uuid=aaa canbus_uuid=bbb"),
             ):
                 with mock.patch.object(
                     self.mod.os.path, "isfile", return_value=True
@@ -217,6 +230,7 @@ class TestSetCanUuid(unittest.TestCase):
             self.assertEqual(r.status_code, 409, r.data)
         finally:
             os.unlink(path)
+
 
 
 if __name__ == "__main__":

@@ -1,0 +1,7 @@
+# CodeQL query suite filters for magneto-x
+name: magneto-x codeql
+paths-ignore:
+  - "backups/**"
+  - "community/**"
+  - "docs/vendor-archive/**"
+  - "**/__pycache__/**"
